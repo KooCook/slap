@@ -136,3 +136,7 @@ dmypy.json
 .idea/
 .vscode/
 .vs/
+
+# OpenAPI auto-generation
+openapi/openapi-generator-cli*.jar
+autogen/
