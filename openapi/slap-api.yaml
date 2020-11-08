@@ -1,0 +1,63 @@
+openapi: 3.0.3
+# https://swagger.io/specification/
+info:
+  title: Song Lyrics & Popularity (SLAP)
+  description: This API provides sth...
+# #Template for if we want to put any contacts
+#  contact:
+#    name: Koo Cook
+#    url: https://www.koocook.app/api-support/
+#    email: koocook.app@gmail.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: /v1
+  description: localhost
+paths:
+  /songs:
+    get:
+      description: Returns all songs?
+      responses:
+        '200':
+          description: A list of songs.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Song'
+        '404':
+          $ref: '#/components/responses/default'
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+    Song:
+      type: object
+      properties:
+        title:
+          type: string
+        artists:
+          type: array
+          items:
+            $ref: '#/components/schemas/Artist'
+        lyrics:
+          type: string
+    Artist:
+      type: object
+      properties:
+        name:
+          type: string
+  responses:
+# Just to test out responses object
+    default:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
