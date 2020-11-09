@@ -139,4 +139,5 @@ dmypy.json
 
 # OpenAPI auto-generation
 openapi/openapi-generator-cli*.jar
-autogen/
+autogen/*
+!autogen/requirements.txt
