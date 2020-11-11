@@ -26,7 +26,7 @@ def yaml_value(value: object, i: int = 0):
         if value:
             yaml_value(value[0], i+1)
         else:
-            xprint(i, '  NULLL')
+            xprint(i, '    NULLL')
     elif isinstance(value, dict):
         xprint(i, '  type: object')
         xprint(i, '  properties:')

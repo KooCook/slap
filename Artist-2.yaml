@@ -1,0 +1,16 @@
+api_path:
+  type: string
+header_image_url:
+  type: string
+id:
+  type: integer
+image_url:
+  type: string
+is_meme_verified:
+  type: integer
+is_verified:
+  type: integer
+name:
+  type: string
+url:
+  type: string
