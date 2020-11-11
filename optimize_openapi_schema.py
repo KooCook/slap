@@ -38,7 +38,7 @@ def yaml(dct: dict):
                 pattern = match(v['properties'])
                 if pattern is not None:
                     dct[k] = {'$ref': f'#/components/schemas/{pattern}'}
-                    return
+                    continue
             yaml(v)
 
 
