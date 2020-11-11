@@ -1,0 +1,407 @@
+openapi: 3.0.3
+# https://swagger.io/specification/
+info:
+  title: Genius API
+  description: Unofficial OpenAPI specs for Genius
+  version: 1.0.0
+externalDocs:
+  description: Official API homepage
+  url: https://docs.genius.com/
+servers:
+- url: https://api.genius.com
+  description: Official API server
+paths:
+  /oauth/authorize:
+    get:
+      tags:
+      - oauth
+      description: OAuth authentication?
+      responses:
+        '200':
+          description: Success?
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    $ref: '#/components/schemas/MetaSuccess'
+      parameters:
+      - name: client_id
+        in: query
+        description: >
+          Your application's Client ID, as listed on the API Client management page
+        required: true
+        schema:
+          type: string
+      - name: redirect_uri
+        in: query
+        description: >
+          The URI Genius will redirect the user to after they've authorized your
+          application; it must be the same as the one set for the API client on the
+          management page
+        required: true
+        schema:
+          type: string
+      - name: scope
+        in: query
+        description: >
+          The permissions your application is requesting as a space-separated list
+          (see [available scopes](https://docs.genius.com/#/available-scopes) below)
+        required: false
+        schema:
+          type: string
+        example: me vote
+      - name: state
+        in: query
+        description: >
+          A value that will be returned with the code redirect for maintegeraining
+          arbitrary state through the authorization process.
+        required: false
+        schema:
+          type: string
+      - name: response_type
+        in: query
+        description: Always "code"
+        required: true
+        schema:
+          type: string
+        example: code
+
+  /songs/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: The ID of the song
+        required: true
+        schema:
+          type: string
+        example: 378195
+    get:
+      tags:
+        - songs
+      description: Data for a specific song.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    $ref: '#/components/schemas/MetaSuccess'
+                  response:
+                    type: object
+                    properties:
+                      song:
+                        $ref: '#/components/schemas/Song'
+        '404':
+          $ref: '#/components/responses/default'
+      security:
+         - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/text_format'
+  /search:
+    parameters:
+      - name: q
+        in: query
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - search
+      description: Search documents hosted on Genius.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    type: object
+                    $ref: '#/components/schemas/Song'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                properties:
+                  meta:
+                    $ref: '#/components/schemas/MetaError'
+      security:
+        - bearerAuth: []
+
+  /annotations/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: The ID of the annotation
+        required: true
+        schema:
+          type: string
+        example: 10225840
+    get:
+      tags:
+        - annotations
+      description: An annotation is a piece of content about a part of a document. The document may be a song (hosted on Genius) or a web page (hosted anywhere). The part of a document that an annotation is attached to is called a referent. Annotation data returned from the API includes both the substance of the annotation and the necessary information for displaying it in its original context.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SongResponse'
+        '404':
+          $ref: '#/components/responses/default'
+      security:
+         - bearerAuth: []
+
+  /referents:
+    parameters:
+      - $ref: '#/components/parameters/per_page'
+      - $ref: '#/components/parameters/page'
+      - name: created_by_id
+        in: query
+        description: The ID of a user to get referents for
+        required: true
+        schema:
+          type: string
+        example: ??
+      - name: song_id
+        in: query
+        description: The ID of a song to get referents for
+        required: true
+        schema:
+          type: string
+        example: ??
+      - name: text_format
+        in: query
+        description: Format for text bodies related to the document. One or more of dom, plain, and html, separated by commas (defaults to dom). See details of each option here
+        required: false
+        schema:
+          type: string
+        example: ??
+
+    get:
+      tags:
+        - referents
+      description: >
+        Referents by content item or user responsible for an included annotation.
+
+        You may pass only one of `song_id` and `web_page_id`, not both.
+      responses:
+        '200':
+          description: Data for a specific song.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: object
+                    properties:
+                      referent:
+                        $ref: '#/components/schemas/Referent'
+        '404':
+          $ref: '#/components/responses/default'
+      security:
+         - bearerAuth: []
+  /artists/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: The ID of the artist
+        required: true
+        schema:
+          type: string
+        example: 16775
+    get:
+      tags:
+        - artists
+      description: Data for a specific artist.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtistResponse'
+        '404':
+          $ref: '#/components/responses/default'
+      security:
+         - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/text_format'
+  /artists/{id}/songs:
+    parameters:
+      - name: id
+        in: path
+        description: The ID of the artist
+        required: true
+        schema:
+          type: string
+        example: 16775
+    get:
+      tags:
+        - artists
+      description: >
+        Documents (songs) for the artist specified. By default, 20 items are returned
+        for each request.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtistResponse'
+        '404':
+          $ref: '#/components/responses/default'
+      security:
+         - bearerAuth: []
+      parameters:
+        - name: sort
+          in: query
+          description: >
+            `title` (default) or `popularity`
+          required: true
+          schema:
+            type: string
+            example: ??
+        - $ref: '#/components/parameters/per_page'
+        - $ref: '#/components/parameters/page'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    MetaSuccess:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 200
+    MetaError:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 404
+        message:
+          type: string
+          example: Not found
+    Error:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/MetaError'
+    ArtistResponse:
+      type: object
+      properties:
+        response:
+          type: object
+          properties:
+            artist:
+              type: object
+              properties:
+                path:
+                  type: string
+    SongResponse:
+      type: object
+      properties:
+        boilerplate:
+          type: string
+    Song:
+      type: object
+      properties:
+        boilerplate:
+          type: string
+    Referent:
+      type: object
+      properties:
+        path:
+          type: string
+  responses:
+# Just to test out responses object
+    default:
+      description: Unexpected error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  parameters:
+    text_format:
+      name: text_format
+      in: query
+      description: >
+        Format for text bodies related to the document. One or more of `dom`,
+        `plain`, and `html`, separated by commas (defaults to `dom`).
+
+        - `plain` is just plain text, no markup
+
+        - `html` is a string of unescaped HTML suitable for rendering by a browse
+
+        - `dom` is a nested object representing and HTML DOM hierarchy that can be
+          used to programmatically present structured content
+      required: false
+      schema:
+        type: string
+        example: dom,plain,html
+    per_page:
+      name: per_page
+      in: query
+      description: Number of results to return per request
+      required: false
+      schema:
+        type: integer
+      example: 20
+    page:
+      name: page
+      in: query
+      description: >
+        Paginated offset, (e.g., `per_page=5&page=3` returns songs 11–15)
+      required: false
+      schema:
+        type: integer
+      example: 3
+tags:
+  - name: oauth
+    description: OAuth operations
+  - name: annotations
+    description: >
+      An **annotation** is a piece of content about a part of a document. The
+      document may be a _song_ (hosted on Genius) or a _web page_ (hosted anywhere).
+      The part of a document that an annotation is attached to is called a referent.
+
+      Annotation data returned from the API includes both the substance of the
+      annotation and the necessary information for displaying it in its original
+      context.
+  - name: songs
+    description: >
+      A **song** is a document hosted on Genius. It's usually music lyrics.
+
+      Data for a song includes details about the document itself and information
+      about all the _referents_ that are attached to it, including the text to which
+      they refer.
+  - name: artists
+    description: >
+      An **artist** is how Genius represents the creator of one or more _songs_ (or
+      other documents hosted on Genius). It's usually a musician or group of
+      musicians.
+  - name: referents
+    description: >
+      **Referents** are the sections of a piece of content to which _annotations_ are
+      attached. Each referent is associated with a _web page_ or a _song_ and may
+      have one or more annotations. Referents can be searched by the document they
+      are attached to or by the user that created them.
+
+      When a new annotation is created either a referent is created with it or that
+      annotation is attached to an existing referent.
+  - name: search
+    description: >
+      The **search** capability covers all content hosted on Genius (all _songs_).
