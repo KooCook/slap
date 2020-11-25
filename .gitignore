@@ -141,3 +141,6 @@ dmypy.json
 openapi/openapi-generator-cli*.jar
 autogen/*
 !autogen/requirements.txt
+
+# macOS Stuff
+.DS_Store

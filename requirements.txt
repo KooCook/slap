@@ -2,3 +2,4 @@
 google-api-python-client
 google-auth-oauthlib # Authorization dependency
 google-auth-httplib2 # Authorization dependency
+billboard.py # For Billboard charts scraping
