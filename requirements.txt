@@ -9,3 +9,4 @@ djangorestframework
 python-decouple
 dj-database-url
 plotly
+nltk
