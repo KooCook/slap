@@ -8,78 +8,132 @@ import numpy as np
 from support.init.nltk import initialize_nltk
 
 initialize_nltk()
+
 lyrics = """
+[Intro]
+Oh-oh-oh-oh-oh, oh-oh-oh-oh, oh-oh-oh
+Caught in a bad romance
+Oh-oh-oh-oh-oh, oh-oh-oh-oh, oh-oh-oh
+Caught in a bad romance
+Ra-ra-ah-ah-ah
+Roma Roma-ma
+Gaga, "Ooh la-la"
+Want your bad romance
+Ra-ra-ah-ah-ah
+Roma, Roma-ma
+Gaga, "Ooh la-la"
+Want your bad romance
+
 [Verse 1]
-I'm so into you, I can barely breathe
-And all I wanna do is to fall in deep
-But close ain't close enough 'til we cross the line, hey yeah
-So name a game to play and I'll roll the dice, hey
+I want your ugly, I want your disease
+I want your everything as long as it’s free
+I want your love
+Love, love, love, I want your love, oh, ey
+I want your drama, the touch of your hand (Hey!)
+I want your leather-studded kiss in the sand
+I want your love
+Love, love, love, I want your love
+(Love, love, love, I want your love)
 
 [Pre-Chorus]
-Oh baby, look what you started
-The temperature's rising in here
-Is this gonna happen?
-Been waiting and waiting for you to make a move
-Before I make a move
+You know that I want you
+And you know that I need you
+I want it bad
+Your bad romance
 
 [Chorus]
-So, baby, come light me up, and, baby, I'll let you on it
-A little bit dangerous, but, baby, that's how I want it
-A little less conversation and a little more touch my body
-'Cause I'm so into you, into you, into you
-Got everyone watchin' us, so, baby, let's keep this secret
-A little bit scandalous, but, baby, don't let them see it
-A little less conversation and a little more touch my body
-'Cause I'm so into you, into you, into you (Ooh, yeah)
+I want your love, and I want your revenge
+You and me could write a bad romance (Oh-oh-oh-oh-oh)
+I want your love, and all your lover's revenge
+You and me could write a bad romance
+Oh-oh-oh-oh-oh, oh-oh-oh-oh, oh-oh-oh
+Caught in a bad romance
+Oh-oh-oh-oh-oh, oh-oh-oh-oh, oh-oh-oh
+Caught in a bad romance
+
+[Post-Chorus]
+Ra-ra-ah-ah-ah
+Roma-roma-ma
+Gaga, "Ooh la-la"
+Want your bad romance
 
 [Verse 2]
-This could take some time, hey
-Made too many mistakes
-Better get this right, right, baby
+I want your horror, I want your design
+‘Cause you’re a criminal as long as you’re mine
+I want your love
+Love, love, love, I want your love, uh
+I want your psycho, your vertigo shtick (Shtick, hey!)
+Want you in my rear window, baby, you're sick
+I want your love
+Love, love, love, I want your love
+(Love, love, love, I want your love)
 
 [Pre-Chorus]
-Oh, baby, look what you started
-The temperature's rising in here
-Is this gonna happen?
-Been waiting and waiting for you to make a move
-Before I make a move
+You know that I want you
+And you know that I need you (
+'Cause I'm a free bitch, baby
+)
+I want it bad
+Your bad romance
 
 [Chorus]
-So, baby, come light me up, and, baby, I'll let you on it
-A little bit dangerous, but, baby, that's how I want it
-A little less conversation and a little more touch my body
-'Cause I'm so into you, into you, into you
-Got everyone watchin' us, so, baby, let's keep this secret
-A little bit scandalous, but, baby, don't let them see it
-A little less conversation and a, little more touch my body
-'Cause I'm so into you, into you, into you, oh yeah
-('Cause I'm so into you)
+I want your love, and I want your revenge
+You and me could write a bad romance (Oh-oh-oh-oh-oh)
+I want your love, and all your lover's revenge
+You and me could write a bad romance
+Oh-oh-oh-oh-oh, oh-oh-oh-oh, oh-oh-oh
+Caught in a bad romance
+Oh-oh-oh-oh-oh, oh-oh-oh-oh, oh-oh-oh
+Caught in a bad romance
 
-[Bridge]
-Tell me what you came here for
-'Cause I can't, I can't wait no more
-I'm on the edge with no control
-And I need, I need you to know
-You to know, oh, woah, yeah
+[Post-Chorus]
+Ra-ra-ah-ah-ah
+Roma-roma-ma
+Gaga, "Ooh la-la"
+Want your bad romance
+Ra-ra-ah-ah-ah
+Roma-roma-ma
+Gaga, "Ooh la-la"
+Want your bad romance
+
+[Bridge 1]
+Walk, walk, fashion, baby
+Work it, move that bitch crazy
+Walk, walk, fashion, baby
+Work it, move that bitch crazy
+Walk, walk, fashion, baby
+Work it, move that bitch crazy
+Walk, walk, passion, baby
+Work it, I'm a free bitch, baby
+
+[Bridge 2]
+I want your love, and I want your revenge
+I want your love, I don't wanna be friends
+Je veux ton amour et je veux ta revanche
+Je veux ton amour, I don't wanna be friends
+(Oh-oh-oh-oh-oh, oh-oh-oh-oh, oh-oh-oh)
+(I want you back) No, I don't wanna be friends
+(Caught in a bad romance) I don't wanna be friends
+Want your bad romance
+(Caught in a bad romance) Want your bad romance
 
 [Chorus]
-So, baby, come light me up (Light me up), and, baby, I'll let you on it
-A little bit dangerous (Dangerous), but, baby, that's how I want it (How I want it)
-A little less conversation and a little more touch my body
-'Cause I'm so into you, into you, into you
-Got everyone watchin' us (Watchin' us), so, baby, let's keep this secret
-A little bit scandalous (Scandalous), but, baby, don't let them see it (Yeah)
-A little less conversation  and a little more touch my body
-'Cause I'm so into you, into you, into you
+I want your love, and I want your revenge
+You and me could write a bad romance (Oh-oh-oh-oh-oh)
+I want your love, and all your lover's revenge
+You and me could write a bad romance
+Oh-oh-oh-oh-oh, oh-oh-oh-oh, oh-oh-oh
+(Want your bad romance)
+Caught in a bad romance (Want your bad romance)
+Oh-oh-oh-oh-oh, oh-oh-oh-oh, oh-oh-oh
+(Want your bad romance)
+Caught in a bad romance
 
-[Outro]
-So come light me up
-So come light me up, my baby
-Little dangerous
-A little dangerous, my boy (How I want it)
-A little less conversation and a little more touch my body
-'Cause I'm so into you, into you, into you
-(I'm so into you)
+[Post-Chorus]
+Ra-ra-ah-ah-ah
+Roma, Roma-ma
+Gaga, "Ooh la-la"
+Want your bad romance
 """
 
 
@@ -101,8 +155,16 @@ def get_similarity_matrix(lst: list) -> np.ndarray:
     size = len(lst)
     p = list(product(lst, lst))
     q = list(map(lambda x: x[0] == x[1], p))
+    print(q)
     u = np.asarray(q)
     return np.reshape(u, (size, size))
+
+
+def get_similarity_matrix_map(words: list):
+    lst = list(range(len(words)))
+    p = list(product(lst, lst))
+    q = list(map(lambda x: (x[0], x[1], 50) if words[x[0]] == words[x[1]] else (x[0], x[1], 0), p))
+    return q
 
 
 all_sections = []
@@ -112,6 +174,7 @@ for i in m:
     tk = TokenizedSongLyrics(section, sub_lyrics)
     all_sections.append(tk)
 
+all_lyrics = functools.reduce(lambda x, y: x + y.tokenized if isinstance(x, list) else x.tokenized + y.tokenized, all_sections)
+
 if __name__ == '__main__':
-    all_lyrics = functools.reduce(lambda x, y: x + y.tokenized if isinstance(x, list) else x.tokenized + y.tokenized, all_sections)
     print(get_similarity_matrix(all_lyrics))
