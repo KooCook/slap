@@ -10,3 +10,4 @@ python-decouple
 dj-database-url
 plotly
 nltk
+numpy
