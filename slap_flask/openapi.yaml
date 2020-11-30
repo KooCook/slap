@@ -17,9 +17,25 @@ info:
 servers:
 - url: /api
 paths:
-  /songs:
+  /song:
+    parameters:
+      - name: name
+        in: query
+        description: The name of a song
+        required: true
+        schema:
+          type: string
+        example: ??
+      - name: artist
+        in: query
+        description: The artist of a song
+        required: true
+        schema:
+          type: string
+        example: ??
     get:
       description: Returns all songs?
+      operationId: slap_flask.public.controllers.songs.get_song
       responses:
         '200':
           description: A list of songs.

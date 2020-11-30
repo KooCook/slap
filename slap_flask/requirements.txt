@@ -1,2 +1,3 @@
 Flask~=1.1.2
 connexion[swagger-ui]
+Flask-SQLAlchemy

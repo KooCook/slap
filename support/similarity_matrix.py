@@ -1,6 +1,7 @@
 import functools
 from itertools import product
 import re
+from typing import List
 
 from nltk import word_tokenize
 import numpy as np
@@ -143,7 +144,7 @@ class TokenizedSongLyrics:
         self.lyrics = lyrics
 
     @property
-    def tokenized(self):
+    def tokenized(self) -> List[str]:
         words = word_tokenize(self.lyrics)
         return [word for word in words if word.isalnum()]
 
@@ -155,7 +156,6 @@ def get_similarity_matrix(lst: list) -> np.ndarray:
     size = len(lst)
     p = list(product(lst, lst))
     q = list(map(lambda x: x[0] == x[1], p))
-    print(q)
     u = np.asarray(q)
     return np.reshape(u, (size, size))
 

@@ -100,7 +100,7 @@ function drawRects(data, x_range, y_range) {
 //   });
 
 async function g() {
-    const p = await fetch('http://0.0.0.0:8080/plot/params')
+    const p = await fetch(`http://0.0.0.0:8080/plot/${fetched_song_id}/params`)
     const {words}  = await p.json()
     myVars = myGroups = words
         const x_r = d3.scaleBand()
@@ -125,10 +125,7 @@ async function g() {
     svg.append("g")
   .call(d3.axisLeft(y_r)
     .tickFormat(function(d) { return myVars[d] }));
-
-
-
-    fetch('http://0.0.0.0:8080/plot/data')
+    fetch(`http://0.0.0.0:8080/plot/${fetched_song_id}/data`)
       .then(response => response.text())
       .then(text => { return d3.csvParse(text) })
       .then(data => { drawRects(data, x_r, y_r) })

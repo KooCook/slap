@@ -1,10 +1,12 @@
 import connexion
 from connexion import FlaskApp
-from flask import Flask
 
+from slap_flask.database import db
+from slap_flask.database.models import load_models
 from slap_flask.settings import OPENAPI_SPECS_PATH, OPENAPI_OPS_MODULE_NAME
 from connexion.resolver import RestyResolver
 from slap_flask.views import root
+from slap_flask.models.generator import start_generating
 
 
 def create_app() -> FlaskApp:
@@ -17,4 +19,7 @@ def create_app() -> FlaskApp:
 
 if __name__ == '__main__':
     app = create_app()
+    db.connect_app(app.app)
+    load_models(app.app)
+    # start_generating()
     app.run(port=8080, debug=True)
