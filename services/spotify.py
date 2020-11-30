@@ -17,11 +17,13 @@ def search_for_song(song_name: str, artist_name: str):
             artist = sp.artist(artist["external_urls"]["spotify"])
             genres.extend(artist["genres"])
             artist_names.append(artist["name"])
-        if s_name == song_name and artist_name in artist_names:
+        if s_name.lower() == song_name.lower() and artist_name in artist_names:
             s = SongModel()
             s.genres = genres
-            s.name = song_name
+            s.name = s_name
             s.artist_name = artist_name
             return s
+        else:
+            return None
         print("track genres:", genres)
         # print(track)

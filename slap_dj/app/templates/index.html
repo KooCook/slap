@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+<div id="myDiv"></div>
+
+<script>
+    const xValues = ["I'm", 'a', 'Barbie', 'girl', 'in', 'a', 'Barbie*', 'world'].reverse();
+const yValues = xValues;
+const zValues = [
+  [1, 0, 0, 0, 0, 0, 0, 0],
+  [0, 1, 0, 0, 0, 1, 0, 0],
+  [0, 0, 1, 0, 0, 0, 1, 0],
+  [0, 0, 0, 1, 0, 0, 0, 0],
+  [0, 0, 0, 0, 1, 0, 0, 0],
+  [0, 1, 0, 0, 0, 1, 0, 0],
+  [0, 0, 1, 0, 0, 0, 1, 0],
+  [0, 0, 0, 0, 0, 0, 0, 1],
+];
+const colorscaleValue = [
+  [0, '#000000'],
+  [1, '#6e6e6e'],
+  // [2, '#A301FF'],
+  // [3, '#FFAF19'],
+];
+
+const data = [
+  {
+    x: xValues,
+    y: yValues,
+    z: zValues,
+    type: 'heatmap',
+    colorscale: colorscaleValue,
+    // showscale: false,
+  }
+];
+
+Plotly.newPlot('myDiv', data, {
+    xaxis: {
+        type: 'category-nonunique'
+    }
+});
+</script>
+</body>
+</html>

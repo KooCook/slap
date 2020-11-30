@@ -5,13 +5,21 @@ from slap_flask.database import db
 from slap_flask.database.models import load_models
 from slap_flask.settings import OPENAPI_SPECS_PATH, OPENAPI_OPS_MODULE_NAME
 from connexion.resolver import RestyResolver
+
+import os
+
+from django.apps import apps
+from django.conf import settings
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "slap_dj.slap_dj.settings.flask")
+if not apps.loading:
+    apps.populate(settings.INSTALLED_APPS)
+
 from slap_flask.views import root
-from slap_flask.models.generator import start_generating
 
 
 def create_app() -> FlaskApp:
     connexion_app = connexion.App(__name__, specification_dir='swagger', options={"swagger_ui": True})
-
     connexion_app.add_api(OPENAPI_SPECS_PATH, resolver=RestyResolver(OPENAPI_OPS_MODULE_NAME))
     connexion_app.app.register_blueprint(root)
     return connexion_app

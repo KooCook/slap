@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container-fluid">
+      <!-- Content here -->
+      <div id="my_dataviz" style="width:75vh;height:75vh;"></div>
+    </div>
+    <!-- d3.js -->
+    <script src="https://d3js.org/d3.v6.js"></script>
+    <!-- custom -->
+    <script src="{{ url_for('static', filename='js/plot-repetition-matrix.js') }}"></script>
+{% endblock %}

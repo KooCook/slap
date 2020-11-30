@@ -24,7 +24,7 @@ git clone https://github.com/KooCook/slap.git
 java -jar openapi/openapi-generator-cli-4.3.1.jar generate -i openapi/slap-api.yaml -o autogen -g python-flask
 ```
 
-3\. Install python requirements. (We recommend using virtual environemnts)
+3\. Install python requirements. (We recommend using virtual environments)
 
 ```sh
 python -m pip install -r requirements.txt
@@ -33,5 +33,6 @@ python -m pip install -r requirements.txt
 4\. Start the server
 
 ```sh
-python app,py
+cd slap_flask
+python app.py
 ```

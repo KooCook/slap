@@ -65,6 +65,10 @@ components:
             $ref: '#/components/schemas/Artist'
         lyrics:
           type: string
+        genres:
+          type: array
+          items:
+            type: string
     Artist:
       type: object
       properties:
