@@ -22,3 +22,7 @@ class Song(models.Model):
     compressibility = models.FloatField()
     artists = models.ManyToManyField(Artist)
     genres = models.ManyToManyField(Genre)
+
+    @property
+    def artist_names(self) -> str:
+        return ",".join([a.name for a in self.artists.all()])

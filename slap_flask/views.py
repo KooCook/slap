@@ -28,26 +28,21 @@ def get_songs():
     artist = request.args.get('artist')
     songs = Song.objects.all()
     return render_template('songs.html',
-                           songs = songs)
-    # p = Song.query.filter_by(name=name, artist=artist).first()
-
-
-@root.route('/ac1')
-def test_view_block():
-    return render_template('ac1.html')
+                           songs=songs)
 
 
 @root.route('/song/<song_id>')
 def show_song(song_id):
     s = SongSearcher.search_one(id=song_id)
-    artists = ",".join([a.name for a in s.artists.all()])
-    plot_div = get_plot_div(plot_song_data_google_trends(s.title))
+    trends_data, trends_latest = plot_song_data_google_trends(s.title)
+    plot_div = get_plot_div(trends_data)
     return render_template('song.html',
                            name=s.title,
-                           artists=artists,
+                           artists=s.artist_names,
                            lyrics=s.lyrics,
                            song_id=song_id,
-                           trends_plot=plot_div)
+                           trends_plot=plot_div,
+                           trends_latest=trends_latest)
 
 
 @root.route('/plot/<song_id>')

@@ -24,6 +24,4 @@ def search_for_song(song_name: str, artist_name: str):
             s.artist_name = artist_name
             return s
         else:
-            return None
-        print("track genres:", genres)
-        # print(track)
+            raise Exception("Error!")
