@@ -9,6 +9,7 @@ from nltk import word_tokenize
 import numpy as np
 
 from support.init.nltk import initialize_nltk
+from nltk.tokenize import TweetTokenizer
 
 initialize_nltk()
 
@@ -147,7 +148,7 @@ class TokenizedSongLyrics:
 
     @property
     def tokenized(self) -> List[str]:
-        words = word_tokenize(self.lyrics)
+        words = TweetTokenizer().tokenize(self.lyrics)
         return [word for word in words if word not in string.punctuation]
 
     def __repr__(self):
