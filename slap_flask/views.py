@@ -8,6 +8,7 @@ from services.genius import tokenize_words
 from services.trends import plot_song_data_google_trends, get_plot_div
 from slap_dj.app.models import Song
 from slap_flask.models.searchers import SongSearcher
+from support.lyric_metrics import plot_lyrics_frequency
 from support.similarity_matrix import get_similarity_matrix_map, all_lyrics
 
 root = Blueprint('view_pages', __name__, template_folder='templates')
@@ -34,15 +35,14 @@ def get_songs():
 @root.route('/song/<song_id>')
 def show_song(song_id):
     s = SongSearcher.search_one(id=song_id)
-    trends_data, trends_latest = plot_song_data_google_trends(s.title)
-    plot_div = get_plot_div(trends_data)
+    fig = plot_lyrics_frequency(s.lyrics)
+    plot_div = get_plot_div(fig)
     return render_template('song.html',
                            name=s.title,
                            artists=s.artist_names,
                            lyrics=s.lyrics,
                            song_id=song_id,
-                           trends_plot=plot_div,
-                           trends_latest=trends_latest)
+                           word_freq_plot=plot_div)
 
 
 @root.route('/plot/<song_id>')

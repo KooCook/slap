@@ -1,17 +1,11 @@
-import functools
-import string
-from itertools import product
-import re
-from typing import List
+import pandas as pd
+import plotly.express as px
 
-from nltk import word_tokenize
-# from nltk.tokenize import WhitespaceTokenizer
-import numpy as np
+from nltk import collections
+from plotly.graph_objs import Figure
 
-from support.init.nltk import initialize_nltk
-
-initialize_nltk()
-
+from services.genius import tokenize_words
+pd.options.plotting.backend = "plotly"
 lyrics = """
 [Intro]
 Oh-oh-oh-oh-oh, oh-oh-oh-oh, oh-oh-oh
@@ -140,43 +134,18 @@ Want your bad romance
 """
 
 
-class TokenizedSongLyrics:
-    def __init__(self, section: str, lyrics: str):
-        self.section = section
-        self.lyrics = lyrics
+def get_lyrics_frequency_df(raw_lyrics: str, limit: int = 10) -> pd.DataFrame:
+    all_words_no_urls = tokenize_words(raw_lyrics)
 
-    @property
-    def tokenized(self) -> List[str]:
-        words = word_tokenize(self.lyrics)
-        return [word for word in words if word not in string.punctuation]
-
-    def __repr__(self):
-        return f"SongLyrics<'{self.section}', l={self.lyrics[:20]}...>"
+    counts_no_urls = collections.Counter(all_words_no_urls)
+    return pd.DataFrame(counts_no_urls.most_common(limit), columns=['words', 'count'])
 
 
-def get_similarity_matrix(lst: list) -> np.ndarray:
-    size = len(lst)
-    p = list(product(lst, lst))
-    q = list(map(lambda x: x[0] == x[1], p))
-    u = np.asarray(q)
-    return np.reshape(u, (size, size))
+def plot_lyrics_frequency(raw_lyrics: str) -> Figure:
+    df = get_lyrics_frequency_df(raw_lyrics)
+    return px.bar(df, x="words", y="count", title="Word Frequency in lyrics")
 
-
-def get_similarity_matrix_map(words: list):
-    lst = list(range(len(words)))
-    p = list(product(lst, lst))
-    q = list(map(lambda x: (x[0], x[1], 50) if words[x[0]] == words[x[1]] else (x[0], x[1], 0), p))
-    return q
-
-
-all_sections = []
-m = re.findall(r'\[(.+)\][ \n]+([^\[]+)', lyrics)
-for i in m:
-    section, sub_lyrics = i
-    tk = TokenizedSongLyrics(section, sub_lyrics)
-    all_sections.append(tk)
-
-all_lyrics = functools.reduce(lambda x, y: x + y.tokenized if isinstance(x, list) else x.tokenized + y.tokenized, all_sections)
 
 if __name__ == '__main__':
-    print(get_similarity_matrix(all_lyrics))
+    fig = plot_lyrics_frequency(lyrics)
+    fig.show()
