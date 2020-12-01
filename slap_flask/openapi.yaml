@@ -25,14 +25,14 @@ paths:
         required: true
         schema:
           type: string
-        example: ??
+        example: Begin Again
       - name: artist
         in: query
         description: The artist of a song
         required: true
         schema:
           type: string
-        example: ??
+        example: Taylor Swift
     get:
       description: Returns all songs?
       operationId: slap_flask.public.controllers.songs.get_song

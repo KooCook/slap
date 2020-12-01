@@ -11,7 +11,7 @@ from slap_dj.app.models import Song
 from slap_flask.models.searchers import SongSearcher
 from support.lyric_metrics import plot_lyrics_frequency
 from support.pop_plotter import get_generated_scatter_plot
-from support.similarity_matrix import get_similarity_matrix_map, all_lyrics
+from support.similarity_matrix import get_similarity_matrix_map
 
 root = Blueprint('view_pages', __name__, template_folder='templates')
 
@@ -29,8 +29,6 @@ def show(page):
 def get_songs():
     songs = Song.objects.all()
     paginator = Paginator(songs, 25)
-    # page = request.args.get(get_page_parameter(), type=int, default=1)
-    # pagination = Pagination(page=page, total=Song.objects.count())
     page_number = request.args.get('page')
     page_obj = paginator.get_page(page_number)
     return render_template('songs.html', songs=songs, page_obj=page_obj)
@@ -46,6 +44,7 @@ def show_song(song_id):
                            artists=s.artist_names,
                            lyrics=s.lyrics,
                            song_id=song_id,
+                           word_count=s.word_count,
                            word_freq_plot=plot_div)
 
 

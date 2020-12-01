@@ -25,7 +25,7 @@ def get_generated_scatter_plot() -> Figure:
         ])
     )
     fig.update_layout(
-        title_text='Compressibility vs. Spotify Popularity'
+        title_text='Compressibility vs. Spotify Popularity Index'
     )
 
     # fig.add_trace(
