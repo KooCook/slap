@@ -44,7 +44,7 @@ def show_song(song_id):
                            artists=s.artist_names,
                            lyrics=s.lyrics,
                            song_id=song_id,
-                           word_count=s.word_count,
+                           word_count=len(tokenize_words(s.lyrics)),
                            word_freq_plot=plot_div)
 
 

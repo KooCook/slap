@@ -2,7 +2,7 @@ from typing import Union
 
 from services.main import generate_song_to_model
 from support.models import SongModel
-from slap_dj.app.models import Song, Artist, Genre
+from slap_dj.app.models import Song, Artist, Genre, SpotifyTrack
 from django.core.exceptions import ObjectDoesNotExist
 
 
@@ -23,7 +23,6 @@ class SongSearcher:
                     compressibility=song_model.compressibility,
                     lyrics=song_model.lyrics,
                     spotify_popularity=song_model.spotify_popularity)
-
         artists = []
         for artist_name in song_model.artist_names:
             try:
@@ -36,6 +35,8 @@ class SongSearcher:
         if len(songs) > 0:
             return songs[0]
         inst.save()
+        SpotifyTrack(song=inst, track_id=song_model.spotify_id,
+                     album_id=song_model.spotify_album_id).save()
         for genre_label in song_model.genres:
             try:
                 genre = Genre.objects.filter(name=genre_label).get()

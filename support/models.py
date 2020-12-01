@@ -9,3 +9,5 @@ class SongModel:
         self.artist_names: List[str] = []
         self.compressibility = 0
         self.spotify_popularity = 0
+        self.spotify_id = ''
+        self.spotify_album_id = ''

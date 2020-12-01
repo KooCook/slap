@@ -1,7 +1,8 @@
-from services.billboard_reader import read_billboard_yearly
 from slap_dj.app.init import start_django_lite
 
 start_django_lite()
+
+from services.billboard_reader import read_billboard_yearly
 
 
 def generate_song_to_db():

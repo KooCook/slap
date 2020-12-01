@@ -1,8 +1,8 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
 
 # Create your models here.
-from services.genius import tokenize_words
 
 
 class Artist(models.Model):
@@ -31,15 +31,9 @@ class Song(models.Model):
     def artist_names(self) -> str:
         return ",".join([a.name for a in self.artists.all()])
 
-    @property
-    def word_count(self) -> int:
-        return len(tokenize_words(self.lyrics))
-
 
 class YouTubeVideo(models.Model):
-    song_id = models.OneToOneField(
-        Song, on_delete=models.CASCADE, primary_key=True
-    )
+    song = models.OneToOneField(Song, on_delete=models.CASCADE)
     video_id = models.CharField(max_length=255)
     title = models.CharField(max_length=255)
     view_count = models.IntegerField()
@@ -47,4 +41,37 @@ class YouTubeVideo(models.Model):
     dislike_count = models.IntegerField()
     favorite_count = models.IntegerField()
     comment_count = models.IntegerField()
-    default_language = models.CharField()
+    default_language = models.CharField(max_length=10)
+
+
+class BillboardYearEndEntry(models.Model):
+    chart = models.CharField(max_length=255)
+    image_url = models.CharField(max_length=255)
+    artist = models.CharField(max_length=255)
+    title = models.CharField(max_length=255)
+    year = models.IntegerField()
+    rank = models.IntegerField()
+    song = models.OneToOneField(Song, on_delete=models.CASCADE)
+
+    @classmethod
+    def from_dict(cls, dct: dict, song: Song) -> 'BillboardYearEndEntry':
+        try:
+            entry = cls.objects.get(song=song)
+            return entry
+        except cls.DoesNotExist:
+            chart = dct['chart']
+            year = dct['year']
+            rank = dct['rank']
+            title = dct['title']
+            artist = dct['artist']
+            image_url = dct['image']
+            entry = cls(chart=chart, year=year, rank=rank,
+                        title=title, artist=artist,
+                        image_url=image_url, song=song)
+            return entry
+
+
+class SpotifyTrack(models.Model):
+    song = models.OneToOneField(Song, on_delete=models.CASCADE)
+    track_id = models.CharField(max_length=255)
+    album_id = models.CharField(max_length=255)

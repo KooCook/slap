@@ -13,7 +13,8 @@ sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTIFY_CLI
 def search_for_song(song_name: str, artist_name: str) -> SongModel:
     results = sp.search(q=f"artist:{artist_name} track:{song_name}", type='track', limit=20)
     s = None
-    for idx, track in enumerate(results['tracks']['items']):
+    items = results['tracks']['items']
+    for idx, track in enumerate(items):
         genres = []
         s_name = track["name"]
         artist_names: List[str] = []
@@ -28,8 +29,12 @@ def search_for_song(song_name: str, artist_name: str) -> SongModel:
             s.name = s_name
             s.artist_names = artist_names
             s.spotify_popularity = track["popularity"]
+            s.spotify_id = track["id"]
+            s.spotify_album_id = track["album"]["id"]
             return s
         else:
             continue
+    if len(items) == 0:
+        raise Exception("No such song!")
     if s is None:
-        raise Exception("Error!")
+        raise Exception(f"Error! {song_name} - {artist_name}")

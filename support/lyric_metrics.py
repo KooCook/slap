@@ -136,7 +136,6 @@ Want your bad romance
 
 def get_lyrics_frequency_df(raw_lyrics: str, limit: int = 10) -> pd.DataFrame:
     all_words_no_urls = tokenize_words(raw_lyrics)
-
     counts_no_urls = collections.Counter(all_words_no_urls)
     return pd.DataFrame(counts_no_urls.most_common(limit), columns=['words', 'count'])
 
