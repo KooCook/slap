@@ -1,7 +1,10 @@
+from typing import List
+
+
 class SongModel:
     def __init__(self):
         self.name = ""
         self.lyrics = ""
         self.genres = []
-        self.artist_name = ""
+        self.artist_names: List[str] = []
         self.compressibility = 0

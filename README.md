@@ -30,7 +30,14 @@ java -jar openapi/openapi-generator-cli-4.3.1.jar generate -i openapi/slap-api.y
 python -m pip install -r requirements.txt
 ```
 
-4\. Start the server
+4\. Migrate Django data models
+
+```sh
+cd slap_dj
+python manage.py migrate
+```
+
+5\. Start the server
 
 ```sh
 cd slap_flask

@@ -2,8 +2,6 @@ import pandas
 from dirs import ROOT_DIR
 
 import plotly.express as px
-# fig = px.bar(data_canada, x='year', y='pop')
-# fig.show()
 
 from plotly.offline import plot
 

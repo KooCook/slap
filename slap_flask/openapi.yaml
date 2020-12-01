@@ -19,9 +19,9 @@ servers:
 paths:
   /song:
     parameters:
-      - name: name
+      - name: title
         in: query
-        description: The name of a song
+        description: The title of a song
         required: true
         schema:
           type: string

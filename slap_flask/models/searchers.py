@@ -22,11 +22,14 @@ class SongSearcher:
         inst = Song(title=song_model.name,
                     compressibility=song_model.compressibility,
                     lyrics=song_model.lyrics)
-        try:
-            artist = Artist.objects.filter(name=song_model.artist_name).get()
-        except ObjectDoesNotExist:
-            artist = Artist(name=song_model.artist_name)
-            artist.save()
+        artists = []
+        for artist_name in song_model.artist_names:
+            try:
+                artist = Artist.objects.filter(name=artist_name).get()
+            except ObjectDoesNotExist:
+                artist = Artist(name=artist_name)
+                artist.save()
+            artists.append(artist)
         inst.save()
         for genre_label in song_model.genres:
             try:
@@ -35,5 +38,6 @@ class SongSearcher:
                 genre = Genre(name=genre_label)
                 genre.save()
             inst.genres.add(genre)
-        inst.artists.add(artist)
+        for artist in artists:
+            inst.artists.add(artist)
         return inst
