@@ -32,4 +32,4 @@ if __name__ == '__main__':
     app = create_app()
     # db.connect_app(app.app)
     # load_models(app.app)
-    app.run(port=8080, debug=True)
+    app.run(host='127.0.0.1', port=8080, debug=True)
