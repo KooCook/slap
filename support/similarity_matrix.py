@@ -1,9 +1,11 @@
 import functools
+import string
 from itertools import product
 import re
 from typing import List
 
-from nltk import word_tokenize
+# from nltk import word_tokenize
+from nltk.tokenize import WhitespaceTokenizer
 import numpy as np
 
 from support.init.nltk import initialize_nltk
@@ -145,8 +147,8 @@ class TokenizedSongLyrics:
 
     @property
     def tokenized(self) -> List[str]:
-        words = word_tokenize(self.lyrics)
-        return [word for word in words if word.isalnum()]
+        words = WhitespaceTokenizer().tokenize(self.lyrics)
+        return [word for word in words if word not in string.punctuation]
 
     def __repr__(self):
         return f"SongLyrics<'{self.section}', l={self.lyrics[:20]}...>"
