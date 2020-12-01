@@ -8,12 +8,12 @@ from django.core.exceptions import ObjectDoesNotExist
 
 class SongSearcher:
     @classmethod
-    def search_one(cls, **kwargs) -> Union[Song, None]:
+    def search_one(cls, title: str = None, **kwargs) -> Union[Song, None]:
         try:
             result = Song.objects.get(**kwargs)
             return result
         except ObjectDoesNotExist:
-            fetched_result = cls.from_model(generate_song_to_model(kwargs['title'], kwargs['artists__name']))
+            fetched_result = cls.from_model(generate_song_to_model(title, kwargs['artists__name']))
             fetched_result.save()
             return fetched_result
 
@@ -21,7 +21,9 @@ class SongSearcher:
     def from_model(cls, song_model: SongModel) -> 'Song':
         inst = Song(title=song_model.name,
                     compressibility=song_model.compressibility,
-                    lyrics=song_model.lyrics)
+                    lyrics=song_model.lyrics,
+                    spotify_popularity=song_model.spotify_popularity)
+
         artists = []
         for artist_name in song_model.artist_names:
             try:
@@ -30,6 +32,9 @@ class SongSearcher:
                 artist = Artist(name=artist_name)
                 artist.save()
             artists.append(artist)
+        songs = Song.objects.filter(title=song_model.name, artists__in=artists)
+        if len(songs) > 0:
+            return songs[0]
         inst.save()
         for genre_label in song_model.genres:
             try:

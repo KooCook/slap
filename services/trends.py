@@ -28,5 +28,5 @@ def plot_song_data_google_trends(song_name: str, mode: str = 'sum') -> Tuple[go.
                                                                  f'by year'))), latest
 
 
-def get_plot_div(figure: go.Figure) -> str:
+def get_rendered_plot(figure: go.Figure) -> str:
     return plot(figure, output_type='div', include_plotlyjs=False)

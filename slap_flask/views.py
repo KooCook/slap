@@ -5,10 +5,11 @@ from flask import Blueprint, render_template, abort, jsonify, make_response, req
 from jinja2 import TemplateNotFound
 
 from services.genius import tokenize_words
-from services.trends import plot_song_data_google_trends, get_plot_div
+from services.trends import plot_song_data_google_trends, get_rendered_plot
 from slap_dj.app.models import Song
 from slap_flask.models.searchers import SongSearcher
 from support.lyric_metrics import plot_lyrics_frequency
+from support.pop_plotter import get_generated_scatter_plot
 from support.similarity_matrix import get_similarity_matrix_map, all_lyrics
 
 root = Blueprint('view_pages', __name__, template_folder='templates')
@@ -25,8 +26,6 @@ def show(page):
 
 @root.route('/songs')
 def get_songs():
-    name = request.args.get('name')
-    artist = request.args.get('artist')
     songs = Song.objects.all()
     return render_template('songs.html',
                            songs=songs)
@@ -36,7 +35,7 @@ def get_songs():
 def show_song(song_id):
     s = SongSearcher.search_one(id=song_id)
     fig = plot_lyrics_frequency(s.lyrics)
-    plot_div = get_plot_div(fig)
+    plot_div = get_rendered_plot(fig)
     return render_template('song.html',
                            name=s.title,
                            artists=s.artist_names,
@@ -73,4 +72,9 @@ def get_d3_plot_params(song_id):
 
 @root.route('/popularity')
 def get_popularity():
-    return render_template('popularity.html')
+    return render_template('popularity.html', compressibility_vs_pop=get_rendered_plot(get_generated_scatter_plot()))
+
+
+@root.route('/repetition')
+def get_repetition():
+    return render_template('repetition.html')

@@ -9,8 +9,8 @@ sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id="f13fec145e
                                                            client_secret="853c655cf5ae441cb29f3450dad900c2"))
 
 
-def search_for_song(song_name: str, artist_name: str):
-    results = sp.search(q=song_name, type='track', limit=20)
+def search_for_song(song_name: str, artist_name: str) -> SongModel:
+    results = sp.search(q=f"artist:{artist_name} track:{song_name}", type='track', limit=20)
     s = None
     for idx, track in enumerate(results['tracks']['items']):
         genres = []
@@ -26,6 +26,7 @@ def search_for_song(song_name: str, artist_name: str):
             s.genres = genres
             s.name = s_name
             s.artist_names = artist_names
+            s.spotify_popularity = track["popularity"]
             return s
         else:
             continue

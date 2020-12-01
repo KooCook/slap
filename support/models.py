@@ -8,3 +8,4 @@ class SongModel:
         self.genres = []
         self.artist_names: List[str] = []
         self.compressibility = 0
+        self.spotify_popularity = 0
