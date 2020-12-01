@@ -17,9 +17,13 @@ scopes = ["https://www.googleapis.com/auth/youtube.readonly"]
 
 API_KEYS = YOUTUBE_DATA_API_KEYS
 
-API_KEY = API_KEYS[0]
+CURRENT_KEY_INDEX = 0
 REGION_CODE = 'US'
 CATEGORY_ID = 10
+
+
+def get_suitable_api_key() -> str:
+    return API_KEYS[CURRENT_KEY_INDEX]
 
 # Disable OAuthlib's HTTPS verification when running locally.
 # *DO NOT* leave this option enabled in production.
@@ -27,20 +31,11 @@ os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
 api_service_name = "youtube"
 api_version = "v3"
-client_secrets_file = "client_secret.json"
 
-# Get credentials and create an API client
-# flow = google_auth_oauthlib.flow.InstalledAppFlow.f.from_client_secrets_file(
-#     client_secrets_file, scopes)
-# credentials = flow.run_console()
-youtube = googleapiclient.discovery.build(api_service_name, api_version, developerKey=API_KEY)
-
-
-# credentials=credentials)
-# request = youtube.channels().list(
-#     part="snippet,contentDetails,statistics",
-#     id="UC_x5XG1OV2P6uZZ5FSM9Ttw"
-# )
+try:
+    youtube = googleapiclient.discovery.build(api_service_name, api_version, developerKey=get_suitable_api_key())
+except googleapiclient.HttpError:
+    CURRENT_KEY_INDEX += 1
 
 
 def main():
@@ -85,7 +80,7 @@ def get_youtube_video_by_ids(video_ids: Union[List[str], str]) -> List[dict]:
     return request.execute()['items']
 
 
-def get_youtube_video_list(region_code: str):
+def get_youtube_video_list_most_popular(region_code: str):
     kwargs = {}
     scrolling = True
     next_page_token = None
@@ -141,5 +136,5 @@ def read_dumped_json_to_csv(region_code: str):
 
 
 if __name__ == "__main__":
-    get_youtube_video_list(REGION_CODE)
+    get_youtube_video_list_most_popular(REGION_CODE)
     # read_dumped_json_to_csv(REGION_CODE)
