@@ -1,9 +1,10 @@
 import numpy as np
 from scipy import integrate
+from scipy import special
 
 
 def logistic(x):
-    return np.divide(1, np.add(1, np.exp(np.negative(x))))
+    return special.expit(x)
 
 
 def tanh(x):
@@ -19,7 +20,7 @@ def _f(t):
 
 
 def erf(x):
-    return np.divide(2, np.sqrt(np.pi)) * integrate.quad(_f, 0, x)[0]
+    return special.erf(x)
 
 
 def func1(x):
