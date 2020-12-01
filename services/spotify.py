@@ -3,10 +3,11 @@ from typing import List
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
+from settings import SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET
 from support.models import SongModel
 
-sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id="f13fec145e594ade889c41887eb8f481",
-                                                           client_secret="853c655cf5ae441cb29f3450dad900c2"))
+sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTIFY_CLIENT_ID,
+                                                           client_secret=SPOTIFY_CLIENT_SECRET))
 
 
 def search_for_song(song_name: str, artist_name: str) -> SongModel:

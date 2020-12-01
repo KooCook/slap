@@ -4,9 +4,10 @@ from typing import List
 
 import lyricsgenius as lg
 
+from settings import GENIUS_SECRET
 from support.similarity_matrix import TokenizedSongLyrics
 
-genius_client = lg.Genius("cLdigwShk0dtga_4LwuaX5FoNW-j1T-0X37ucmzmGuo2Dlm53yC6FO1keQ7BGQKe")
+genius_client = lg.Genius(GENIUS_SECRET)
 
 
 def search_for_song_lyrics(song_name: str, artist_name: str) -> str:

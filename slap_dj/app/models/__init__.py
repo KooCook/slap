@@ -22,6 +22,7 @@ class Song(models.Model):
     compressibility = models.FloatField()
     artists = models.ManyToManyField(Artist)
     genres = models.ManyToManyField(Genre)
+    spotify_popularity = models.IntegerField()
 
     @property
     def artist_names(self) -> str:

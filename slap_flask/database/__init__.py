@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from slap_flask.settings import DATABASE_URI
+from settings import DATABASE_URI
 
 
 class Database:

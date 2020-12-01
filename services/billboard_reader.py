@@ -1,17 +1,26 @@
+from typing import List
+
 import pandas
 from dirs import ROOT_DIR
+from slap_flask.models.searchers import SongSearcher
+from support.models import SongModel
 
-import plotly.express as px
 
-from plotly.offline import plot
+def read_billboard_yearly() -> List[SongModel]:
+    d = pandas.read_csv(ROOT_DIR / "data/billboard/year_end.csv")
+    q = d.query("chart == 'hot-100-songs'")
+    s = q.loc[:, ['year', 'artist', 'title']]
+    r = q.assign(freq=q.apply(lambda x: q.artist.value_counts().to_dict()[x.artist], axis=1))\
+        .sort_values(by=['freq', 'artist'], ascending=[False, True])\
+        .drop_duplicates(subset=['artist']).loc[:, ['artist', 'freq']].iloc[:10]
 
-d = pandas.read_csv(ROOT_DIR / "data/billboard/year_end.csv")
-q = d.query("chart == 'hot-100-songs'")
-r = q.assign(freq=q.apply(lambda x: q.artist.value_counts().to_dict()[x.artist], axis=1))\
-    .sort_values(by=['freq', 'artist'], ascending=[False, True])\
-    .drop_duplicates(subset=['artist']).loc[:, ['artist', 'freq']].iloc[:10]
-    # .groupby(['artist']).count().sort_values(by=['freq', 'artist'], ascending=[False, True])
-print(r.columns)
-fig = px.bar(r, x='artist', y='freq')
-fig.show()
-print(r)
+    dct = s.to_dict('index')
+    ms = []
+    for ele in list(dct.items()):
+        fields = ele[1]
+        try:
+            SongSearcher.search_one(title=fields['title'], artists__name=fields['artist'])
+        except Exception:
+            pass
+        print(fields['year'], fields['title'])
+    return ms

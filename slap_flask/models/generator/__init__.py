@@ -1,18 +1,20 @@
-from slap_flask.models.song import Song
-from services.spotify import search_for_song
-from services.genius import search_for_song_lyrics, clean_lyrics
-from repetition import calculate_repetition
+from services.billboard_reader import read_billboard_yearly
+from slap_dj.app.init import start_django_lite
 
-song_tuples = (("Needed Me", "Rihanna"),)
+start_django_lite()
 
 
-def generate_song_to_db(song_name, song_artist):
-    s = search_for_song(song_name, song_artist)
-    lyrics = search_for_song_lyrics(song_name, song_artist)
-    cmp = calculate_repetition(clean_lyrics(lyrics))
-    Song(name=s.name, artist=s.artist_name, lyrics=lyrics, compressibility=cmp).save()
+def generate_song_to_db():
+    read_billboard_yearly()
+
+
+GENERATING = False
 
 
 def start_generating():
-    for s in song_tuples:
-        generate_song_to_db(s[0], s[1])
+    if not GENERATING:
+        generate_song_to_db()
+
+
+if __name__ == '__main__':
+    start_generating()
