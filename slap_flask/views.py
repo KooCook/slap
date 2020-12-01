@@ -1,11 +1,12 @@
 import csv
 import io
 
+from django.core.paginator import Paginator
 from flask import Blueprint, render_template, abort, jsonify, make_response, request
 from jinja2 import TemplateNotFound
 
 from services.genius import tokenize_words
-from services.trends import plot_song_data_google_trends, get_rendered_plot
+from services.trends import get_rendered_plot
 from slap_dj.app.models import Song
 from slap_flask.models.searchers import SongSearcher
 from support.lyric_metrics import plot_lyrics_frequency
@@ -27,8 +28,12 @@ def show(page):
 @root.route('/songs')
 def get_songs():
     songs = Song.objects.all()
-    return render_template('songs.html',
-                           songs=songs)
+    paginator = Paginator(songs, 25)
+    # page = request.args.get(get_page_parameter(), type=int, default=1)
+    # pagination = Pagination(page=page, total=Song.objects.count())
+    page_number = request.args.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render_template('songs.html', songs=songs, page_obj=page_obj)
 
 
 @root.route('/song/<song_id>')

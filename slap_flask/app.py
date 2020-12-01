@@ -30,6 +30,6 @@ def create_app() -> FlaskApp:
 
 if __name__ == '__main__':
     app = create_app()
-    db.connect_app(app.app)
-    load_models(app.app)
+    # db.connect_app(app.app)
+    # load_models(app.app)
     app.run(port=8080, debug=True)
