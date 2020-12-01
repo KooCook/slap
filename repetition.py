@@ -30,7 +30,7 @@ def get_words(s: str) -> Iterator[str]:
             lst.append(c)
 
 
-@depreciated()
+@depreciated(reason="Use get_bow_dataframe() for better perf")
 def get_sorted_bag_of_words(words: List[str]) -> Dict[str, str]:
     bow = {}
     for word in words:
@@ -40,7 +40,7 @@ def get_sorted_bag_of_words(words: List[str]) -> Dict[str, str]:
     return sorted_bow
 
 
-@depreciated()
+@depreciated(reason="Use get_bow_dataframe() for better perf")
 def convert_bow_to_dataframe(sorted_bow: Dict[str, str]) -> pd.DataFrame:
     lst = []
     for r, (k, v) in enumerate(sorted_bow.items()):
