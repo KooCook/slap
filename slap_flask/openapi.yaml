@@ -48,6 +48,37 @@ paths:
         '404':
           $ref: '#/components/responses/default'
 
+  /song/{song_id}:
+    parameters:
+      - name: song_id
+        in: path
+        description: The ID of the song
+        required: true
+        schema:
+          type: string
+        example: 12
+      - name: for_graph
+        in: query
+        description: Whether to return additional parameters for making a graph
+        required: false
+        schema:
+          type: boolean
+        example: true
+    get:
+      description: Returns song metrics
+      operationId: slap_flask.public.controllers.songs.get_song_by_id
+      responses:
+        '200':
+          description: The metrics of a given song
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SongMetrics'
+        '404':
+          $ref: '#/components/responses/default'
+
   /song/{song_id}/metrics:
     parameters:
       - name: song_id
@@ -69,7 +100,52 @@ paths:
       operationId: slap_flask.public.controllers.songs.get_song_metrics
       responses:
         '200':
-          description: A list of songs.
+          description: The metrics of a given song
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SongMetrics'
+        '404':
+          $ref: '#/components/responses/default'
+
+  /song/{song_id}/word_popularity:
+    parameters:
+      - name: song_id
+        in: path
+        description: The ID of the song
+        required: true
+        schema:
+          type: string
+        example: 12
+      - name: word_count_weight
+        in: query
+        description: The given weight of word count
+        required: true
+        schema:
+          type: number
+        example: 12
+      - name: popularity_weight
+        in: query
+        description: The given popularity index of word count
+        required: true
+        schema:
+          type: number
+        example: 12
+      - name: popularity_indicator
+        in: query
+        description: The given popularity indicator
+        required: true
+        schema:
+          type: number
+        example: 12
+    get:
+      description: Returns song metrics
+      operationId: slap_flask.public.controllers.songs.get_parameterized_word_popularity
+      responses:
+        '200':
+          description: The metrics of a given song
           content:
             application/json:
               schema:

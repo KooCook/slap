@@ -21,10 +21,10 @@ options.plotting.backend = "plotly"
 
 
 def get_comp_vs_spo_pop_plot() -> Figure:
-    song_list = [(f"{song.title} - {song.artist_names}", song.compressibility, song.spotify_popularity)
+    song_list = [(f"{song.title} - {song.artist_names}", song.compressibility, song.spotify_popularity, song.word_count)
                  for song in list(Song.objects.all())]
-    df = DataFrame(song_list, columns=['Name', 'Compressibility', 'Spotify Popularity'])
-    fig: Figure = px.scatter(df, x='Compressibility', y='Spotify Popularity', custom_data=['Name'])
+    df = DataFrame(song_list, columns=['Name', 'Compressibility', 'Spotify Popularity', 'Word Count'])
+    fig: Figure = px.scatter(df, x='Compressibility', y='Spotify Popularity', custom_data=['Name', 'Word Count'])
     fig.update_traces(
         hovertemplate="<br>".join([
             "%{customdata[0]}",
@@ -63,7 +63,7 @@ def get_generated_histogram_plot_genre(genre: str = "r&b"):
     fig.show()
 
 
-def get_generated_title_occurrence(limit=20):
+def get_generated_title_occurrence(limit=20) -> Figure:
     o = []
     for s in Song.objects.all().order_by('spotify_popularity'):
         try:
@@ -80,19 +80,25 @@ def get_generated_title_occurrence(limit=20):
             part_of_most_common = counts.most_common(limit)
             part_of_intermediate = list(b[1] + a[1] for a, b in zip(part_of_most_common, part_of_most_common[1:]))
             part_of_count = reduce(operator.add, part_of_intermediate) if len(part_of_intermediate) > 0 else 0
-            o.append((s.title, exact_count, part_of_count, s.spotify_popularity))
+            count = exact_count + part_of_count
+            if count > 0:
+                o.append((s.title, count, s.spotify_popularity))
         except TypeError:
             continue
-    df = DataFrame(o, columns=['Title', 'Exact Count', 'Partial Count', 'Spotify Popularity'])
+    df = DataFrame(o, columns=['Title', 'Word Title Count', 'Spotify Popularity'])
     fig: Figure = make_subplots()
-    fig.add_trace(go.Scatter(x=df['Exact Count'], y=df['Spotify Popularity'], text="Name", mode='markers', name="Exact match"))
-    fig.add_trace(go.Scatter(x=df['Partial Count'], y=df['Spotify Popularity'], text="Name", mode='markers', name="Partial match"))
+    fig.add_trace(go.Scatter(x=df['Word Title Count'], y=df['Spotify Popularity'], mode='markers', name="Exact match"))
+   #  fig.add_trace(go.Scatter(x=df['Partial Count'], y=df['Spotify Popularity'], text="Name", mode='markers', name="Partial match"))
     fig.update_layout(
         title_text='Title occurrences in lyrics vs. Spotify Popularity Index'
     )
-    fig.show()
+    fig.update_xaxes(title_text='Title occurrences')
+    fig.update_yaxes(title_text='Spotify Popularity')
+    # fig.show()
+    return fig
 
 
+# def get_genre_eng_words()
 if __name__ == '__main__':
     # get_generated_scatter_plot()
     get_generated_title_occurrence()

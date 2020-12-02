@@ -6,6 +6,7 @@ from slap_dj.app.models import Song, Genre
 from slap_flask.models.searchers import SongSearcher
 
 DEFAULT_PLOTTER = 'plotly'
+INDICATORS = ['youtube_views', 'spotify_streams']
 
 
 def get_song():
@@ -27,7 +28,27 @@ def get_song():
         return abort(404)
 
 
-def get_popularity_indicator():
+def get_song_by_id(song_id: str):
+    result = Song.objects.get(id=song_id)
+    artists = [a.as_dict() for a in result.artists.all()]
+    genres = [a.as_dict()['name'] for a in result.genres.all()]
+    if result is not None:
+        return jsonify({'song_id': result.id,
+                        'title': result.title,
+                        'artists': artists,
+                        'genres': genres,
+                        'lyrics': result.lyrics,
+                        'metrics': {
+                            'compressibility': result.compressibility
+                        }})
+
+
+def get_parameterized_word_popularity(song_id: str):
+    song = Song.objects.get(id=song_id)
+    word_count_weight = request.args.get('word_count_weight')
+    popularity_weight = request.args.get('popularity_weight')
+    popularity_indicator = request.args.get('popularity_indicator')
+
     pass
 
 

@@ -6,25 +6,26 @@
             <h1 class="display-4">{{ name }}</h1>
             <p class="lead">by {{ artists }}</p>
         </div>
-         <div class="container">
-             Word count: {{ word_count }}
-         </div>
+         <div id="GFG"></div>
          <div class="container">
              <h4>Popularity</h4>
          </div>
          <div class="container">
              <h4>Repetition</h4>
+             Word count: {{ word_count }}
              {{ word_freq_plot | safe }}
              <div class="row">
                  <div class="col-6">
                      <h5>Lyrics</h5>
-                     {{ lyrics | safe }}
+                     <pre>{{ lyrics | safe }}</pre>
                  </div>
                  <div class="col-6">
                      <h5>Repetition Matrix</h5>
                         <div class="container-fluid">
                           <!-- Content here -->
-                          <div id="my_dataviz" style="width:75vh;height:75vh;"></div>
+                          <div id="my_dataviz" style="width:100% ;height:100% ;">
+
+                          </div>
                         </div>
                  </div>
              </div>
@@ -38,4 +39,22 @@
     <script src="https://d3js.org/d3.v6.js"></script>
     <!-- custom -->
     <script src="{{ url_for('static', filename='js/plot-repetition-matrix.js') }}"></script>
+     <script>
+            var svg = d3.select("#GFG")
+              .append("svg")
+                .attr("width", 300)
+                .attr("height", 300)
+                .call(d3.zoom().on("zoom", function () {
+                   svg.attr("transform", d3.event.transform)
+                }))
+              .append("g")
+
+            svg
+              .append("circle")
+                .attr("cx", 150)
+                .attr("cy", 150)
+                .attr("r", 40)
+                .style("fill", "green")
+
+        </script>
 {% endblock %}

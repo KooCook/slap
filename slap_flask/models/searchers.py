@@ -8,11 +8,14 @@ from django.core.exceptions import ObjectDoesNotExist
 
 class SongSearcher:
     @classmethod
-    def search_one(cls, title: str = None, **kwargs) -> Union[Song, None]:
+    def search_one(cls, title: str = None, pk: str = None, **kwargs) -> Union[Song, None]:
         try:
-            result = Song.objects.filter(title, **kwargs)[0]
+            if pk:
+                result = Song.objects.get(pk=pk)
+            else:
+                result = Song.objects.filter(title=title, **kwargs)[0]
             return result
-        except ObjectDoesNotExist or IndexError:
+        except (ObjectDoesNotExist, IndexError):
             fetched_result = cls.from_model(generate_song_to_model(title, kwargs['artists__name']))
             fetched_result.save()
             return fetched_result

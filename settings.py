@@ -1,10 +1,10 @@
 from decouple import config, Csv
 from dirs import ROOT_DIR
 
-YOUTUBE_DATA_API_KEYS = config("YOUTUBE_DATA_API_KEYS", cast=Csv())
-GENIUS_SECRET = config("GENIUS_SECRET")
-SPOTIFY_CLIENT_ID = config("SPOTIFY_CLIENT_ID")
-SPOTIFY_CLIENT_SECRET = config("SPOTIFY_CLIENT_SECRET")
+YOUTUBE_DATA_API_KEYS = config("YOUTUBE_DATA_API_KEYS", cast=Csv(), default="")
+GENIUS_SECRET = config("GENIUS_SECRET", default="")
+SPOTIFY_CLIENT_ID = config("SPOTIFY_CLIENT_ID", default="")
+SPOTIFY_CLIENT_SECRET = config("SPOTIFY_CLIENT_SECRET", default="")
 MODULE_NAME = "slap_flask"
 OPENAPI_OPS_MODULE_NAME = "slap_flask.public.controllers"
 RELATIVE_DIR = ROOT_DIR / MODULE_NAME

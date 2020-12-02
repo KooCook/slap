@@ -10,7 +10,7 @@ from services.trends import get_rendered_plot
 from slap_dj.app.models import Song
 from slap_flask.models.searchers import SongSearcher
 from support.lyric_metrics import plot_lyrics_frequency
-from support.pop_plotter import get_comp_vs_spo_pop_plot
+from support.pop_plotter import get_comp_vs_spo_pop_plot, get_generated_title_occurrence
 from support.similarity_matrix import get_similarity_matrix_map
 
 root = Blueprint('view_pages', __name__, template_folder='templates')
@@ -36,7 +36,7 @@ def get_songs():
 
 @root.route('/song/<song_id>')
 def show_song(song_id):
-    s = SongSearcher.search_one(id=song_id)
+    s = SongSearcher.search_one(pk=song_id)
     fig = plot_lyrics_frequency(s.lyrics)
     plot_div = get_rendered_plot(fig)
     return render_template('song.html',
@@ -55,7 +55,7 @@ def plot(song_id):
 
 @root.route('/plot/<song_id>/data')
 def get_plot_csv(song_id):
-    s = SongSearcher.search_one(id=song_id)
+    s = SongSearcher.search_one(pk=song_id)
     with io.StringIO() as output:
         writer = csv.writer(output
                             , quoting=csv.QUOTE_MINIMAL)
@@ -70,15 +70,12 @@ def get_plot_csv(song_id):
 
 @root.route('/plot/<song_id>/params')
 def get_d3_plot_params(song_id):
-    s = SongSearcher.search_one(id=song_id)
+    s = SongSearcher.search_one(pk=song_id)
     return jsonify({'words': tokenize_words(s.lyrics)})
 
 
 @root.route('/popularity')
 def get_popularity():
-    return render_template('popularity.html', compressibility_vs_pop=get_rendered_plot(get_comp_vs_spo_pop_plot()))
-
-
-@root.route('/repetition')
-def get_repetition():
-    return render_template('repetition.html')
+    return render_template('popularity.html',
+                           compressibility_vs_pop=get_rendered_plot(get_comp_vs_spo_pop_plot()),
+                           graph2=get_rendered_plot(get_generated_title_occurrence()))

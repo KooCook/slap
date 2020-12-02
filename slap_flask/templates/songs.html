@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 {% extends 'base.html' %}
 
+{% block page_title %}All songs{% endblock %}
+
 {% block content %}
     <div class="container">
         <h1>Songs</h1>
@@ -8,7 +10,6 @@
             <div class="col">
             {% for song in page_obj %}
                 <div class="card">
-{#                  <img class="card-img-top" src="..." alt="Card image cap">#}
                   <div class="card-body">
                     <h5 class="card-title">{{ song.title }}</h5>
                     <p class="card-text">by {{ song.artist_names }}</p>

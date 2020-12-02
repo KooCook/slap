@@ -7,7 +7,6 @@ import json
 import re
 import os
 import csv
-from datetime import datetime
 from typing import Union, List
 
 import googleapiclient.discovery
@@ -15,6 +14,7 @@ import googleapiclient.errors
 import pandas
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
+import requests
 
 from dirs import ROOT_DIR
 from settings import YOUTUBE_DATA_API_KEYS
@@ -88,9 +88,14 @@ def get_youtube_video_by_ids(video_ids: Union[List[str], str]) -> List[dict]:
         v_ids = video_ids
     else:
         raise ValueError("Error!")
-    request = youtube.videos().list(part='statistics,snippet', videoCategoryId=CATEGORY_ID,
-                                    id=v_ids, maxResults=10000)
-    return request.execute()['items']
+    response = requests.get('https://www.googleapis.com/youtube/v3/videos',
+                            {'part': 'statistics,snippet', 'videoCategoryId': CATEGORY_ID,
+                             'id': v_ids, 'maxResults': 1000, 'key': get_suitable_api_key()})
+    return response.json()['items'][0]
+    # request = youtube.videos().list(part='statistics,snippet', videoCategoryId=CATEGORY_ID,
+    #                                 id=v_ids, maxResults=1000)
+    # response = request.execute()
+    # return response['items']
 
 
 def get_youtube_video_list_most_popular(region_code: str):
@@ -176,32 +181,34 @@ def populate_insert_to_db(filename: str):
                 print(title)
                 continue
             artist, song_title = match[0]
-            try:
-                song = SongSearcher.search_one(song_title, artists__name=artist)
-            except Exception:
-                print(f'Broken {title}')
-                continue
-            u = get_youtube_video_by_ids(video_id)[0]
-
+            u = get_youtube_video_by_ids(video_id)
             published_at = u['snippet']['publishedAt']
             channel_title = u['snippet']['channelTitle']
             view_count = int(u['statistics']['viewCount'])
-            like_count = int(u['statistics']['likeCount'])
-            dislike_count = int(u['statistics']['dislikeCount'])
-            favorite_count = int(u['statistics']['favoriteCount'])
-            comment_count = int(u['statistics']['commentCount'])
-            video = upsert_video(video_id, song,
-                                 title=title, view_count=view_count,
-                                 published_at=published_at,
-                                 like_count=like_count, dislike_count=dislike_count,
-                                 favorite_count=favorite_count, channel_title=channel_title,
-                                 comment_count=comment_count)
-            print(f'Done {video.title}')
+            like_count = int(u['statistics'].get('likeCount', 0))
+            dislike_count = int(u['statistics'].get('dislikeCount', 0))
+            favorite_count = int(u['statistics'].get('favoriteCount', 0))
+            comment_count = int(u['statistics'].get('commentCount', 0))
+            default_lang = u['snippet'].get('defaultAudioLanguage', u['snippet'].get('defaultLanguage', ""))
+            try:
+                song = SongSearcher.search_one(song_title, artists__name=artist)
+                video = upsert_video(video_id, song,
+                                     title=title, view_count=view_count,
+                                     published_at=published_at,
+                                     like_count=like_count, dislike_count=dislike_count,
+                                     favorite_count=favorite_count, channel_title=channel_title,
+                                     comment_count=comment_count, default_language=default_lang)
+                print(f'Done {video.title}')
+            except Exception as e:
+                print(f'Broken {title}')
+                print(e)
+                continue
 
 
 if __name__ == "__main__":
     # get_youtube_video_list_most_popular(REGION_CODE)
-   #  populate_insert_to_db(ROOT_DIR / 'tests/data/youtube/scraped_most_viewed_music_us.csv')
-    populate_insert_to_db(ROOT_DIR / 'tests/data/youtube/api/youtube_videos_most_pop_US.csv')
+    # populate_insert_to_db(ROOT_DIR / 'tests/data/youtube/scraped_most_viewed_music_us.csv')
+    # populate_insert_to_db(ROOT_DIR / 'tests/data/youtube/api/youtube_videos_most_pop_US.csv')
+    populate_insert_to_db(ROOT_DIR / 'tests/data/youtube/api/youtube_search_top_views_year_US.csv')
     # read_youtube_csv(REGION_CODE, ROOT_DIR / 'tests/data/youtube/api/youtube_videos_most_pop_US.csv')
     # read_dumped_json_to_csv(REGION_CODE)

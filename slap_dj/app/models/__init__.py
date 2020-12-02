@@ -1,4 +1,3 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
 from repetition import calculate_repetition
@@ -36,6 +35,10 @@ class Song(models.Model):
     @property
     def word_count(self) -> int:
         return len(tokenize_words(self.lyrics))
+
+    @property
+    def identifier(self) -> str:
+        return f"{self.title} - {self.artist_names}"
 
     def update_compression_ratio(self):
         new = calculate_repetition(remove_sections(self.lyrics))
@@ -91,3 +94,9 @@ class SpotifyTrack(models.Model):
     song = models.OneToOneField(Song, on_delete=models.CASCADE)
     track_id = models.CharField(max_length=255)
     album_id = models.CharField(max_length=255)
+
+
+class SpotifySongWeeklyStream(models.Model):
+    song = models.OneToOneField(Song, on_delete=models.CASCADE)
+    streams = models.BigIntegerField()
+    week_date = models.CharField(max_length=255)
