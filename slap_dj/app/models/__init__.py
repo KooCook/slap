@@ -1,6 +1,8 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
+from repetition import calculate_repetition
+from services.genius import remove_sections
 
 # Create your models here.
 
@@ -30,6 +32,14 @@ class Song(models.Model):
     @property
     def artist_names(self) -> str:
         return ",".join([a.name for a in self.artists.all()])
+
+    def update_compression_ratio(self):
+        new = calculate_repetition(remove_sections(self.lyrics))
+        print(f"Updating model {self}\n"
+              f"old: {self.compressibility}\n"
+              f"new: {new}")
+        self.compressibility = new
+        self.save()
 
 
 class YouTubeVideo(models.Model):
