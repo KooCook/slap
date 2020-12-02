@@ -28,8 +28,7 @@ def tokenize_words(raw_lyrics: str) -> List[str]:
         section, sub_lyrics = i
         tk = TokenizedSongLyrics(section, sub_lyrics)
         all_sections.append(tk)
-    return functools.reduce(lambda x, y: x + y.tokenized if isinstance(x, list) else x.tokenized + y.tokenized,
-                            all_sections)
+    return functools.reduce(_f, all_sections, [])
 
 
 def tokenize_words_simple(raw_words: str) -> List[str]:
