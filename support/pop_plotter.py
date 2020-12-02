@@ -1,30 +1,65 @@
 import operator
-
-from nltk import collections
-from pandas import DataFrame
-from pandas import options
-from plotly.graph_objs import Figure
-from plotly import graph_objs as go
-import plotly.express as px
-
 from functools import reduce
 
+import numpy as np
+import pandas as pd
+from pandas import DataFrame, options
+from scipy import stats
+
+import plotly.express as px
+from nltk import collections
+from plotly import graph_objs as go
+from plotly.graph_objs import Figure
 from plotly.subplots import make_subplots
 
 from services.genius import tokenize_words, tokenize_words_simple
 from slap_dj.app.init import start_django_lite
+from slap_dj.app.models import Genre, Song
+
 start_django_lite()
 
-from slap_dj.app.models import Song, Genre
 
 options.plotting.backend = "plotly"
 
 
+def add_fitted_line_trace(fig: Figure, x, y) -> None:
+    """ Fits data using linear regression and add trace to plot. """
+    # x: pd.Series
+    # y: pd.Series
+    slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
+    # print("R-squared: %f" % r_value ** 2)
+    # print("slope: %f    intercept: %f" % (slope, intercept))
+    # plt.plot(x, y, 'o', label='original data')
+    # plt.plot(x, intercept + slope * x, 'r', label='fitted line')
+    # plt.legend()
+    # plt.show()
+
+    p = np.arange(x.min(), x.max(), 0.01)
+    LINE_NAME = 'fitted line'
+    fig.add_trace(
+        go.Line(x=p, y=intercept + slope * p, name=LINE_NAME, mode='lines')
+    )
+    fig.update_traces(
+        selector={'name': LINE_NAME},
+        hovertemplate="<br>".join([
+            "x: %{x}",
+            "y: %{y}",
+            f"slope: {slope}",
+            f"R-squared: {r_value}",
+        ])
+    )
+
+
 def get_comp_vs_spo_pop_plot() -> Figure:
-    song_list = [(f"{song.title} - {song.artist_names}", song.compressibility, song.spotify_popularity)
-                 for song in list(Song.objects.all())]
-    df = DataFrame(song_list, columns=['Name', 'Compressibility', 'Spotify Popularity'])
-    fig: Figure = px.scatter(df, x='Compressibility', y='Spotify Popularity', custom_data=['Name'])
+    song_list = [
+        (f"{song.title} - {song.artist_names}", song.compressibility, song.spotify_popularity, song.word_count)
+        for song in Song.objects.all()
+    ]
+    df = pd.DataFrame(song_list, columns=['Name', 'Compressibility', 'Spotify Popularity', 'Word Count'])
+    fig: Figure = px.scatter(df,
+                             x='Compressibility', y='Spotify Popularity',
+                             custom_data=['Name', 'Word Count'],
+                             )
     fig.update_traces(
         hovertemplate="<br>".join([
             "%{customdata[0]}",
@@ -36,6 +71,8 @@ def get_comp_vs_spo_pop_plot() -> Figure:
     fig.update_layout(
         title_text='Compressibility vs. Spotify Popularity Index'
     )
+
+    add_fitted_line_trace(fig, df.get('Compressibility'), df.get('Spotify Popularity'))
 
     # fig.add_trace(
     #     go.Scatter(x=df['Compressibility'], y=df['Spotify Popularity'], text="Name", mode='markers'),
