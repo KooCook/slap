@@ -2,7 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
 from repetition import calculate_repetition
-from services.genius import remove_sections
+from services.genius import remove_sections, tokenize_words
 
 # Create your models here.
 
@@ -32,6 +32,10 @@ class Song(models.Model):
     @property
     def artist_names(self) -> str:
         return ",".join([a.name for a in self.artists.all()])
+
+    @property
+    def word_count(self) -> int:
+        return len(tokenize_words(self.lyrics))
 
     def update_compression_ratio(self):
         new = calculate_repetition(remove_sections(self.lyrics))
