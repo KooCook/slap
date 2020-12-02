@@ -13,15 +13,18 @@ options.plotting.backend = "plotly"
 
 
 def get_generated_scatter_plot() -> Figure:
-    song_list = [(f"{song.title} - {song.artist_names}", song.compressibility, song.spotify_popularity)
-                 for song in list(Song.objects.all())]
-    df = DataFrame(song_list, columns=['Name', 'Compressibility', 'Spotify Popularity'])
-    fig: Figure = px.scatter(df, x='Compressibility', y='Spotify Popularity', custom_data=['Name'])
+    song_list = [
+        (f"{song.title} - {song.artist_names}", song.compressibility, song.spotify_popularity, song.word_count)
+        for song in Song.objects.all()
+    ]
+    df = DataFrame(song_list, columns=['Name', 'Compressibility', 'Spotify Popularity', 'Word Count'])
+    fig: Figure = px.scatter(df, x='Compressibility', y='Spotify Popularity', custom_data=['Name', 'Word Count'])
     fig.update_traces(
         hovertemplate="<br>".join([
+            "%{customdata[0]}",
             "Compressibility: %{x}",
             "Spotify Popularity Index: %{y}",
-            "Name: %{customdata[0]}"
+            "Word Count: %{customdata[1]}",
         ])
     )
     fig.update_layout(
