@@ -1,6 +1,11 @@
 from flask import request, jsonify, abort
 
+from repetition import get_bow_dataframe
+from services.genius import tokenize_words
+from slap_dj.app.models import Song, Genre
 from slap_flask.models.searchers import SongSearcher
+
+DEFAULT_PLOTTER = 'plotly'
 
 
 def get_song():
@@ -10,7 +15,8 @@ def get_song():
     artists = [a.as_dict() for a in result.artists.all()]
     genres = [a.as_dict()['name'] for a in result.genres.all()]
     if result is not None:
-        return jsonify({'title': result.title,
+        return jsonify({'song_id': result.id,
+                        'title': result.title,
                         'artists': artists,
                         'genres': genres,
                         'lyrics': result.lyrics,
@@ -19,3 +25,37 @@ def get_song():
                         }})
     else:
         return abort(404)
+
+
+def get_popularity_indicator():
+    pass
+
+
+# TODO: Popularity and Lyrics
+def get_song_metrics(song_id: str):
+    for_graph = request.args.get('for_graph', type=bool)
+    song = Song.objects.get(id=song_id)
+    tokenized = tokenize_words(song.lyrics)
+    df = get_bow_dataframe(tokenized)
+    freq = list(df['freq'])
+    words = list(df['word'])
+    ranks = list(df['rank'])
+    main_dct = {
+        'repetition': {
+            'bow': {
+                'frequencies': freq,
+                'words': words,
+                'ranks': ranks
+            }}
+    }
+    if for_graph:
+        main_dct['chart'] = {
+            'library': DEFAULT_PLOTTER,
+            'type': 'bar'
+        }
+    return jsonify(main_dct)
+
+
+def get_song_genres():
+    genres = [{'name': genre.name, 'genre_id': genre.id} for genre in Genre.objects.all()]
+    return genres

@@ -10,7 +10,7 @@ from services.trends import get_rendered_plot
 from slap_dj.app.models import Song
 from slap_flask.models.searchers import SongSearcher
 from support.lyric_metrics import plot_lyrics_frequency
-from support.pop_plotter import get_generated_scatter_plot
+from support.pop_plotter import get_comp_vs_spo_pop_plot
 from support.similarity_matrix import get_similarity_matrix_map
 
 root = Blueprint('view_pages', __name__, template_folder='templates')
@@ -76,7 +76,7 @@ def get_d3_plot_params(song_id):
 
 @root.route('/popularity')
 def get_popularity():
-    return render_template('popularity.html', compressibility_vs_pop=get_rendered_plot(get_generated_scatter_plot()))
+    return render_template('popularity.html', compressibility_vs_pop=get_rendered_plot(get_comp_vs_spo_pop_plot()))
 
 
 @root.route('/repetition')

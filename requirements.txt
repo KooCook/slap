@@ -9,5 +9,6 @@ numpy
 python-decouple
 pandas
 scipy
+mysqlclient
 -r slap_flask/requirements.txt
 -r slap_dj/requirements.txt

@@ -4,14 +4,27 @@
 # See instructions for running these code samples locally:
 # https://developers.google.com/explorer-help/guides/code_samples#python
 import json
+import re
 import os
 import csv
+from datetime import datetime
 from typing import Union, List
 
 import googleapiclient.discovery
 import googleapiclient.errors
+import pandas
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
+
 from dirs import ROOT_DIR
 from settings import YOUTUBE_DATA_API_KEYS
+from slap_dj.app.init import start_django_lite
+
+
+start_django_lite()
+
+from slap_flask.models.searchers import SongSearcher
+from slap_dj.app.models import YouTubeVideo, Song
 
 scopes = ["https://www.googleapis.com/auth/youtube.readonly"]
 
@@ -135,6 +148,60 @@ def read_dumped_json_to_csv(region_code: str):
                 writer.writerow([v_id, ti, pub_at, ch_id, ch_ti, vc, lc, dc, fc, cc, cd, dl, dal])
 
 
+def read_youtube_csv(region_code: str, filename: str):
+    df = pandas.read_csv(filename)
+    print(df)
+
+
+def upsert_video(video_id: str, song: Song, **kwargs) -> YouTubeVideo:
+    try:
+        video = YouTubeVideo.objects.get(video_id=video_id)
+    except ObjectDoesNotExist:
+        video = YouTubeVideo(video_id=video_id, song=song, **kwargs)
+        try:
+            video.save()
+        except IntegrityError:
+            print(f'{video.title} {song.title}')
+    return video
+
+
+def populate_insert_to_db(filename: str):
+    with open(filename) as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            title = row['title']
+            video_id = row['id']
+            match = re.findall(r'(.+) - ([^\(\)\[\]]+) (?:[\(\[].+[\)\]])?', title)
+            if len(match) == 0:
+                print(title)
+                continue
+            artist, song_title = match[0]
+            try:
+                song = SongSearcher.search_one(song_title, artists__name=artist)
+            except Exception:
+                print(f'Broken {title}')
+                continue
+            u = get_youtube_video_by_ids(video_id)[0]
+
+            published_at = u['snippet']['publishedAt']
+            channel_title = u['snippet']['channelTitle']
+            view_count = int(u['statistics']['viewCount'])
+            like_count = int(u['statistics']['likeCount'])
+            dislike_count = int(u['statistics']['dislikeCount'])
+            favorite_count = int(u['statistics']['favoriteCount'])
+            comment_count = int(u['statistics']['commentCount'])
+            video = upsert_video(video_id, song,
+                                 title=title, view_count=view_count,
+                                 published_at=published_at,
+                                 like_count=like_count, dislike_count=dislike_count,
+                                 favorite_count=favorite_count, channel_title=channel_title,
+                                 comment_count=comment_count)
+            print(f'Done {video.title}')
+
+
 if __name__ == "__main__":
-    get_youtube_video_list_most_popular(REGION_CODE)
+    # get_youtube_video_list_most_popular(REGION_CODE)
+   #  populate_insert_to_db(ROOT_DIR / 'tests/data/youtube/scraped_most_viewed_music_us.csv')
+    populate_insert_to_db(ROOT_DIR / 'tests/data/youtube/api/youtube_videos_most_pop_US.csv')
+    # read_youtube_csv(REGION_CODE, ROOT_DIR / 'tests/data/youtube/api/youtube_videos_most_pop_US.csv')
     # read_dumped_json_to_csv(REGION_CODE)

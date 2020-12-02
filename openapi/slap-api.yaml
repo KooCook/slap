@@ -53,6 +53,13 @@ components:
       properties:
         name:
           type: string
+    Genre:
+      type: object
+      properties:
+        name:
+          type: string
+        genre_id:
+          type: string
   responses:
 # Just to test out responses object
     default:

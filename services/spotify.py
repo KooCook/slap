@@ -35,6 +35,6 @@ def search_for_song(song_name: str, artist_name: str) -> SongModel:
         else:
             continue
     if len(items) == 0:
-        raise Exception("No such song!")
+        raise Exception(f"No such song! {song_name} : {artist_name}")
     if s is None:
         raise Exception(f"Error! {song_name} - {artist_name}")

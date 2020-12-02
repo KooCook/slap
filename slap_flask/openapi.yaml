@@ -34,7 +34,7 @@ paths:
           type: string
         example: Taylor Swift
     get:
-      description: Returns all songs?
+      description: Returns a song matching the query
       operationId: slap_flask.public.controllers.songs.get_song
       responses:
         '200':
@@ -47,6 +47,54 @@ paths:
                   $ref: '#/components/schemas/Song'
         '404':
           $ref: '#/components/responses/default'
+
+  /song/{song_id}/metrics:
+    parameters:
+      - name: song_id
+        in: path
+        description: The ID of the song
+        required: true
+        schema:
+          type: string
+        example: 12
+      - name: for_graph
+        in: query
+        description: Whether to return additional parameters for making a graph
+        required: false
+        schema:
+          type: boolean
+        example: true
+    get:
+      description: Returns song metrics
+      operationId: slap_flask.public.controllers.songs.get_song_metrics
+      responses:
+        '200':
+          description: A list of songs.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SongMetrics'
+        '404':
+          $ref: '#/components/responses/default'
+
+  /song/genres:
+    get:
+      description: Returns all genres
+      operationId: slap_flask.public.controllers.songs.get_song_genres
+      responses:
+        '200':
+          description: A list of genres.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Genre'
+        '404':
+          $ref: '#/components/responses/default'
+
 components:
   schemas:
     Error:
@@ -57,6 +105,8 @@ components:
     Song:
       type: object
       properties:
+        song_id:
+          type: string
         title:
           type: string
         artists:
@@ -73,6 +123,41 @@ components:
       type: object
       properties:
         name:
+          type: string
+    SongMetrics:
+      type: object
+      properties:
+        repetition:
+          type: object
+          properties:
+            bow:
+              type: object
+              properties:
+                frequencies:
+                  type: array
+                  items:
+                    type: integer
+                words:
+                  type: array
+                  items:
+                    type: string
+                ranks:
+                  type: array
+                  items:
+                    type: integer
+        chart:
+          type: object
+          properties:
+            library:
+              type: string
+            type:
+              type: string
+    Genre:
+      type: object
+      properties:
+        name:
+          type: string
+        genre_id:
           type: string
   responses:
 # Just to test out responses object

@@ -10,9 +10,9 @@ class SongSearcher:
     @classmethod
     def search_one(cls, title: str = None, **kwargs) -> Union[Song, None]:
         try:
-            result = Song.objects.get(**kwargs)
+            result = Song.objects.filter(title, **kwargs)[0]
             return result
-        except ObjectDoesNotExist:
+        except ObjectDoesNotExist or IndexError:
             fetched_result = cls.from_model(generate_song_to_model(title, kwargs['artists__name']))
             fetched_result.save()
             return fetched_result

@@ -24,7 +24,8 @@ def read_billboard_yearly() -> List[SongModel]:
             s = SongSearcher.search_one(title=fields['title'], artists__name=fields['artist'])
             if s:
                 BillboardYearEndEntry.from_dict(fields, s).save()
-        except Exception:
+        except Exception as e:
+            print(e)
             pass
         print(fields['year'], fields['title'])
     return ms
