@@ -34,14 +34,16 @@ class Song(models.Model):
 
 class YouTubeVideo(models.Model):
     song = models.OneToOneField(Song, on_delete=models.CASCADE)
-    video_id = models.CharField(max_length=255)
+    video_id = models.CharField(max_length=255, unique=True)
     title = models.CharField(max_length=255)
-    view_count = models.IntegerField()
-    like_count = models.IntegerField()
-    dislike_count = models.IntegerField()
-    favorite_count = models.IntegerField()
-    comment_count = models.IntegerField()
-    default_language = models.CharField(max_length=10)
+    view_count = models.BigIntegerField()
+    like_count = models.BigIntegerField()
+    dislike_count = models.BigIntegerField()
+    favorite_count = models.BigIntegerField()
+    comment_count = models.BigIntegerField()
+    default_language = models.CharField(max_length=10, null=True)
+    published_at = models.DateTimeField(null=True)
+    channel_title = models.CharField(max_length=255, null=True)
 
 
 class BillboardYearEndEntry(models.Model):
