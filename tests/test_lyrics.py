@@ -24,8 +24,11 @@ class LyricsTest(unittest.TestCase):
                 with open(ROOT_DIR / 'tests/data' / input_file, 'r', encoding='utf-8') as file:
                     input_ = file.read()
                 with open(ROOT_DIR / 'tests/data' / expected_result_file, 'r', encoding='utf-8') as file:
-                    expected_result = file.read().splitlines(keepends=False)
-                self.assertEqual(expected_result, self.__class__.tokenizer(input_))
+                    expected = file.read().splitlines(keepends=False)
+                actual = self.__class__.tokenizer(input_)
+                with open(ROOT_DIR / 'tests/actual' / expected_result_file, 'w', encoding='utf-8') as file:
+                    file.write('\n'.join(actual) + '\n')
+                self.assertEqual(expected, actual)
 
     remove_sections = genius.remove_sections
 
