@@ -5,6 +5,67 @@
 {% endblock %}
 {% block content %}
 <div class="container">
+    <h2>Repetition vs. Popularity</h2>
+    <h3>Overview</h3>
+    <p>
+        Two main factors that contribute to a feeling of repetitiveness in <em>songs</em>
+        are the repetitiveness of the lyrics and the repetitiveness of the melody.
+        From the song lyrics data we have, we can look at the repetitiveness of the lyrics.
+    </p>
+    <p>
+        There is no agreed upon way to measure repetitiveness of song lyrics,
+        but one measure is how much we can compress it.
+    </p>
+    <h3>Compression</h3>
+    <p>
+        A common way to compress things is to search for matches in the text
+        to be compressed and store them in a data structure.
+        When the encoder finds a match to a prior section,
+        it substitutes a reference to the matching string's position in the data structure.
+        This is a <em>class</em> of lossless data compression algorithm known
+        as the dictionary coder.
+    </p>
+    <p>
+        The more repetitive the text is, the more you can compress it.
+        Theoretically we can also apply this to a song lyrics repetitiveness.
+        This <a href="https://pudding.cool/2017/05/song-repetition/">linked article</a>
+        should convince you so.
+    </p>
+    <p>
+        The compression algorithm we use for the <em>compressability</em>
+        metric is the DEFLATE algorithm which is based on the Lempel–Ziv algorithm
+        and the Huffman tree.
+        They don't actually keep a dictionary, in our understanding,
+        but we don't need to know the complicated details to use them.
+        We compared our results with the one in the article, and it is suffice
+        to say that it is mostly usable as a metric for the repetitiveness of the lyrics
+        (except in some edge cases as you'll see in the graph below).
+    </p>
+<div class="container">
+    <h3>Graph</h3>
 {{ compressibility_vs_pop | safe }}
+</div>
+<div class="container">
+    <h3>Correlation</h3>
+    <p>
+        With te data, you can do linear regression analysis on it and see if the values are related.
+        <br>
+        R-Squared is the percentage of variance in y explained by the linear regression equation between X and y.
+        <br>
+        An R-squared of around <strong>0.05</strong> in this case shows that there is statistically <strong>no correlation between the two variables</strong>.
+    </p>
+    <p>
+        You can plot a similar graph using python.
+    </p>
+    <pre><code>>>> from scipy import stats
+>>> import matplotlib.pyplot as plt
+
+>>> slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
+>>> print("R-squared: %f" % r_value ** 2)
+>>> print("slope: %f    intercept: %f" % (slope, intercept))
+>>> plt.plot(x, y, 'o', label='original data')
+>>> plt.plot(x, intercept + slope * x, 'r', label='fitted line')
+>>> plt.legend()
+>>> plt.show()</code></pre>
 </div>
 {% endblock %}
