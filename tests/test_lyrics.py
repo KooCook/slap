@@ -16,6 +16,8 @@ class LyricsTest(unittest.TestCase):
              'lyrics/cheap-thrills-words.txt'),
             ('lyrics/G.U.Y.txt',
              'lyrics/G.U.Y-words.txt'),
+            ('lyrics/animals.txt',
+             'lyrics/animals-words.txt'),
         ]
         for input_file, expected_result_file in test_cases:
             with self.subTest(f"{input_file=} {expected_result_file=}"):
