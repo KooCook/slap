@@ -7,6 +7,7 @@ from nltk import TweetTokenizer
 
 from settings import GENIUS_SECRET
 from support.similarity_matrix import TokenizedSongLyrics
+from utils.iter import remove_consecs
 
 genius_client = lg.Genius(GENIUS_SECRET)
 
@@ -14,6 +15,10 @@ genius_client = lg.Genius(GENIUS_SECRET)
 def search_for_song_lyrics(song_name: str, artist_name: str) -> str:
     song = genius_client.search_song(song_name, artist_name)
     return song.lyrics
+
+
+def _f(x, y):
+    return x + y.tokenized
 
 
 def tokenize_words(raw_lyrics: str) -> List[str]:
@@ -39,3 +44,11 @@ def clean_lyrics(sectioned: str) -> str:
         tk = TokenizedSongLyrics(section, sub_lyrics)
         all_sections.append(tk)
     return " ".join([s.lyrics for s in all_sections])
+
+
+def remove_sections(raw_lyrics: str) -> str:
+    """Returns lyrics with the sections removed."""
+    lines = raw_lyrics.splitlines(keepends=True)
+    cleaned_lines = [line for line in lines if re.match(f'^\[.*]\\n?$', line) is None]
+    cleaned_text = ''.join(remove_consecs(cleaned_lines, '\n'))
+    return cleaned_text.rstrip() + '\n'

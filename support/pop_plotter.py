@@ -27,9 +27,10 @@ def get_comp_vs_spo_pop_plot() -> Figure:
     fig: Figure = px.scatter(df, x='Compressibility', y='Spotify Popularity', custom_data=['Name'])
     fig.update_traces(
         hovertemplate="<br>".join([
+            "%{customdata[0]}",
             "Compressibility: %{x}",
             "Spotify Popularity Index: %{y}",
-            "Name: %{customdata[0]}"
+            "Word Count: %{customdata[1]}",
         ])
     )
     fig.update_layout(
