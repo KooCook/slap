@@ -144,3 +144,6 @@ autogen/*
 
 # macOS Stuff
 .DS_Store
+
+# test output
+tests/actual/
