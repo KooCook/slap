@@ -11,7 +11,7 @@ from slap_dj.app.models import Song
 from slap_flask.models.searchers import SongSearcher
 from support.lyric_metrics import plot_lyrics_frequency
 from support.pop_plotter import get_comp_vs_spo_pop_plot, get_generated_title_occurrence
-from support.similarity_matrix import get_similarity_matrix_map
+from support.similarity_matrix import get_similarity_matrix_map, get_similarity_matrix_map_v2
 
 root = Blueprint('view_pages', __name__, template_folder='templates')
 
@@ -55,13 +55,21 @@ def plot(song_id):
 
 @root.route('/plot/<song_id>/data')
 def get_plot_csv(song_id):
+    version = 'v2'
     s = SongSearcher.search_one(pk=song_id)
     with io.StringIO() as output:
         writer = csv.writer(output
                             , quoting=csv.QUOTE_MINIMAL)
-        writer.writerow(["group", "variable", "value"])
-        for i in get_similarity_matrix_map(tokenize_words(s.lyrics)):
-            writer.writerow(i)
+        if version == 'v1':
+            writer.writerow(["group", "variable", "value"]) # v1
+        else:
+            writer.writerow(["x", "y", "word", "color"]) # v2
+        if version == 'v1':
+            for i in get_similarity_matrix_map(tokenize_words(s.lyrics)):
+                writer.writerow(i)
+        else:
+            for i in get_similarity_matrix_map_v2(tokenize_words(s.lyrics)):
+                writer.writerow(i)
         o = output.getvalue()
     output = make_response(o)
     output.headers["Content-type"] = "text/csv"

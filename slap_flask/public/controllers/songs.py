@@ -1,11 +1,10 @@
-from django.core.exceptions import ObjectDoesNotExist
 from flask import request, jsonify, abort
 
 from repetition import get_bow_dataframe
 from services.genius import tokenize_words
 from slap_dj.app.models import Song, Genre
 from slap_flask.models.searchers import SongSearcher
-from support.popularity_rank import get_song_visibility, get_song_weighted_count, get_word_popularity_index_from_song
+from support.popularity_rank import get_word_popularity_index_from_song
 
 DEFAULT_PLOTTER = 'plotly'
 INDICATORS = ['youtube_views', 'spotify_streams']
