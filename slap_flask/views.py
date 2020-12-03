@@ -74,8 +74,8 @@ def get_d3_plot_params(song_id):
     return jsonify({'words': tokenize_words(s.lyrics)})
 
 
-@root.route('/popularity')
-def get_popularity():
-    return render_template('popularity.html',
+@root.route('/overview')
+def get_overview_page():
+    return render_template('overview.html',
                            compressibility_vs_pop=get_rendered_plot(get_comp_vs_spo_pop_plot()),
                            graph2=get_rendered_plot(get_generated_title_occurrence()))

@@ -1,11 +1,12 @@
 import connexion
 from connexion import FlaskApp
+from connexion.resolver import RestyResolver
+from flask_misaka import Misaka
 
 from slap_dj.app.init import start_django_lite
 from slap_flask.database import db
 from slap_flask.database.models import load_models
 from settings import OPENAPI_SPECS_PATH, OPENAPI_OPS_MODULE_NAME
-from connexion.resolver import RestyResolver
 
 # import os
 #
@@ -25,6 +26,8 @@ def create_app() -> FlaskApp:
     connexion_app = connexion.App(__name__, specification_dir='swagger', options={"swagger_ui": True})
     connexion_app.add_api(OPENAPI_SPECS_PATH, resolver=RestyResolver(OPENAPI_OPS_MODULE_NAME))
     connexion_app.app.register_blueprint(root)
+
+    Misaka(connexion_app.app)
     return connexion_app
 
 
