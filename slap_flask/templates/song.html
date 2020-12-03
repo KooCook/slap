@@ -39,22 +39,4 @@
     <script src="https://d3js.org/d3.v6.js"></script>
     <!-- custom -->
     <script src="{{ url_for('static', filename='js/plot-repetition-matrix.js') }}"></script>
-     <script>
-            var svg = d3.select("#GFG")
-              .append("svg")
-                .attr("width", 300)
-                .attr("height", 300)
-                .call(d3.zoom().on("zoom", function () {
-                   svg.attr("transform", d3.event.transform)
-                }))
-              .append("g")
-
-            svg
-              .append("circle")
-                .attr("cx", 150)
-                .attr("cy", 150)
-                .attr("r", 40)
-                .style("fill", "green")
-
-        </script>
 {% endblock %}
