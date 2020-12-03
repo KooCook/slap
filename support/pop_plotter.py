@@ -3,6 +3,7 @@ from functools import reduce
 
 import numpy as np
 import pandas as pd
+from django.core.exceptions import ObjectDoesNotExist
 from pandas import DataFrame, options
 from scipy import stats
 
@@ -51,10 +52,12 @@ def add_fitted_line_trace(fig: Figure, x, y) -> None:
 
 
 def get_plt() -> Figure:
-    song_list = [
-        (f"{song.title} - {song.artist_names}", song.compressibility, song.youtubevideo.view_count, song.word_count)
-        for song in Song.objects.all()
-    ]
+    song_list = []
+    for song in Song.objects.all():
+        try:
+            song_list.append((f"{song.title} - {song.artist_names}", song.compressibility, song.youtubevideo.view_count, song.word_count))
+        except ObjectDoesNotExist:
+            pass
     df = pd.DataFrame(song_list, columns=['Name', 'Compressibility', 'YouTube View', 'Word Count'])
     fig: Figure = px.scatter(df,
                              x='Compressibility', y='YouTube View',
