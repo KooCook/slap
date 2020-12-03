@@ -98,6 +98,6 @@ def get_overview_page():
     return render_template('overview.html',
                            compressibility_vs_pop=get_rendered_plot(get_comp_vs_spo_pop_plot()),
                            graph2=get_rendered_plot(get_generated_title_occurrence()),
-                           graph3=get_rendered_plot(pop_plotter.get_plt()),
+                           graph3=get_rendered_plot(pop_plotter.get_comp_vs_yt_view_plt()),
                            markdown_content='',
                            )
