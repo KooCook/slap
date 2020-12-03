@@ -2,7 +2,7 @@ import csv
 import io
 
 from django.core.paginator import Paginator
-from flask import Blueprint, render_template, abort, jsonify, make_response, request
+from flask import Blueprint, render_template, abort, jsonify, make_response, request, redirect
 from jinja2 import TemplateNotFound
 
 from services.genius import tokenize_words
@@ -18,13 +18,18 @@ from support.similarity_matrix import get_similarity_matrix_map, get_similarity_
 root = Blueprint('view_pages', __name__, template_folder='templates')
 
 
-@root.route('/', defaults={'page': 'index'})
-@root.route('/<page>')
-def show(page):
-    try:
-        return render_template('pages/%s.html' % page)
-    except TemplateNotFound:
-        abort(401)
+# @root.route('/', defaults={'page': 'index'})
+# @root.route('/<page>')
+# def show(page):
+#     try:
+#         return render_template('pages/%s.html' % page)
+#     except TemplateNotFound:
+#         abort(401)
+
+
+@root.route('/')
+def show():
+    return redirect('/songs')
 
 
 @root.route('/songs')
