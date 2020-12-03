@@ -152,7 +152,7 @@ async function g() {
   //   svg.append("g")
   // .call(d3.axisLeft(y_r)
   //   .tickFormat(function(d) { return myVars[d] }));
-    fetch(`http://0.0.0.0:8080/plot/${fetched_song_id}/data`)
+    fetch(`http://${host_port}/plot/${fetched_song_id}/data`)
       .then(response => response.text())
       .then(text => { return d3.csvParse(text) })
       .then(data => { drawRects(data, x_r, y_r) })

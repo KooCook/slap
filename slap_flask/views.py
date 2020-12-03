@@ -7,6 +7,7 @@ from jinja2 import TemplateNotFound
 
 from services.genius import tokenize_words
 from services.trends import get_rendered_plot
+from settings import HOST, PORT
 from slap_dj.app.models import Song
 from slap_flask.models.searchers import SongSearcher
 from support.lyric_metrics import plot_lyrics_frequency
@@ -45,7 +46,8 @@ def show_song(song_id):
                            lyrics=s.lyrics,
                            song_id=song_id,
                            word_count=len(tokenize_words(s.lyrics)),
-                           word_freq_plot=plot_div)
+                           word_freq_plot=plot_div,
+                           host_port=f'{HOST}:{PORT}')
 
 
 @root.route('/plot/<song_id>')
@@ -58,8 +60,7 @@ def get_plot_csv(song_id):
     version = 'v2'
     s = SongSearcher.search_one(pk=song_id)
     with io.StringIO() as output:
-        writer = csv.writer(output
-                            , quoting=csv.QUOTE_MINIMAL)
+        writer = csv.writer(output, quoting=csv.QUOTE_MINIMAL)
         if version == 'v1':
             writer.writerow(["group", "variable", "value"]) # v1
         else:

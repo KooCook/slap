@@ -11,3 +11,5 @@ RELATIVE_DIR = ROOT_DIR / MODULE_NAME
 
 OPENAPI_SPECS_PATH = RELATIVE_DIR / config("OPENAPI_SPECS_PATH", default="openapi.yaml")
 DATABASE_URI = config("DATABASE_URI", default="sqlite:///slap.sqlite")
+HOST = config("HOST", default='127.0.0.1')
+PORT = config("PORT", cast=int, default=8080)
