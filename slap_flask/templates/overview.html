@@ -5,8 +5,8 @@
 {% endblock %}
 {% block content %}
 <div class="container">
-    <h2>Repetition vs. Popularity</h2>
     {{ markdown_content | markdown }}
+    <h2>Repetition vs. Popularity</h2>
     <h3>Overview</h3>
     <p>
         Two main factors that contribute to a feeling of repetitiveness in <em>songs</em>
@@ -50,11 +50,12 @@
 <div class="container">
     <h3>Correlation</h3>
     <p>
-        With te data, you can do linear regression analysis on it and see if the values are related.
+        With the data, you can do linear regression analysis on it and see if the values are related.
         <br>
         R-Squared is the percentage of variance in y explained by the linear regression equation between X and y.
         <br>
-        An R-squared of around <strong>0.05</strong> in this case shows that there is statistically <strong>no correlation between the two variables</strong>.
+        An R square value of around 0.002 (basically <strong>zero</strong>) in this case shows that there is statistically
+        <strong>no correlation between the two variables</strong>.
     </p>
     <p>
         You can plot a similar graph using python.
