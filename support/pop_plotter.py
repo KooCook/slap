@@ -131,6 +131,7 @@ def get_generated_title_occurrence(limit=20) -> Figure:
     )
     fig.update_xaxes(title_text='Title occurrences')
     fig.update_yaxes(title_text='Spotify Popularity')
+    add_fitted_line_trace(fig, df['Word Title Count'], df['Spotify Popularity'])
     # fig.show()
     return fig
 
