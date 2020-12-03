@@ -1,9 +1,11 @@
+from django.core.exceptions import ObjectDoesNotExist
 from flask import request, jsonify, abort
 
 from repetition import get_bow_dataframe
 from services.genius import tokenize_words
 from slap_dj.app.models import Song, Genre
 from slap_flask.models.searchers import SongSearcher
+from support.popularity_rank import get_song_visibility, get_song_weighted_count, get_word_popularity_index_from_song
 
 DEFAULT_PLOTTER = 'plotly'
 INDICATORS = ['youtube_views', 'spotify_streams']
@@ -43,13 +45,16 @@ def get_song_by_id(song_id: str):
                         }})
 
 
-def get_parameterized_word_popularity(song_id: str):
+def get_parameterized_word_popularity_single(song_id: str):
     song = Song.objects.get(id=song_id)
-    word_count_weight = request.args.get('word_count_weight')
-    popularity_weight = request.args.get('popularity_weight')
-    popularity_indicator = request.args.get('popularity_indicator')
-
-    pass
+    word_count_weight = request.args.get('word_count_weight', type=float)
+    popularity_weight = request.args.get('popularity_weight', type=float)
+    popularity_indicator = request.args.get('popularity_indicator', default='youtube_views')
+    score = get_word_popularity_index_from_song(song, popularity_indicator, popularity_weight, word_count_weight)
+    return jsonify({
+        'song_id': song_id,
+        'score': score
+    })
 
 
 # TODO: Popularity and Lyrics

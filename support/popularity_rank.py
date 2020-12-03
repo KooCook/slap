@@ -22,6 +22,22 @@ def get_song_weighted_count(c_weight: float, song: Song):
     return c_weight * song.word_count
 
 
+def get_word_popularity_index_from_song(song: Song, popularity_source: str,
+                                        popularity_weight: float, word_count_weight: float):
+    if popularity_source == 'youtube_views':
+        try:
+            return get_song_visibility(popularity_weight, song.youtubevideo.view_count) * \
+                    get_song_weighted_count(word_count_weight, song)
+        except ObjectDoesNotExist:
+            pass
+    elif popularity_source == 'spotify_streams':
+        try:
+            return get_song_visibility(popularity_weight, song.spotifysongweeklystream.streams) * \
+                    get_song_weighted_count(word_count_weight, song)
+        except ObjectDoesNotExist:
+            pass
+
+
 if __name__ == '__main__':
     songs = list(Song.objects.order_by('-youtubevideo__view_count'))
     popularity_indices = []

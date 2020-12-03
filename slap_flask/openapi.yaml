@@ -4,7 +4,7 @@
 openapi: 3.0.0
 info:
   title: Song Lyrics & Popularity (SLAP)
-  description: This API provides sth...
+  description: This API provides the metrics and the metadata of songs in order to analyze Lyrics & Popularity
 # #Template for if we want to put any contacts
 #  contact:
 #    name: Koo Cook
@@ -136,16 +136,16 @@ paths:
       - name: popularity_indicator
         in: query
         description: The given popularity indicator
-        required: true
+        required: false
         schema:
-          type: number
-        example: 12
+          type: string
+        example: youtube_views
     get:
-      description: Returns song metrics
-      operationId: slap_flask.public.controllers.songs.get_parameterized_word_popularity
+      description: Returns word popularity index
+      operationId: slap_flask.public.controllers.songs.get_parameterized_word_popularity_single
       responses:
         '200':
-          description: The metrics of a given song
+          description: The parameterized word popularity of a given song
           content:
             application/json:
               schema:
