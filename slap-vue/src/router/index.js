@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import D3Test from '../views/D3Test.vue'
 
 Vue.use(VueRouter)
 
