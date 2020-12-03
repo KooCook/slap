@@ -34,7 +34,11 @@ def show():
 
 @root.route('/songs')
 def get_songs():
-    songs = Song.objects.all()
+    title = request.args.get('title', None)
+    if title:
+        songs = Song.objects.filter(title__istartswith=title).order_by("title")
+    else:
+        songs = Song.objects.all()
     paginator = Paginator(songs, 25)
     page_number = request.args.get('page')
     page_obj = paginator.get_page(page_number)
