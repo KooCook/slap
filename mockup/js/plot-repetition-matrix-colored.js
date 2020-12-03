@@ -16,6 +16,7 @@ fetch('csv/song_matrix.csv')
   .then(response => response.text())
   .then(text => { return d3.csvParse(text) })
   .then(data => {
+// d3.csv("csv/song_matrix.csv", function(data) {
     const posWord = new Map([...new Set(data.map(d => [d.x, d.word]))]);
 
     // Build X scales and axis:
