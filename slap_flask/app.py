@@ -4,7 +4,7 @@ from connexion.resolver import RestyResolver
 from flask_misaka import Misaka
 
 from slap_dj.app.init import start_django_lite
-from settings import OPENAPI_SPECS_PATH, OPENAPI_OPS_MODULE_NAME, HOST, PORT
+from settings import OPENAPI_SPECS_PATH, OPENAPI_OPS_MODULE_NAME, HOST, PORT, DEBUG
 
 # import os
 #
@@ -33,4 +33,4 @@ if __name__ == '__main__':
     app = create_app()
     # db.connect_app(app.app)
     # load_models(app.app)
-    app.run(host=HOST, port=PORT, debug=True)
+    app.run(host=HOST, port=PORT, debug=DEBUG)

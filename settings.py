@@ -13,3 +13,4 @@ OPENAPI_SPECS_PATH = RELATIVE_DIR / config("OPENAPI_SPECS_PATH", default="openap
 DATABASE_URI = config("DATABASE_URI", default="sqlite:///slap.sqlite")
 HOST = config("HOST", default='127.0.0.1')
 PORT = config("PORT", cast=int, default=8080)
+DEBUG = config("DEBUG", cast=bool, default=True)
