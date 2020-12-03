@@ -149,7 +149,7 @@ class TokenizedSongLyrics:
     @property
     def tokenized(self) -> List[str]:
         words = TweetTokenizer().tokenize(self.lyrics)
-        return [word for word in words if word not in string.punctuation]
+        return [word.lower() for word in words if word not in string.punctuation]
 
     def __repr__(self):
         return f"SongLyrics<'{self.section}', l={self.lyrics[:20]}...>"
