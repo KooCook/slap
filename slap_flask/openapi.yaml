@@ -118,7 +118,7 @@ paths:
         required: true
         schema:
           type: string
-        example: 12
+        example: 519
       - name: word_count_weight
         in: query
         description: The given weight of word count
@@ -151,7 +151,12 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/SongMetrics'
+                  type: object
+                  properties:
+                    song_id:
+                      type: string
+                    score:
+                      type: number
         '404':
           $ref: '#/components/responses/default'
 
