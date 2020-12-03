@@ -45,7 +45,7 @@ def add_fitted_line_trace(fig: Figure, x, y) -> None:
             "x: %{x}",
             "y: %{y}",
             f"slope: {slope}",
-            f"R-squared: {r_value}",
+            f"R-squared: {r_value**2}",
         ])
     )
 
