@@ -63,7 +63,7 @@ fetch('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/iri
   var zoom = d3.zoom()
       .scaleExtent([.5, 20])  // This control how much you can unzoom (x0.5) and zoom (x20)
       .extent([[0, 0], [width, height]])
-      .on("zoom", updateChart);
+      .on("zoom", event => updateChart(event));
 
   // This add an invisible rect on top of the chart area. This rect can recover pointer events: necessary to understand when the user zoom
   SVG.append("rect")
@@ -76,12 +76,12 @@ fetch('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/iri
   // now the user can zoom and it will trigger the function called updateChart
 
   // A function that updates the chart when the user zoom and thus new boundaries are available
-  function updateChart() {
+  function updateChart(event) {
 
     // recover the new scale
     // TODO: FIX HERE
-    var newX = d3.event.transform.rescaleX(x);
-    var newY = d3.event.transform.rescaleY(y);
+    var newX = event.transform.rescaleX(x);
+    var newY = event.transform.rescaleY(y);
 
     // update axes with these new boundaries
     xAxis.call(d3.axisBottom(newX))
