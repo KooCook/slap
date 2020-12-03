@@ -50,6 +50,32 @@ def add_fitted_line_trace(fig: Figure, x, y) -> None:
     )
 
 
+def get_plt() -> Figure:
+    song_list = [
+        (f"{song.title} - {song.artist_names}", song.compressibility, song.youtubevideo.view_count, song.word_count)
+        for song in Song.objects.all()
+    ]
+    df = pd.DataFrame(song_list, columns=['Name', 'Compressibility', 'YouTube View', 'Word Count'])
+    fig: Figure = px.scatter(df,
+                             x='Compressibility', y='YouTube View',
+                             custom_data=['Name', 'Word Count'],
+                             )
+    fig.update_traces(
+        hovertemplate="<br>".join([
+            "%{customdata[0]}",
+            "Compressibility: %{x}",
+            "YouTube View: %{y}",
+            "Word Count: %{customdata[1]}",
+        ])
+    )
+    fig.update_layout(
+        title_text='Compressibility vs. YouTube View'
+    )
+
+    add_fitted_line_trace(fig, df.get('Compressibility'), df.get('YouTube View'))
+    return fig
+
+
 def get_comp_vs_spo_pop_plot() -> Figure:
     song_list = [
         (f"{song.title} - {song.artist_names}", song.compressibility, song.spotify_popularity, song.word_count)

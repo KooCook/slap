@@ -10,6 +10,7 @@ from services.trends import get_rendered_plot
 from settings import HOST, PORT
 from slap_dj.app.models import Song
 from slap_flask.models.searchers import SongSearcher
+from support import pop_plotter
 from support.lyric_metrics import plot_lyrics_frequency
 from support.pop_plotter import get_comp_vs_spo_pop_plot, get_generated_title_occurrence
 from support.similarity_matrix import get_similarity_matrix_map, get_similarity_matrix_map_v2
@@ -88,5 +89,6 @@ def get_overview_page():
     return render_template('overview.html',
                            compressibility_vs_pop=get_rendered_plot(get_comp_vs_spo_pop_plot()),
                            graph2=get_rendered_plot(get_generated_title_occurrence()),
+                           graph3=get_rendered_plot(pop_plotter.get_plt()),
                            markdown_content='',
                            )
