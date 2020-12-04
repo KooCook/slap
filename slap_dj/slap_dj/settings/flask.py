@@ -38,21 +38,19 @@ INSTALLED_APPS = [
 ]
 
 
-# DATABASES = {
-#     'default': config(
-#         'DATABASE_URL',
-#         default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
-#         cast=db_url
-#     )
-# }
 DATABASES = {
     'default': config(
         'DATABASE_URL',
         default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
-       #  default='sqlite:///' + str(ROOT_DIR / 'db.sqlite3'),
         cast=db_url
-    )
+    ),
+    'sqlite': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    },
 }
+
+DATABASE_ROUTERS = ['slap_dj.slap_dj.settings.Router']
 
 USE_TZ = True
 

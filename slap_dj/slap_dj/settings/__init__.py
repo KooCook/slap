@@ -13,6 +13,8 @@ from decouple import config
 from dj_database_url import parse as db_url
 from pathlib import Path
 
+from .router import Router
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -79,9 +81,14 @@ DATABASES = {
         'DATABASE_URL',
         default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
         cast=db_url
-    )
+    ),
+    'sqlite': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    },
 }
 
+DATABASE_ROUTERS = ['slap_dj.settings.Router']
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
