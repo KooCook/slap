@@ -242,11 +242,26 @@ paths:
           content:
             application/json:
               schema:
-                items:
-                  $ref: '#/components/schemas/Song'
-                type: array
+                properties:
+                  per_page:
+                    type: number
+                  songs:
+                    items:
+                      $ref: '#/components/schemas/Song'
+                    type: array
+                  total_page_count:
+                    type: number
+                type: object
           description: A list of songs.
         '404':
           $ref: '#/components/responses/default'
+    parameters:
+    - description: The page number
+      example: 1
+      in: query
+      name: page
+      required: false
+      schema:
+        type: integer
 servers:
 - url: /api

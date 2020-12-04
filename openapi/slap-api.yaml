@@ -15,6 +15,14 @@ servers:
 - url: localhost:8080/api
 paths:
   /songs:
+    parameters:
+      - name: page
+        in: query
+        description: The page number
+        required: false
+        schema:
+          type: integer
+        example: 1
     get:
       description: Returns all songs
       operationId: slap_flask.public.controllers.songs.get_songs
@@ -24,9 +32,16 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Song'
+                type: object
+                properties:
+                  songs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Song'
+                  total_page_count:
+                    type: number
+                  per_page:
+                    type: number
         '404':
           $ref: '#/components/responses/default'
   /song:
