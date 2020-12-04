@@ -1,0 +1,252 @@
+components:
+  responses:
+    default:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+      description: Unexpected error
+  schemas:
+    Artist:
+      properties:
+        name:
+          type: string
+      type: object
+    Error:
+      properties:
+        message:
+          type: string
+      type: object
+    Genre:
+      properties:
+        genre_id:
+          type: string
+        name:
+          type: string
+      type: object
+    Song:
+      properties:
+        artists:
+          items:
+            $ref: '#/components/schemas/Artist'
+          type: array
+        genres:
+          items:
+            type: string
+          type: array
+        lyrics:
+          type: string
+        song_id:
+          type: string
+        title:
+          type: string
+      type: object
+    SongMetrics:
+      properties:
+        chart:
+          properties:
+            library:
+              type: string
+            type:
+              type: string
+          type: object
+        repetition:
+          properties:
+            bow:
+              properties:
+                frequencies:
+                  items:
+                    type: integer
+                  type: array
+                ranks:
+                  items:
+                    type: integer
+                  type: array
+                words:
+                  items:
+                    type: string
+                  type: array
+              type: object
+          type: object
+      type: object
+info:
+  description: This API provides the metrics and the metadata of songs in order to
+    analyze Lyrics & Popularity
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  title: Song Lyrics & Popularity (SLAP)
+  version: 1.0.0
+openapi: 3.0.3
+paths:
+  /song:
+    get:
+      description: Returns a song matching the query
+      operationId: slap_flask.public.controllers.songs.get_song
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Song'
+                type: array
+          description: A list of songs.
+        '404':
+          $ref: '#/components/responses/default'
+    parameters:
+    - description: The title of a song
+      example: Begin Again
+      in: query
+      name: title
+      required: true
+      schema:
+        type: string
+    - description: The artist of a song
+      example: Taylor Swift
+      in: query
+      name: artist
+      required: true
+      schema:
+        type: string
+  /song/genres:
+    get:
+      description: Returns all genres
+      operationId: slap_flask.public.controllers.songs.get_song_genres
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Genre'
+                type: array
+          description: A list of genres.
+        '404':
+          $ref: '#/components/responses/default'
+  /song/{song_id}:
+    get:
+      description: Returns song metrics
+      operationId: slap_flask.public.controllers.songs.get_song_by_id
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/SongMetrics'
+                type: array
+          description: The metrics of a given song
+        '404':
+          $ref: '#/components/responses/default'
+    parameters:
+    - description: The ID of the song
+      example: 12
+      in: path
+      name: song_id
+      required: true
+      schema:
+        type: string
+    - description: Whether to return additional parameters for making a graph
+      example: true
+      in: query
+      name: for_graph
+      required: false
+      schema:
+        type: boolean
+  /song/{song_id}/metrics:
+    get:
+      description: Returns song metrics
+      operationId: slap_flask.public.controllers.songs.get_song_metrics
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/SongMetrics'
+                type: array
+          description: The metrics of a given song
+        '404':
+          $ref: '#/components/responses/default'
+    parameters:
+    - description: The ID of the song
+      example: 12
+      in: path
+      name: song_id
+      required: true
+      schema:
+        type: string
+    - description: Whether to return additional parameters for making a graph
+      example: true
+      in: query
+      name: for_graph
+      required: false
+      schema:
+        type: boolean
+  /song/{song_id}/word_popularity:
+    get:
+      description: Returns word popularity index
+      operationId: slap_flask.public.controllers.songs.get_parameterized_word_popularity_single
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  properties:
+                    score:
+                      type: number
+                    song_id:
+                      type: string
+                  type: object
+                type: array
+          description: The parameterized word popularity of a given song
+        '404':
+          $ref: '#/components/responses/default'
+    parameters:
+    - description: The ID of the song
+      example: 519
+      in: path
+      name: song_id
+      required: true
+      schema:
+        type: string
+    - description: The given weight of word count
+      example: 12
+      in: query
+      name: word_count_weight
+      required: true
+      schema:
+        type: number
+    - description: The given popularity index of word count
+      example: 12
+      in: query
+      name: popularity_weight
+      required: true
+      schema:
+        type: number
+    - description: The given popularity indicator
+      example: youtube_views
+      in: query
+      name: popularity_indicator
+      required: false
+      schema:
+        type: string
+  /songs:
+    get:
+      description: Returns all songs
+      operationId: slap_flask.public.controllers.songs.get_songs
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Song'
+                type: array
+          description: A list of songs.
+        '404':
+          $ref: '#/components/responses/default'
+servers:
+- url: /api
