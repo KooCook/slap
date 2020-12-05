@@ -1,32 +1,24 @@
-from django.shortcuts import render
-
 # Create your views here.
-from plotly.offline import plot
+from rest_framework import viewsets
+from rest_framework.generics import RetrieveAPIView
 
-import plotly
-import plotly.graph_objs as go
-
-import pandas as pd
-import numpy as np
-import json
+from .models import Song, Artist
+from .serializers import SongSerializer
+from .support import LargeResultsSetPagination
 
 
-def create_plot():
-    N = 40
-    x = np.linspace(0, 1, N)
-    y = np.random.randn(N)
-    df = pd.DataFrame({'x': x, 'y': y}) # creating a sample dataframe
-    data = [
-        go.Bar(
-            x=df['x'], # assign x as the dataframe column 'x'
-            y=df['y']
-        )
-    ]
-   # graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
-    return data # graphJSON
+class SongViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows songs to be viewed.
+    """
+    queryset = Song.objects.all()
+    serializer_class = SongSerializer
+    pagination_class = LargeResultsSetPagination
+    http_method_names = ('get', )
 
 
-def index(request):
-    plot_div = plot(create_plot(), output_type='div', include_plotlyjs=False)
-    context = {'plot': plot_div}
-    return render(request, 'plot.html', context)
+class ArtistViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows a song to be viewed.
+    """
+    queryset = Artist.objects.all()
