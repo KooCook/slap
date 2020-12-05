@@ -28,7 +28,7 @@ class WikiDataQueryBuilder:
         self.sparql_builder.setReturnFormat(JSON)
         results = self.sparql_builder.query().convert()
 
-        results_df = pd.io.json.json_normalize(results['results']['bindings'])
+        results_df = pd.json_normalize(results['results']['bindings'])
         results_df[[f'{field}.value' for field in fields]].head()
         return results_df
 
