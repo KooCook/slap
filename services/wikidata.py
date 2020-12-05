@@ -29,15 +29,20 @@ class WikiDataQueryBuilder:
         results = self.sparql_builder.query().convert()
 
         results_df = pd.io.json.json_normalize(results['results']['bindings'])
-        results_df[['item.value', 'itemLabel.value']].head()
+        results_df[[f'{field}.value' for field in fields]].head()
         return results_df
 
 
 def main():
     builder = WikiDataQueryBuilder()
-    print(builder.query(['itemLabel', 'item'], where="""
-      ?item wdt:P31 wd:Q146 .
-               SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }
+    print(builder.query(['qLabel', 'classLabel', 'q', 'class', 'l'], where="""
+        ?class wdt:P279 wd:Q2188189.
+  ?q p:P31 [ps:P31 ?class];
+     p:P175 [ps:P175 wd:Q41173].
+  ?class rdfs:label ?l
+   FILTER (langMatches( lang(?l), "EN" ) )
+   # FILTER (?classes in (wd:release, wd:Q7366, wd:Q134556))
+   SERVICE wikibase:label { bd:serviceParam wikibase:language "en".}
     """))
 
 
