@@ -10,5 +10,6 @@ python-decouple
 pandas
 scipy
 mysqlclient
+sparqlwrapper
 -r slap_flask/requirements.txt
 -r slap_dj/requirements.txt
