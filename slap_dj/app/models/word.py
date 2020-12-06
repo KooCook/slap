@@ -19,8 +19,8 @@ class WordOccurrenceInSong(models.Model):
     def update_all_songs_word_frequency(cls, skip=True):
         for s in Song.objects.all():
             try:
-                cls.objects.get(appears_in=s)
-                if skip:
+                s = cls.objects.filter(appears_in=s)
+                if skip and s is not None:
                     continue
             except cls.DoesNotExist:
                 pass
