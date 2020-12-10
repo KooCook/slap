@@ -5,7 +5,7 @@ from django.db import models
 from .base import Artist, Song
 
 
-class ArtistRoleInSong(Enum):
+class ArtistRoleInSong(models.TextChoices):
     Primary = "primary"
     Secondary = "secondary"
     Collaborator = "collaborator"
@@ -15,4 +15,4 @@ class ArtistRoleInSong(Enum):
 class ArtistInSong(models.Model):
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
-    role = models.CharField(max_length=64, choices=[(tag, tag.value) for tag in ArtistRoleInSong])
+    role = models.CharField(max_length=64, choices=ArtistRoleInSong.choices)
