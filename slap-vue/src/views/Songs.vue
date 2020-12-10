@@ -1,0 +1,66 @@
+<template>
+  <div class="container">
+    <div class="row">
+      <div class="col-3" v-for="song in songs" :key="song.id">
+        <b-card>
+          <b-card-title>{{ song.title }}</b-card-title>
+          <b-card-text>
+            by {{ song.artists.join() }}
+
+          </b-card-text>
+          <b-card-text class="small text-muted">Last updated 3 mins ago</b-card-text>
+          <b-button href="#" variant="primary">Go somewhere</b-button>
+        </b-card>
+      </div>
+    </div>
+    <b-pagination
+            v-model="currentPage"
+            :total-rows="totalCount"
+            :per-page="perPage"
+            aria-controls="my-table"
+            @change="onChangePage"
+    ></b-pagination>
+  </div>
+</template>
+
+<script>
+const SongLyricsPopularitySlap = require("slap-client");
+
+export default {
+  data() {
+    return {
+      songs: [],
+      currentPage: 8,
+      perPage: 25,
+      totalCount: 0
+    };
+  },
+  watch: {
+  },
+  methods: {
+    onChangePage(page) {
+      this.$router.push({path: 'songs', query: { page }})
+      this.fetchData()
+    },
+    fetchData() {
+      const api = new SongLyricsPopularitySlap.DefaultApi();
+      api.slapFlaskPublicControllersSongsGetSongs({page: this.$route.query.page}, (error, data) => {
+        if (error) {
+          console.error(error);
+        } else {
+          this.songs = data.songs
+          this.perPage = data['per_page']
+          this.totalCount = data['total_page_count']
+          setTimeout(() => this.currentPage = this.$route.query.page)
+        }
+      })
+    }
+  },
+  mounted() {
+    this.fetchData()
+  },
+};
+</script>
+
+<style>
+</style>
