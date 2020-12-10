@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name='ArtistInSong',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('role', models.CharField(choices=[(app.models.artists.ArtistRoleInSong['Collaborator'], 'collaborator'), (app.models.artists.ArtistRoleInSong['Featured'], 'featured')], max_length=64)),
+                ('role', models.CharField(max_length=64)),
                 ('artist', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app.artist')),
                 ('song', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app.song')),
             ],

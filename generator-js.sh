@@ -6,5 +6,6 @@ cd slap-client || exit
 npm install
 npm run build
 cd ..
+#rm -rf slap-vue/node_modules/slap-client
 cp -rf slap-client slap-vue/node_modules
 rm -r slap-client

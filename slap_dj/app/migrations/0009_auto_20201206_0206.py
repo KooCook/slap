@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='artistinsong',
             name='role',
-            field=models.CharField(choices=[(app.models.artists.ArtistRoleInSong['Primary'], 'primary'), (app.models.artists.ArtistRoleInSong['Secondary'], 'secondary'), (app.models.artists.ArtistRoleInSong['Collaborator'], 'collaborator'), (app.models.artists.ArtistRoleInSong['Featured'], 'featured')], max_length=64),
+            field=models.CharField(max_length=64),
         ),
         migrations.CreateModel(
             name='WordOccurrenceInSong',

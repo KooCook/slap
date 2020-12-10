@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
-from .models import Song, Genre
-from .models.artists import ArtistInSong
-from .models.word import WordCache
+from ..models import Song, Genre
+from ..models.artists import ArtistInSong
+from ..models.word import WordCache
 
 
 class ArtistInSongSerializer(serializers.ModelSerializer):
