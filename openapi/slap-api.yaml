@@ -12,7 +12,7 @@ info:
     url: https://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.0
 servers:
-- url: localhost:8080/api
+- url: localhost:8000/api
 paths:
   /songs:
     parameters:
@@ -203,9 +203,35 @@ paths:
         '404':
           $ref: '#/components/responses/default'
 
+  /plot/rep-pop:
+    parameters:
+      - name: pop_facet
+        in: query
+        description: The page number
+        required: false
+        schema:
+          type: integer
+        example: youtube_view
+      - name: rep_facet
+        in: query
+        description: The page number
+        required: false
+        schema:
+          type: integer
+        example: compressibility
+    get:
+      operationId: slap.listRepetitionPopularityPlots
+      description: Return a list of all users.
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+          description: ''
 components:
   schemas:
-    Error:
+    HttpError:
       type: object
       properties:
         message:
@@ -274,4 +300,4 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: '#/components/schemas/HttpError'
