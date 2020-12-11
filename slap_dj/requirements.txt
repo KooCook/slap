@@ -3,3 +3,4 @@ dj_database_url
 djangorestframework
 django-cors-headers
 djangorestframework-csv
+drf-nested-routers
