@@ -37,9 +37,9 @@ cd slap_dj
 python manage.py migrate
 ```
 
-5\. Start the server
+5\. Start the Django server
 
 ```sh
-cd slap_flask
-python app.py
+cd slap_dj
+python manage.py runserver
 ```
