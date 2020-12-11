@@ -34,14 +34,23 @@ paths:
               schema:
                 type: object
                 properties:
-                  songs:
+                  count:
+                    type: integer
+                    example: 123
+                  next:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?page=4
+                  previous:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?page=2
+                  results:
                     type: array
                     items:
                       $ref: '#/components/schemas/Song'
-                  total_page_count:
-                    type: number
-                  per_page:
-                    type: number
         '404':
           $ref: '#/components/responses/default'
   /song:
@@ -74,38 +83,49 @@ paths:
                   $ref: '#/components/schemas/Song'
         '404':
           $ref: '#/components/responses/default'
-
-  /song/{song_id}:
-    parameters:
-      - name: song_id
-        in: path
-        description: The ID of the song
-        required: true
-        schema:
-          type: string
-        example: 12
-      - name: for_graph
-        in: query
-        description: Whether to return additional parameters for making a graph
-        required: false
-        schema:
-          type: boolean
-        example: true
+  /songs/{id}/:
     get:
-      description: Returns song metrics
-      operationId: slap_flask.public.controllers.songs.get_song_by_id
+      operationId: retrieveSong
+      description: An API endpoint that allows songs to be viewed.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A unique integer value identifying this song.
+          schema:
+            type: string
       responses:
         '200':
-          description: The metrics of a given song
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SongMetrics'
+                $ref: '#/components/schemas/Song'
+          description: ''
         '404':
           $ref: '#/components/responses/default'
-
+  /songs/{song_id}/words:
+    get:
+      operationId: listWords
+      description: A list of words in the given song lyrics
+      parameters:
+        - name: song_id
+          in: path
+          required: true
+          description: ''
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  words:
+                    type: array
+                    items:
+                      type: string
+          description: ''
   /song/{song_id}/metrics:
     parameters:
       - name: song_id
@@ -229,6 +249,29 @@ paths:
               schema:
                 type: object
           description: ''
+  /plot/rep-matrix/{song_id}:
+    get:
+      operationId: retrieveRepetitionMatrixPlot
+      description: 'View to list all users in the system.
+
+
+          * Requires token authentication.
+
+          * Only admin users are able to access this view.'
+      parameters:
+        - name: song_id
+          in: path
+          required: true
+          description: ''
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            text/csv:
+              schema:
+                type: string
+          description: ''
 components:
   schemas:
     HttpError:
@@ -239,20 +282,35 @@ components:
     Song:
       type: object
       properties:
-        song_id:
-          type: string
-        title:
-          type: string
+        id:
+          type: integer
+          readOnly: true
         artists:
           type: array
           items:
-            $ref: '#/components/schemas/Artist'
-        lyrics:
-          type: string
+            type: string
+          readOnly: true
         genres:
           type: array
           items:
             type: string
+          readOnly: true
+        title:
+          type: string
+          maxLength: 289
+        lyrics:
+          type: string
+        compressibility:
+          type: number
+        spotify_popularity:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+      required:
+        - title
+        - lyrics
+        - compressibility
+        - spotify_popularity
     Artist:
       type: object
       properties:
