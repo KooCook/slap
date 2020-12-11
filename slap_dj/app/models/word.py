@@ -30,8 +30,8 @@ class WordOccurrenceInSong(models.Model):
     def update_song_word_frequency(cls, song: Song):
         tokenized = tokenize_words(song.lyrics)
         df = get_bow_dataframe(tokenized)
-        freq = list(df['freq'])
-        words = list(df['word'])
+        freq = df['freq']
+        words = df['word']
         for w, f in zip(words, freq):
             cls.upsert(w, song, f)
 
