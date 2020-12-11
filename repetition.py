@@ -1,5 +1,5 @@
 import zlib
-from typing import List, Iterator, Dict
+from typing import List, Iterator, Dict, Iterable
 from operator import itemgetter
 
 import pandas as pd
@@ -30,8 +30,7 @@ def get_words(s: str) -> Iterator[str]:
             lst.append(c)
 
 
-@depreciated(reason="Use get_bow_dataframe() for better perf")
-def get_sorted_bag_of_words(words: List[str]) -> Dict[str, str]:
+def get_sorted_bag_of_words(words: Iterable[str]) -> Dict[str, str]:
     bow = {}
     for word in words:
         word = word.lower()
@@ -53,7 +52,7 @@ def convert_bow_to_dataframe(sorted_bow: Dict[str, str]) -> pd.DataFrame:
     return df
 
 
-def get_bow_dataframe(words: List[str]) -> pd.DataFrame:
+def get_bow_dataframe(words: Iterable[str]) -> pd.DataFrame:
     bow = {}
     for word in words:
         word = word.lower()
