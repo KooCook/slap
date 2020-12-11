@@ -81,7 +81,6 @@
     },
     methods: {
       onPopChanged() {
-        console.log(this.popularity.selected)
         this.fetchData()
       },
       fetchData() {

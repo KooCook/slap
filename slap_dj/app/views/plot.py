@@ -8,9 +8,11 @@ from rest_framework.views import APIView
 from rest_framework_csv.renderers import CSVRenderer
 
 from services.genius import tokenize_words
-from support.similarity_matrix import get_similarity_matrix_map, get_similarity_matrix_map_v2
+from support.similarity_matrix import get_similarity_matrix_map_v2
 from ..model_generator import SongGen
 from app.support.plotter import get_fitted_line_params
+
+from ..models import Song
 
 
 class RepetitionPopularityPlotView(APIView):
