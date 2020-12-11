@@ -20,14 +20,14 @@ class WordOccurrenceInSong(models.Model):
 
     @classmethod
     def update_all_songs_word_frequency(cls, skip=True):
-        for s in Song.objects.all():
+        for song in Song.objects.all():
             try:
-                s = cls.objects.filter(appears_in=s)
-                if skip and s is not None:
+                occurrence = cls.objects.filter(appears_in=s)
+                cls.update_song_word_frequency(song)
+                if skip and occurrence is not None:
                     continue
             except cls.DoesNotExist:
                 pass
-            cls.update_song_word_frequency(s)
 
     @classmethod
     def update_song_word_frequency(cls, song: Song):
