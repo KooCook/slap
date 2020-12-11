@@ -1,8 +1,7 @@
 import operator
 from functools import reduce
-from typing import List
+from typing import List, Tuple, Any
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from pandas import options
@@ -14,6 +13,7 @@ from nltk import collections
 from plotly import graph_objs as go
 from plotly.subplots import make_subplots
 from services.genius import tokenize_words, tokenize_words_simple
+
 from slap_dj.app.init import start_django_lite
 from slap_dj.app.models import Genre, Song
 
@@ -28,10 +28,16 @@ def do_regression_using_scientific(x, y) -> None:
     slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
     print("R-squared: %f" % r_value ** 2)
     print("slope: %f    intercept: %f" % (slope, intercept))
-    plt.plot(x, y, 'o', label='original data')
-    plt.plot(x, intercept + slope * x, 'r', label='fitted line')
-    plt.legend()
-    plt.show()
+    # plt.plot(x, y, 'o', label='original data')
+    # plt.plot(x, intercept + slope * x, 'r', label='fitted line')
+    # plt.legend()
+    # plt.show()
+
+
+def get_fitted_line_params(xdata, ydata, line_tick: float = 0.01) -> Tuple[Any, float, float]:
+    slope, intercept, r_value, p_value, std_err = stats.linregress(xdata, ydata)
+    p = np.arange(xdata.min(), xdata.max(), line_tick)
+    return p, intercept + slope * p, r_value
 
 
 def add_fitted_line_trace(fig: go.Figure, xdata, ydata,
