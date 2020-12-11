@@ -3,7 +3,9 @@ from typing import List
 
 from django.db.models import Max
 
+from services.genius import tokenize_words
 from support.init.nltk import initialize_nltk
+from ..model_generator import SongGen
 
 initialize_nltk()
 from nltk.stem import SnowballStemmer
@@ -98,3 +100,11 @@ class WordRandomizationView(APIView):
                     continue
                 return Response({'word': word.word})
 
+
+class WordView(APIView):
+    """
+    A list of words in the given song lyrics
+    """
+    def get(self, request, song_id: str):
+        s = SongGen.search_one(pk=song_id)
+        return Response({'words': tokenize_words(s.lyrics)})

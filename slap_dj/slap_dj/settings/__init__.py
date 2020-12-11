@@ -9,7 +9,8 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-from decouple import config
+from decouple import config, Csv
+from dirs import ROOT_DIR
 from dj_database_url import parse as db_url
 from pathlib import Path
 
@@ -132,3 +133,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+YOUTUBE_DATA_API_KEYS = config("YOUTUBE_DATA_API_KEYS", cast=Csv(), default="")
+GENIUS_SECRET = config("GENIUS_SECRET", default="")
+SPOTIFY_CLIENT_ID = config("SPOTIFY_CLIENT_ID", default="")
+SPOTIFY_CLIENT_SECRET = config("SPOTIFY_CLIENT_SECRET", default="")

@@ -5,11 +5,11 @@
         <b-card>
           <b-card-title>{{ song.title }}</b-card-title>
           <b-card-text>
-            by {{ song.artists.join() }}
+            by {{ song.artists.join(", ") }}
 
           </b-card-text>
-          <b-card-text class="small text-muted">Last updated 3 mins ago</b-card-text>
-          <b-button href="#" variant="primary">Go somewhere</b-button>
+         <!--<b-card-text class="small text-muted">Last updated 3 mins ago</b-card-text>-->
+          <b-button :to="'/song/' + song.id" variant="primary">See details</b-button>
         </b-card>
       </div>
     </div>
@@ -48,9 +48,10 @@ export default {
         if (error) {
           console.error(error);
         } else {
-          this.songs = data.songs
-          this.perPage = data['per_page']
-          this.totalCount = data['total_page_count']
+          this.songs = data.results
+          console.log(data)
+          this.perPage = 25
+          this.totalCount = data['count']
           setTimeout(() => this.currentPage = this.$route.query.page)
         }
       })

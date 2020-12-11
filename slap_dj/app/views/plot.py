@@ -1,8 +1,15 @@
+import csv
+import io
+
 from pandas import DataFrame, Series
 from rest_framework.response import Response
+from rest_framework.settings import api_settings
 from rest_framework.views import APIView
+from rest_framework_csv.renderers import CSVRenderer
 
-from ..models import Song
+from services.genius import tokenize_words
+from support.similarity_matrix import get_similarity_matrix_map, get_similarity_matrix_map_v2
+from ..model_generator import SongGen
 from app.support.plotter import get_fitted_line_params
 
 
@@ -27,7 +34,7 @@ class RepetitionPopularityPlotView(APIView):
                 return x.values[0]
         return x.values[0]
 
-    def get(self, request, format=None):
+    def get(self, request):
         """
         Return a list of all users.
         """
@@ -53,3 +60,24 @@ class RepetitionPopularityPlotView(APIView):
             'y': y_line,
             'r_val': r_val
         }})
+
+
+class RepetitionMatrixV2Renderer (CSVRenderer):
+    header = ['x', 'y', 'word', 'color']
+
+
+class RepetitionMatrixPlotView(APIView):
+    """
+    View to list all users in the system.
+
+    * Requires token authentication.
+    * Only admin users are able to access this view.
+    """
+    renderer_classes = (RepetitionMatrixV2Renderer, ) + tuple(api_settings.DEFAULT_RENDERER_CLASSES)
+
+    def get(self, request, song_id: str):
+        s = SongGen.search_one(pk=song_id)
+        content = [{'x': row[0], 'y': row[1],
+                        'word': row[2], 'color': row[3]}
+                       for row in get_similarity_matrix_map_v2(tokenize_words(s.lyrics))]
+        return Response(content)
