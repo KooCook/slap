@@ -5,6 +5,9 @@ from services.genius import tokenize_words
 from .base import Song
 
 
+__all__ = ['WordCache', 'WordOccurrenceInSong']
+
+
 class WordCache(models.Model):
     word = models.CharField(max_length=289, unique=True)
     occurs_in_song = models.ManyToManyField(Song, through='WordOccurrenceInSong')

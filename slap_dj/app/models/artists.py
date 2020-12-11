@@ -3,6 +3,9 @@ from django.db import models
 from .base import Artist, Song
 
 
+__all__ = ['Artist', 'Song']
+
+
 class ArtistInSong(models.Model):
 
     class ArtistRole(models.TextChoices):
