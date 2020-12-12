@@ -18,7 +18,7 @@ class WordOccurrenceInSong(models.Model):
     frequency = models.IntegerField()
 
     @classmethod
-    def update_all_songs_word_frequency(cls, skip=True):
+    def update_all_songs_word_frequency(cls, skip: bool = True) -> None:
         for song in Song.objects.all():
             try:
                 occurrence = cls.objects.filter(appears_in=song)
@@ -29,7 +29,7 @@ class WordOccurrenceInSong(models.Model):
             cls.update_song_word_frequency(song)
 
     @classmethod
-    def update_song_word_frequency(cls, song: Song):
+    def update_song_word_frequency(cls, song: Song) -> None:
         df = get_bow_dataframe(song.words)
         freq = df['freq']
         words = df['word']
@@ -39,6 +39,8 @@ class WordOccurrenceInSong(models.Model):
     @classmethod
     def upsert(cls, word: str, song: Song, frequency: float) -> 'WordOccurrenceInSong':
         try:
+            # database note for sqlite:
+            # https://docs.djangoproject.com/en/3.1/ref/databases/#sqlite-string-matching
             w = WordCache.objects.get(word__iexact=word)
         except WordCache.DoesNotExist:
             w = WordCache.objects.create(word=word)
