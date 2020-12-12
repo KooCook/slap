@@ -1,7 +1,6 @@
 from django.db import models
 
 from repetition import get_bow_dataframe
-from services.genius import tokenize_words
 from .base import Song
 
 
@@ -31,8 +30,7 @@ class WordOccurrenceInSong(models.Model):
 
     @classmethod
     def update_song_word_frequency(cls, song: Song):
-        tokenized = tokenize_words(song.lyrics)
-        df = get_bow_dataframe(tokenized)
+        df = get_bow_dataframe(song.words)
         freq = df['freq']
         words = df['word']
         for w, f in zip(words, freq):

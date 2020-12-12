@@ -12,7 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from nltk import collections
 from plotly import graph_objs as go
 from plotly.subplots import make_subplots
-from services.genius import tokenize_words, tokenize_words_simple
+from services.genius import tokenize_words_simple
 
 from slap_dj.app.init import start_django_lite
 from slap_dj.app.models import Genre, Song
@@ -153,7 +153,7 @@ def get_generated_title_occurrence(limit=20) -> go.Figure:
     o = []
     for s in Song.objects.all().order_by('spotify_popularity'):
         try:
-            words = tokenize_words(s.lyrics)
+            words = s.words
             title_words = tokenize_words_simple(s.title)
             exact_occurrences = (word for word in words if s.title in word)
             part_of_occurrences = (word for word in words if word in title_words)

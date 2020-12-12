@@ -7,7 +7,6 @@ from rest_framework.settings import api_settings
 from rest_framework.views import APIView
 from rest_framework_csv.renderers import CSVRenderer
 
-from services.genius import tokenize_words
 from support.similarity_matrix import get_similarity_matrix_map_v2
 from ..model_generator import SongGen
 from app.support.plotter import get_fitted_line_params
@@ -22,6 +21,7 @@ class RepetitionPopularityPlotView(APIView):
     * Requires token authentication.
     * Only admin users are able to access this view.
     """
+
     def each_item(self, x):
         if x.name == 'artistinsong__artist__name':
             if len(x.values) > 1:
@@ -79,7 +79,10 @@ class RepetitionMatrixPlotView(APIView):
 
     def get(self, request, song_id: str):
         s = SongGen.search_one(pk=song_id)
-        content = [{'x': row[0], 'y': row[1],
-                        'word': row[2], 'color': row[3]}
-                       for row in get_similarity_matrix_map_v2(tokenize_words(s.lyrics))]
+        content = [{
+            'x': row[0],
+            'y': row[1],
+            'word': row[2],
+            'color': row[3],
+        } for row in get_similarity_matrix_map_v2(s.words)]
         return Response(content)

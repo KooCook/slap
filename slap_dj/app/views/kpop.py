@@ -5,7 +5,6 @@ from rest_framework.views import APIView
 from app.models import Song
 
 from repetition import get_bow_dataframe
-from services.genius import tokenize_words
 
 
 def check_word_english_alpha(word: str) -> bool:
@@ -34,7 +33,7 @@ class KpopGenreView(APIView):
         ratios = []
         eng_words_each = []
         for idx, song in enumerate(kpop_songs):
-            tokenized = tokenize_words(song.lyrics)
+            tokenized = song.words
             eng_words = list(filter(check_word_english_alpha, tokenized))
             ratios.append(len(eng_words) / len(tokenized))
             eng_words_each.append(get_bow_dataframe(eng_words))

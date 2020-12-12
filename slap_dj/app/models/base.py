@@ -1,3 +1,5 @@
+from typing import List
+
 from django.db import models
 
 from repetition import calculate_repetition
@@ -32,6 +34,10 @@ class Song(models.Model):
     @property
     def artist_names(self) -> str:
         return ",".join([a.name for a in self.artists.all()])
+
+    @property
+    def words(self) -> List[str]:
+        return tokenize_words(self.lyrics)
 
     @property
     def word_count(self) -> int:

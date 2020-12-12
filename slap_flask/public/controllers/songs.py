@@ -1,7 +1,6 @@
 from flask import request, jsonify, abort
 
 from repetition import get_bow_dataframe
-from services.genius import tokenize_words
 from slap_dj.app.models import Song, Genre
 from slap_flask.models.searchers import SongSearcher
 from support.popularity_rank import get_word_popularity_index_from_song
@@ -60,7 +59,7 @@ def get_parameterized_word_popularity_single(song_id: str):
 def get_song_metrics(song_id: str):
     for_graph = request.args.get('for_graph', type=bool)
     song = Song.objects.get(id=song_id)
-    tokenized = tokenize_words(song.lyrics)
+    tokenized = song.words
     df = get_bow_dataframe(tokenized)
     freq = list(df['freq'])
     words = list(df['word'])

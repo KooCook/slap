@@ -5,7 +5,6 @@ from django.core.paginator import Paginator
 from flask import Blueprint, render_template, abort, jsonify, make_response, request, redirect
 from jinja2 import TemplateNotFound
 
-from services.genius import tokenize_words
 from services.trends import get_rendered_plot
 from settings import HOST, PORT
 from slap_dj.app.models import Song
@@ -55,7 +54,7 @@ def show_song(song_id):
                            artists=s.artist_names,
                            lyrics=s.lyrics,
                            song_id=song_id,
-                           word_count=len(tokenize_words(s.lyrics)),
+                           word_count=s.word_count,
                            word_freq_plot=plot_div,
                            host_port=f'{HOST}:{PORT}')
 
@@ -76,10 +75,10 @@ def get_plot_csv(song_id):
         else:
             writer.writerow(["x", "y", "word", "color"]) # v2
         if version == 'v1':
-            for i in get_similarity_matrix_map(tokenize_words(s.lyrics)):
+            for i in get_similarity_matrix_map(s.words):
                 writer.writerow(i)
         else:
-            for i in get_similarity_matrix_map_v2(tokenize_words(s.lyrics)):
+            for i in get_similarity_matrix_map_v2(s.words):
                 writer.writerow(i)
         o = output.getvalue()
     output = make_response(o)
@@ -90,7 +89,7 @@ def get_plot_csv(song_id):
 @root.route('/plot/<song_id>/params')
 def get_d3_plot_params(song_id):
     s = SongSearcher.search_one(pk=song_id)
-    return jsonify({'words': tokenize_words(s.lyrics)})
+    return jsonify({'words': s.words})
 
 
 @root.route('/overview')
