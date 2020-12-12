@@ -1,5 +1,6 @@
 import csv
 import io
+from itertools import chain
 
 from pandas import DataFrame, Series
 from rest_framework.response import Response
@@ -75,7 +76,7 @@ class RepetitionMatrixPlotView(APIView):
     * Requires token authentication.
     * Only admin users are able to access this view.
     """
-    renderer_classes = (RepetitionMatrixV2Renderer, ) + tuple(api_settings.DEFAULT_RENDERER_CLASSES)
+    renderer_classes = tuple(chain((RepetitionMatrixV2Renderer,), api_settings.DEFAULT_RENDERER_CLASSES))
 
     def get(self, request, song_id: str):
         s = SongGen.search_one(pk=song_id)
