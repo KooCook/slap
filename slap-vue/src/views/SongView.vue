@@ -7,6 +7,7 @@
         </div>
         <div class="container">
             <h4>Metrics</h4>
+            <Plotly :data="frequency.data" :layout="frequency.layout" :display-mode-bar="false"></Plotly>
             <div class="row">
                 <div class="col-6">
                     <h5>Lyrics</h5>
@@ -28,15 +29,37 @@
 
 <script>
     import * as d3 from "d3";
+    import { Plotly } from 'vue-plotly'
+
+    let trace1 = {
+        x: ['giraffes', 'orangutans', 'monkeys'],
+        y: [20, 14, 23],
+        type: 'bar'
+    };
 
     const SongLyricsPopularitySlap = require("slap-client");
     export default {
         name: "SongView",
+        components: {
+            Plotly
+        },
         data() {
             return {
                 song: {
                     title: "",
                     artists: []
+                },
+                frequency: {
+                    data: [ trace1 ],
+                    layout: {
+                        xaxis: {
+                            title: 'Words'
+                        },
+                        yaxis: {
+                            title: 'Word count'
+                        },
+                        title:'Word Frequency in lyrics'
+                    }
                 }
             }
         },
@@ -46,7 +69,8 @@
         methods: {
             fetchData() {
                 const api = new SongLyricsPopularitySlap.DefaultApi();
-                api.retrieveSong(this.$route.params.id, (error, data) => {
+                const songId = this.$route.params.id
+                api.retrieveSong(songId, (error, data) => {
                     if (error) {
                         console.error(error);
                     } else {
@@ -194,13 +218,22 @@
                         .call(zoom);
                 }
                 // let csv_data;
-                api.retrieveRepetitionMatrixPlot(this.$route.params.id, (error, data) => {
+                api.retrieveRepetitionMatrixPlot(songId, (error, data) => {
                     if (error) {
                         console.error(error);
                     } else {
                         const csv_data = data
                         d3Gen(csv_data)
                     }})
+                api.listSongWordFrequencyPlots(songId, (error, data) => {
+                    if (error) {
+                        console.error(error);
+                    } else {
+                        const { x, y } = data
+                        trace1.x = x
+                        trace1.y = y
+                    }
+                })
             }
         }
     }

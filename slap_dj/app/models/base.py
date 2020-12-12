@@ -1,6 +1,7 @@
 from typing import List
 
 from django.db import models
+from django_pandas.managers import DataFrameManager
 
 from repetition import calculate_repetition
 from services.genius import remove_sections, tokenize_words
@@ -18,6 +19,7 @@ class Artist(models.Model):
 
 class Genre(models.Model):
     name = models.CharField(max_length=289)
+    pretty_name = models.CharField(max_length=289)
 
     def as_dict(self) -> dict:
         return {'name': self.name}
@@ -30,6 +32,7 @@ class Song(models.Model):
     artists = models.ManyToManyField(Artist, through='ArtistInSong')
     genres = models.ManyToManyField(Genre)
     spotify_popularity = models.IntegerField()
+    objects = DataFrameManager()
 
     @property
     def artist_names(self) -> str:

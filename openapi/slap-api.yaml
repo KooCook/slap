@@ -126,6 +126,24 @@ paths:
                     items:
                       type: string
           description: ''
+  /songs/{song_id}/word-frequency/plot:
+    get:
+      operationId: listSongWordFrequencyPlots
+      description: ''
+      parameters:
+        - name: song_id
+          in: path
+          required: true
+          description: ''
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+          description: ''
   /song/{song_id}/metrics:
     parameters:
       - name: song_id
@@ -156,7 +174,6 @@ paths:
                   $ref: '#/components/schemas/SongMetrics'
         '404':
           $ref: '#/components/responses/default'
-
   /song/{song_id}/word_popularity:
     parameters:
       - name: song_id
@@ -206,7 +223,21 @@ paths:
                       type: number
         '404':
           $ref: '#/components/responses/default'
-
+  /songs/words/randomize:
+    get:
+      operationId: listWordRandomizations
+      description: ''
+      parameters: [ ]
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  word:
+                    type: string
+          description: ''
   /song/genres:
     get:
       description: Returns all genres
@@ -222,7 +253,6 @@ paths:
                   $ref: '#/components/schemas/Genre'
         '404':
           $ref: '#/components/responses/default'
-
   /plot/rep-pop:
     parameters:
       - name: pop_facet
