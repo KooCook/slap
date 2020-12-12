@@ -64,7 +64,7 @@ class RepetitionPopularityPlotView(APIView):
         }})
 
 
-class RepetitionMatrixV2Renderer (CSVRenderer):
+class RepetitionMatrixV2Renderer(CSVRenderer):
     header = ['x', 'y', 'word', 'color']
 
 
