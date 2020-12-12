@@ -37,3 +37,9 @@ class KpopGenreView(APIView):
         df['eng_words'] = eng_words_each
 
         return Response(df)
+
+
+if __name__ == '__main__':
+    import doctest
+
+    doctest.testmod()
