@@ -44,7 +44,7 @@ export default {
     },
     fetchData() {
       const api = new SongLyricsPopularitySlap.DefaultApi();
-      api.slapFlaskPublicControllersSongsGetSongs({page: this.$route.query.page}, (error, data) => {
+      api.slapFlaskPublicControllersSongsGetSongs({ ...this.$route.query }, (error, data) => {
         if (error) {
           console.error(error);
         } else {

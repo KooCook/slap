@@ -23,6 +23,12 @@ paths:
         schema:
           type: integer
         example: 1
+      - name: title
+        required: false
+        in: query
+        description: The partial title of this song
+        schema:
+          type: string
     get:
       description: Returns all songs
       operationId: slap_flask.public.controllers.songs.get_songs
