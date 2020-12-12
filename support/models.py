@@ -1,13 +1,14 @@
+from dataclasses import dataclass, field
 from typing import List
 
 
+@dataclass
 class SongModel:
-    def __init__(self):
-        self.name = ""
-        self.lyrics = ""
-        self.genres = []
-        self.artist_names: List[str] = []
-        self.compressibility = 0
-        self.spotify_popularity = 0
-        self.spotify_id = ''
-        self.spotify_album_id = ''
+    name: str = ''
+    lyrics: str = ''
+    genres: list = field(default_factory=list)
+    artist_names: List[str] = field(default_factory=list)
+    compressibility: int = 0
+    spotify_popularity: int = 0
+    spotify_id: str = ''
+    spotify_album_id: str = ''
