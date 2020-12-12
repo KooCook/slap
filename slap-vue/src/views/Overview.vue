@@ -15,7 +15,7 @@
 
 <script>
   import { Plotly } from 'vue-plotly'
-  const SongLyricsPopularitySlap = require("slap-client");
+  const SongLyricsPopularitySlap = require("@/modules/slap-client");
 
   let trace1 = {
     x: [1, 2, 3, 4, 5],

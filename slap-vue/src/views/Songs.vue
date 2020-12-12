@@ -24,7 +24,7 @@
 </template>
 
 <script>
-const SongLyricsPopularitySlap = require("slap-client");
+const SongLyricsPopularitySlap = require("@/modules/slap-client");
 
 export default {
   data() {

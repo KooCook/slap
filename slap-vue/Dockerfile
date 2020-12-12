@@ -3,7 +3,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY ./ .
-COPY ./node_modules/slap-client node_modules/slap-client
+# ADD ./node_modules/slap-client ./node_modules
+# RUN ls ./node_modules/slap-client
 RUN npm run build
 
 FROM nginx as production-stage
