@@ -14,6 +14,7 @@ from dirs import ROOT_DIR
 from dj_database_url import parse as db_url
 from pathlib import Path
 
+from .celery import *
 from .router import Router
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'app.apps.SlapDjAppConfig',
+    # 'channels'
     # 'slap_dj.app.apps.SlapDjAppConfig',
 ]
 
@@ -138,3 +140,4 @@ YOUTUBE_DATA_API_KEYS = config("YOUTUBE_DATA_API_KEYS", cast=Csv(), default="")
 GENIUS_SECRET = config("GENIUS_SECRET", default="")
 SPOTIFY_CLIENT_ID = config("SPOTIFY_CLIENT_ID", default="")
 SPOTIFY_CLIENT_SECRET = config("SPOTIFY_CLIENT_SECRET", default="")
+# ASGI_APPLICATION = "slap_dj.asgi.application"
