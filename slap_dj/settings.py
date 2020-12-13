@@ -9,7 +9,7 @@ MODULE_NAME = "slap_flask"
 OPENAPI_OPS_MODULE_NAME = "slap_flask.public.controllers"
 RELATIVE_DIR = ROOT_DIR / MODULE_NAME
 
-OPENAPI_SPECS_PATH = RELATIVE_DIR / config("OPENAPI_SPECS_PATH", default="openapi.yaml")
+OPENAPI_SPECS_PATH = RELATIVE_DIR / config("OPENAPI_SPECS_PATH", default=ROOT_DIR / "openapi/slap-api-server.yaml")
 DATABASE_URI = config("DATABASE_URI", default="sqlite:///slap.sqlite")
 HOST = config("HOST", default='127.0.0.1')
 PORT = config("PORT", cast=int, default=8080)

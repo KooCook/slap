@@ -6,8 +6,8 @@ import lyricsgenius as lg
 from nltk import TweetTokenizer
 
 from settings import GENIUS_SECRET
-from support.similarity_matrix import TokenizedSongLyrics
-from utils.iter import remove_consecs
+from app.support.similarity_matrix import TokenizedSongLyrics
+from app.utils.iter import remove_consecs
 
 genius_client = lg.Genius(GENIUS_SECRET)
 

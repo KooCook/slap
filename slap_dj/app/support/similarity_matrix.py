@@ -1,17 +1,12 @@
-import functools
 import random
 import string
 from itertools import product
-import re
 from typing import List, Dict
-
-from nltk import word_tokenize
 # from nltk.tokenize import WhitespaceTokenizer
 import numpy as np
 
-from repetition import get_bow_dataframe, get_words
-from support.init.nltk import initialize_nltk
-from nltk.tokenize import TweetTokenizer
+from app.support.repetition import get_bow_dataframe, get_words
+from app.support.init.nltk import initialize_nltk
 
 initialize_nltk()
 

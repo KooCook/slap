@@ -21,7 +21,7 @@ def read_billboard_yearly() -> List[SongModel]:
     for ele in list(dct.items()):
         fields = ele[1]
         try:
-            s = SongGen.search_one(title=fields['title'], artists__name=fields['artist'])
+            s = SongGen.retrieve_cached_song(title=fields['title'], artists__name=fields['artist'])
             if s:
                 BillboardYearEndEntry.from_dict(fields, s).save()
         except Exception as e:

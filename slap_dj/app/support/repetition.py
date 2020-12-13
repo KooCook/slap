@@ -5,7 +5,7 @@ from operator import itemgetter
 import pandas as pd
 from scipy.optimize import curve_fit
 
-from utils.misc import depreciated
+from app.utils.misc import depreciated
 
 
 def calculate_repetition(text: str, method: str = 'DEFLATE') -> float:

@@ -2,12 +2,11 @@ import random
 from typing import List
 
 from django.db.models import Max
-from rest_framework import schemas, filters
-from rest_framework.schemas.openapi import AutoSchema
+from rest_framework import filters
 
-from services.genius import tokenize_words
-from support.init.nltk import initialize_nltk
-from ..model_generator import SongGen
+from app.services.genius import tokenize_words
+from app.support.init.nltk import initialize_nltk
+from ..model_generator import retrieve_cached_song
 
 initialize_nltk()
 from nltk.stem import SnowballStemmer
@@ -16,13 +15,12 @@ from rest_framework import viewsets
 from rest_framework.compat import coreapi
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.schemas import ManualSchema, openapi as openapi_schema
 
 from ..mixins import PaginatedViewMixin
 from ..models import Song, Artist, Genre
 from ..models.word import WordCache
 from ..serializers import SongSerializer, GenreSerializer, WordOccurrenceSerializer
-from ..support import LargeResultsSetPagination
+from ..support.pagination import LargeResultsSetPagination
 
 ps = SnowballStemmer('english')
 
@@ -135,5 +133,5 @@ class WordView(APIView):
     A list of words in the given song lyrics
     """
     def get(self, request, song_id: str):
-        s = SongGen.search_one(pk=song_id)
+        s = retrieve_cached_song(pk=song_id)
         return Response({'words': tokenize_words(s.lyrics)})

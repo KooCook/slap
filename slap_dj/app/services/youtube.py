@@ -18,13 +18,12 @@ import requests
 
 from dirs import ROOT_DIR
 from settings import YOUTUBE_DATA_API_KEYS
-from slap_dj.app.init import start_django_lite
-
+from app.init import start_django_lite
 
 start_django_lite()
 
 from slap_flask.models.searchers import SongSearcher
-from slap_dj.app.models import YouTubeVideo, Song
+from app.models import YouTubeVideo, Song
 
 scopes = ["https://www.googleapis.com/auth/youtube.readonly"]
 

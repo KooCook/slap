@@ -4,7 +4,7 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
 from settings import SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET
-from support.models import SongModel
+from app.support.models import SongModel
 
 sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTIFY_CLIENT_ID,
                                                            client_secret=SPOTIFY_CLIENT_SECRET))

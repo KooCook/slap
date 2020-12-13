@@ -5,3 +5,18 @@ django-cors-headers
 djangorestframework-csv
 drf-nested-routers
 django_pandas
+coreapi
+channels
+celery==5.0.2
+python-decouple
+mysqlclient
+pandas
+scipy
+nltk
+plotly
+
+# Scraper and API libraries
+lyricsgenius
+spotipy
+pytrends
+

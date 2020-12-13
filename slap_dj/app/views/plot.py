@@ -8,8 +8,9 @@ from rest_framework.settings import api_settings
 from rest_framework.views import APIView
 from rest_framework_csv.renderers import CSVRenderer
 
-from support.similarity_matrix import get_similarity_matrix_map_v2
-from ..model_generator import SongGen
+from app.support.lyric_metrics import get_lyrics_frequency_df
+from app.support.similarity_matrix import get_similarity_matrix_map_v2
+from ..model_generator import retrieve_cached_song
 from app.support.plotter import get_fitted_line_params
 
 from ..models import Song
@@ -17,10 +18,6 @@ from ..models import Song
 
 class RepetitionPopularityPlotView(APIView):
     """
-    View to list all users in the system.
-
-    * Requires token authentication.
-    * Only admin users are able to access this view.
     """
 
     def each_item(self, x):
@@ -38,9 +35,6 @@ class RepetitionPopularityPlotView(APIView):
         return x.values[0]
 
     def get(self, request):
-        """
-        Return a list of all users.
-        """
         rep_facet = self.request.query_params.get('rep_facet', 'compressibility')
         pop_facet = self.request.query_params.get('pop_facet', 'spotify_popularity')
         if pop_facet == 'youtube_view':
@@ -54,15 +48,11 @@ class RepetitionPopularityPlotView(APIView):
         y_dat = df[pop_facet]
         x_line, y_line, r_val = get_fitted_line_params(x_dat, y_dat)
         return Response({'data':
-                             {
-                                 'text': df[text_label], 'x': x_dat, 'y': y_dat,
-                                 'type': 'scatter'
-                             },
-        'line_data': {
-            'x': x_line,
-            'y': y_line,
-            'r_val': r_val
-        }})
+                             {'text': df[text_label], 'x': x_dat, 'y': y_dat,
+                              'type': 'scatter'},
+                         'line_data': {
+                             'x': x_line, 'y': y_line, 'r_val': r_val
+                         }})
 
 
 class RepetitionMatrixV2Renderer(CSVRenderer):
@@ -70,20 +60,25 @@ class RepetitionMatrixV2Renderer(CSVRenderer):
 
 
 class RepetitionMatrixPlotView(APIView):
-    """
-    View to list all users in the system.
-
-    * Requires token authentication.
-    * Only admin users are able to access this view.
-    """
     renderer_classes = tuple(chain((RepetitionMatrixV2Renderer,), api_settings.DEFAULT_RENDERER_CLASSES))
 
     def get(self, request, song_id: str):
-        s = SongGen.search_one(pk=song_id)
+        s = retrieve_cached_song(pk=song_id)
         content = [{
             'x': row[0],
             'y': row[1],
             'word': row[2],
             'color': row[3],
         } for row in get_similarity_matrix_map_v2(s.words)]
+        return Response(content)
+
+
+class SongWordFrequencyPlotView(APIView):
+    def get(self, request, song_id: str):
+        s = retrieve_cached_song(pk=song_id)
+        df = get_lyrics_frequency_df(s.lyrics)
+        content = {
+            'x': df['words'],
+            'y': df['count']
+        }
         return Response(content)

@@ -1,6 +1,6 @@
 import unittest
 
-from services import genius
+from app.services import genius
 from dirs import ROOT_DIR
 
 

@@ -1,6 +1,6 @@
 from django.db import models
 
-from repetition import get_bow_dataframe
+from app.support.repetition import get_bow_dataframe
 from .base import Song
 
 

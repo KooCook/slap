@@ -3,11 +3,11 @@ import pandas
 from django.core.exceptions import ObjectDoesNotExist
 from scipy import special
 
-from slap_dj.app.init import start_django_lite
+from app.init import start_django_lite
 
 start_django_lite()
 
-from slap_dj.app.models import Song
+from app.models import Song
 
 
 def popularity_indicator(view_count: int):

@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 from decouple import config, Csv
-from dirs import ROOT_DIR
 from dj_database_url import parse as db_url
 from pathlib import Path
 
