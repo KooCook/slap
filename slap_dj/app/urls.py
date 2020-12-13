@@ -4,10 +4,10 @@ from rest_framework import routers
 from . import views
 from .views import WordOccurrenceView, WordInLyricsCorrectnessView, WordRandomizationView, WordView
 from .views.kpop import KpopGenreView
-from .views.plot import RepetitionPopularityPlotView, RepetitionMatrixPlotView
+from .views.plot import RepetitionPopularityPlotView, RepetitionMatrixPlotView, SongWordFrequencyPlotView
 
 router = routers.DefaultRouter()
-router.register(r'songs', views.SongViewSet)
+router.register(r'songs', views.SongViewSet, basename='Song')
 router.register(r'genres', views.GenreViewSet)
 # router.register(r'artist', views.ArtistViewSet)
 
@@ -19,6 +19,7 @@ urlpatterns = [
     path('api/plot/rep-pop', RepetitionPopularityPlotView.as_view()),
     path('api/songs/words/randomize', WordRandomizationView.as_view()),
     path('api/songs/<song_id>/words', WordView.as_view()),
+    path('api/songs/<song_id>/word-frequency/plot', SongWordFrequencyPlotView.as_view()),
     path('api/songs/kpop', KpopGenreView.as_view()),
     path('api/word-occur', WordOccurrenceView.as_view()),
     path('api/check/songs/word-in-lyrics', WordInLyricsCorrectnessView.as_view()),
