@@ -23,7 +23,7 @@ class Song(models.Model):
     title = models.CharField(max_length=289)
     lyrics = models.TextField()
     compressibility = models.FloatField()
-    artists = models.ManyToManyField(Artist, through='ArtistInSong')
+    artists = models.ManyToManyField('Artist', through='ArtistInSong')
     genres = models.ManyToManyField(Genre)
     spotify_popularity = models.IntegerField()
     objects = DataFrameManager()
