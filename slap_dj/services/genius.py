@@ -17,10 +17,6 @@ def search_for_song_lyrics(song_name: str, artist_name: str) -> str:
     return song.lyrics
 
 
-def _f(x, y):
-    return x + y.tokenized
-
-
 def tokenize_words(raw_lyrics: str) -> List[str]:
     all_sections = []
     m = re.findall(r'\[(.+)\][ \n]+([^\[]+)', raw_lyrics)
@@ -28,7 +24,7 @@ def tokenize_words(raw_lyrics: str) -> List[str]:
         section, sub_lyrics = i
         tk = TokenizedSongLyrics(section, sub_lyrics)
         all_sections.append(tk)
-    return functools.reduce(_f, all_sections, [])
+    return functools.reduce(lambda x, y: x + y.tokenized, all_sections, [])
 
 
 def tokenize_words_simple(raw_words: str) -> List[str]:
