@@ -6,8 +6,28 @@
             <small>{{ song.genres.join(", ") }}</small>
         </div>
         <div class="container">
-            <h4>Metrics</h4>
-            <Plotly :data="frequency.data" :layout="frequency.layout" :display-mode-bar="false"></Plotly>
+            <h4>Word Visualization</h4>
+            <div class="row">
+                <div class="col">
+                    <h5>Word Frequency in the lyrics</h5>
+                    <Plotly :data="frequency.data" :layout="frequency.layout" :display-mode-bar="false"></Plotly>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6" style="height: 50vh">
+                    <h5>Word Cloud</h5>
+                    <small>of the English words in this song's lyrics</small>
+                    <vue-word-cloud
+                            style="height: 90%; width: 100%"
+                            :words="wc_bow"
+                            :color="([, weight]) => weight > 10 ? 'DeepPink' : weight > 5 ? 'RoyalBlue' : 'Indigo'"
+                            font-family="Avenir"
+                    />
+                </div>
+                <div class="col-6">
+                    <h5>[Another viz]</h5>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-6">
                     <h5>Lyrics</h5>
@@ -45,6 +65,7 @@
         },
         data() {
             return {
+                wc_bow: [],
                 song: {
                     title: "",
                     artists: []
@@ -58,7 +79,7 @@
                         yaxis: {
                             title: 'Word count'
                         },
-                        title:'Word Frequency in lyrics'
+                        // title:'Word Frequency in lyrics'
                     }
                 }
             }
@@ -70,6 +91,13 @@
             fetchData() {
                 const api = new SongLyricsPopularitySlap.DefaultApi();
                 const songId = this.$route.params.id
+                api.listWordFrequencys(songId, {vizFormat: 'tuple'}, (error, data) => {
+                    if (error) {
+                        console.error(error);
+                    } else {
+                        this.wc_bow = data
+                    }
+                })
                 api.retrieveSong(songId, (error, data) => {
                     if (error) {
                         console.error(error);
@@ -225,7 +253,7 @@
                         const csv_data = data
                         d3Gen(csv_data)
                     }})
-                api.listSongWordFrequencyPlots(songId, (error, data) => {
+                api.listWordFrequencys(songId, {vizFormat: 'plotly'}, (error, data) => {
                     if (error) {
                         console.error(error);
                     } else {

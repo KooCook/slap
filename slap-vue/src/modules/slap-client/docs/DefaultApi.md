@@ -5,6 +5,7 @@ All URIs are relative to *http://localhost:8000/api*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**listSongWordFrequencyPlots**](DefaultApi.md#listSongWordFrequencyPlots) | **GET** /songs/{song_id}/word-frequency/plot | 
+[**listWordFrequencys**](DefaultApi.md#listWordFrequencys) | **GET** /songs/{song_id}/word-frequency | 
 [**listWordRandomizations**](DefaultApi.md#listWordRandomizations) | **GET** /songs/words/randomize | 
 [**listWords**](DefaultApi.md#listWords) | **GET** /songs/{song_id}/words | 
 [**retrieveRepetitionMatrixPlot**](DefaultApi.md#retrieveRepetitionMatrixPlot) | **GET** /plot/rep-matrix/{song_id} | 
@@ -46,6 +47,53 @@ apiInstance.listSongWordFrequencyPlots(songId, (error, data, response) => {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **songId** | **String**|  | 
+
+### Return type
+
+**Object**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+
+## listWordFrequencys
+
+> Object listWordFrequencys(songId, opts)
+
+
+
+### Example
+
+```javascript
+import SlapClient from 'slap-client';
+
+let apiInstance = new SlapClient.DefaultApi();
+let songId = "songId_example"; // String | 
+let opts = {
+  'vizFormat': "vizFormat_example" // String | The selected data format for visualization
+};
+apiInstance.listWordFrequencys(songId, opts, (error, data, response) => {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+});
+```
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **songId** | **String**|  | 
+ **vizFormat** | **String**| The selected data format for visualization | [optional] 
 
 ### Return type
 

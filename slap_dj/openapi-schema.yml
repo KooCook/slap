@@ -24,6 +24,8 @@ paths:
         required: false
         in: query
         description: The partial title of this song
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -66,6 +68,8 @@ paths:
         required: false
         in: query
         description: The partial title of this song
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -142,12 +146,7 @@ paths:
   /api/plot/rep-matrix/{song_id}:
     get:
       operationId: retrieveRepetitionMatrixPlot
-      description: 'View to list all users in the system.
-
-
-        * Requires token authentication.
-
-        * Only admin users are able to access this view.'
+      description: ''
       parameters:
       - name: song_id
         in: path
@@ -168,7 +167,7 @@ paths:
   /api/plot/rep-pop:
     get:
       operationId: listRepetitionPopularityPlots
-      description: Return a list of all users.
+      description: ''
       parameters: []
       responses:
         '200':
@@ -204,6 +203,33 @@ paths:
         in: path
         required: true
         description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+          description: ''
+      tags:
+      - api
+  /api/songs/{song_id}/word-frequency:
+    get:
+      operationId: listWordFrequencys
+      description: ''
+      parameters:
+      - name: song_id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: viz_format
+        required: false
+        in: query
+        description: The selected data format for visualization
         schema:
           type: string
       responses:

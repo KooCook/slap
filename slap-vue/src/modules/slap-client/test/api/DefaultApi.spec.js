@@ -58,6 +58,16 @@
         done();
       });
     });
+    describe('listWordFrequencys', function() {
+      it('should call listWordFrequencys successfully', function(done) {
+        //uncomment below and update the code to test listWordFrequencys
+        //instance.listWordFrequencys(function(error) {
+        //  if (error) throw error;
+        //expect().to.be();
+        //});
+        done();
+      });
+    });
     describe('listWordRandomizations', function() {
       it('should call listWordRandomizations successfully', function(done) {
         //uncomment below and update the code to test listWordRandomizations

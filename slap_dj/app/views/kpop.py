@@ -23,13 +23,6 @@ class KpopGenreView(APIView):
         return Response(df)
 
 
-class KpopWordCloudPlotView(APIView):
-    def get(self, request, song_id: str):
-        get_bow_dataframe()
-
-        return Response(content)
-
-
 if __name__ == '__main__':
     import doctest
 

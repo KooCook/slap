@@ -83,6 +83,51 @@ export default class DefaultApi {
     }
 
     /**
+     * Callback function to receive the result of the listWordFrequencys operation.
+     * @callback module:api/DefaultApi~listWordFrequencysCallback
+     * @param {String} error Error message, if any.
+     * @param {Object} data The data returned by the service call.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * @param {String} songId 
+     * @param {Object} opts Optional parameters
+     * @param {String} opts.vizFormat The selected data format for visualization
+     * @param {module:api/DefaultApi~listWordFrequencysCallback} callback The callback function, accepting three arguments: error, data, response
+     * data is of type: {@link Object}
+     */
+    listWordFrequencys(songId, opts, callback) {
+      opts = opts || {};
+      let postBody = null;
+      // verify the required parameter 'songId' is set
+      if (songId === undefined || songId === null) {
+        throw new Error("Missing the required parameter 'songId' when calling listWordFrequencys");
+      }
+
+      let pathParams = {
+        'song_id': songId
+      };
+      let queryParams = {
+        'viz_format': opts['vizFormat']
+      };
+      let headerParams = {
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = [];
+      let accepts = ['application/json'];
+      let returnType = Object;
+      return this.apiClient.callApi(
+        '/songs/{song_id}/word-frequency', 'GET',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
      * Callback function to receive the result of the listWordRandomizations operation.
      * @callback module:api/DefaultApi~listWordRandomizationsCallback
      * @param {String} error Error message, if any.

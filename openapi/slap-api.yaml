@@ -132,6 +132,30 @@ paths:
                     items:
                       type: string
           description: ''
+  /songs/{song_id}/word-frequency:
+    get:
+      operationId: listWordFrequencys
+      description: ''
+      parameters:
+        - name: song_id
+          in: path
+          required: true
+          description: ''
+          schema:
+            type: string
+        - name: viz_format
+          required: false
+          in: query
+          description: The selected data format for visualization
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+          description: ''
   /songs/{song_id}/word-frequency/plot:
     get:
       operationId: listSongWordFrequencyPlots
