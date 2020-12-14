@@ -14,6 +14,7 @@ pandas
 scipy
 nltk
 plotly
+attrs
 
 # Scraper and API libraries
 lyricsgenius

@@ -1,7 +1,7 @@
 import warnings
 from functools import wraps
 from types import FunctionType
-from typing import Callable
+from typing import Callable, Dict, Any
 
 
 def depreciated(func: Callable = None, *, version: str = None, reason: str = None):
@@ -40,3 +40,13 @@ def depreciated(func: Callable = None, *, version: str = None, reason: str = Non
             return func(*args, **kwargs)
         return wrapper
     return decorator
+
+
+def kwds(**kwds) -> Dict[str, Any]:
+    """catch kwds"""
+    return kwds
+
+
+def args(*args) -> tuple:
+    """catch args"""
+    return args
