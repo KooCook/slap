@@ -1,7 +1,7 @@
 import unittest
 from doctest import DocTestSuite
 
-from app.utils import nlp
+from utils import nlp
 
 
 def load_tests(loader: unittest.TestLoader, tests: unittest.TestSuite, ignore) -> unittest.TestSuite:

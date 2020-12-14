@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from app.models import Song
 
 from app.support.repetition import get_bow_dataframe
-from app.utils.nlp import extract_eng_words
+from utils.nlp import extract_eng_words
 
 
 class KpopGenreView(APIView):
