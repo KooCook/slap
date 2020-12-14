@@ -1,16 +1,13 @@
 from itertools import chain, tee, zip_longest
-from typing import Any, Iterable, Tuple, TypeVar, Union, overload
+from typing import Iterable, Tuple, TypeVar, Union
 
 __all__ = ['pairwise', 'remove_consecs']
 
-T = TypeVar('T')
+_T = TypeVar('_T')
+_S = TypeVar('_S')
 
 
-@overload
-def pairwise(iterable: Iterable[T]) -> Iterable[Tuple[T, T]]: ...
-@overload
-def pairwise(iterable: Iterable[T], fillvalue: Any) -> Iterable[Tuple[T, T]]: ...
-def pairwise(iterable: Iterable[T], fillvalue: Any = None) -> Iterable[Tuple[T, Union[T, Any]]]:
+def pairwise(iterable: Iterable[_T], fillvalue: _S = None) -> Iterable[Tuple[_T, Union[_T, _S]]]:
     """
     Returns the iterable pairwise.
     If `fillvalue` is not provided, does not return last value.
@@ -30,11 +27,7 @@ def pairwise(iterable: Iterable[T], fillvalue: Any = None) -> Iterable[Tuple[T, 
     return zip(a, b)
 
 
-@overload
-def remove_consecs(lst: Iterable[T]) -> Iterable[T]: ...
-@overload
-def remove_consecs(lst: Iterable[T], o: T) -> Iterable[T]: ...
-def remove_consecs(lst: Iterable[T], o: T = None) -> Iterable[T]:
+def remove_consecs(lst: Iterable[_T], o: _T = None) -> Iterable[_T]:
     """Returns a list with the consecutive 'o' (if specified) removed.
 
     Args:
