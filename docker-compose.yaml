@@ -7,7 +7,7 @@ services:
     ports:
       - "8080:80"
     depends_on:
-      - slap-dj-backend
+      - slap-backend-dj
   slap-backend-dj:
     container_name: slap-backend-dj
     build:
