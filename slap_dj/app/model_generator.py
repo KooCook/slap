@@ -2,9 +2,9 @@ from typing import Union
 
 from django.core.exceptions import ObjectDoesNotExist
 
-from app.services.main import generate_song_to_model
+from services.main import generate_song_to_model
 from .models import Song, Artist, SpotifyTrack, Genre, ArtistInSong
-from app.support.models import SongModel
+from contract_models import SongModel
 
 
 def retrieve_cached_song(title: str = None, pk: str = None, **kwargs) -> Union[Song, None]:

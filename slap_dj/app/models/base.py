@@ -4,7 +4,7 @@ from django.db import models
 from django_pandas.managers import DataFrameManager
 
 from app.support.repetition import calculate_repetition
-from app.services.genius import remove_sections, tokenize_words
+from services.genius import remove_sections, tokenize_words
 
 
 __all__ = ['Artist', 'Genre', 'Song', 'YouTubeVideo', 'BillboardYearEndEntry', 'SpotifyTrack', 'SpotifySongWeeklyStream']

@@ -4,7 +4,7 @@ import plotly.express as px
 from nltk import collections
 from plotly.graph_objs import Figure
 
-from app.services.genius import tokenize_words
+from services.genius import tokenize_words
 pd.options.plotting.backend = "plotly"
 lyrics = """
 [Intro]

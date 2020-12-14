@@ -12,7 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from nltk import collections
 from plotly import graph_objs as go
 from plotly.subplots import make_subplots
-from app.services.genius import tokenize_words_simple
+from services.genius import tokenize_words_simple
 
 from app.models import Genre, Song
 

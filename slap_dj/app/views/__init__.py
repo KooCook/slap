@@ -4,7 +4,7 @@ from typing import List
 from django.db.models import Max
 from rest_framework import filters
 
-from app.services.genius import tokenize_words
+from services.genius import tokenize_words
 from app.support.init.nltk import initialize_nltk
 from ..model_generator import retrieve_cached_song
 

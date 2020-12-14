@@ -1,7 +1,7 @@
 from app.support.repetition import calculate_repetition
 from .genius import search_for_song_lyrics, clean_lyrics
 from .spotify import search_for_song
-from app.support.models import SongModel
+from contract_models import SongModel
 
 
 def generate_song_to_model(song_name, song_artist) -> SongModel:
