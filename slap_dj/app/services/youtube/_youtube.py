@@ -7,7 +7,7 @@ import json
 import re
 import os
 import csv
-from typing import Union, List
+from typing import Union, List, Iterable
 
 import googleapiclient.discovery
 import googleapiclient.errors
@@ -37,6 +37,7 @@ CATEGORY_ID = 10
 def get_suitable_api_key() -> str:
     return API_KEYS[CURRENT_KEY_INDEX]
 
+
 # Disable OAuthlib's HTTPS verification when running locally.
 # *DO NOT* leave this option enabled in production.
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
@@ -57,7 +58,7 @@ def main():
         for i in range(2006, 2021):
             request = youtube.search().list(part="snippet", videoCategoryId=10, type='video', order='viewCount',
                                             publishedAfter=f"{i}-01-01T00:00:00Z",
-                                            publishedBefore=f"{i+1}-01-01T00:00:00Z",
+                                            publishedBefore=f"{i + 1}-01-01T00:00:00Z",
                                             regionCode=REGION_CODE,
                                             maxResults=200)
             response = request.execute()
@@ -73,23 +74,35 @@ FILE_PATH = str(ROOT_DIR / f'tests/data/youtube/youtube_most_pop_video_{REGION_C
 
 
 def get_youtube_video_by_ids(video_ids: Union[List[str], str]) -> List[dict]:
-    """
+    """Sends a request to YouTube endpoint: 'Videos: list'.
 
     Args:
         video_ids: A single id or multiple ids
 
     Returns:
 
+
+    References:
+        https://developers.google.com/youtube/v3/docs/videos/list
     """
-    if isinstance(video_ids, list):
-        v_ids = ",".join(video_ids)
+    if isinstance(video_ids, Iterable):
+        try:
+            v_ids = ",".join(video_ids)
+        except TypeError as e:
+            raise TypeError("'video_ids' must be Iterable[str].") from e
     elif isinstance(video_ids, str):
         v_ids = video_ids
     else:
-        raise ValueError("Error!")
-    response = requests.get('https://www.googleapis.com/youtube/v3/videos',
-                            {'part': 'statistics,snippet', 'videoCategoryId': CATEGORY_ID,
-                             'id': v_ids, 'maxResults': 1000, 'key': get_suitable_api_key()})
+        raise TypeError(f"'video_ids' must be Iterable[str] or a CSV str, not '{video_ids.__class__.__name__}'")
+    response = requests.get(
+        'https://www.googleapis.com/youtube/v3/videos', {
+            'part': 'statistics,snippet',
+            'videoCategoryId': CATEGORY_ID,
+            'id': v_ids,
+            'maxResults': 50,
+            'key': get_suitable_api_key()
+        }
+    )
     return response.json()['items'][0]
     # request = youtube.videos().list(part='statistics,snippet', videoCategoryId=CATEGORY_ID,
     #                                 id=v_ids, maxResults=1000)
@@ -128,7 +141,8 @@ def read_dumped_json_to_csv(region_code: str):
     with open(FILE_PATH, 'r') as f:
         s = f.read()
         lst = json.loads(s)
-        with open(ROOT_DIR / f'tests/data/youtube/api/youtube_videos_most_pop_{region_code}.csv', 'w', newline='') as csv_file:
+        with open(ROOT_DIR / f'tests/data/youtube/api/youtube_videos_most_pop_{region_code}.csv', 'w',
+                  newline='') as csv_file:
             writer = csv.writer(csv_file, quoting=csv.QUOTE_MINIMAL)
             writer.writerow(['id', 'title', 'publishedAt', 'channelId', 'channelTitle', 'viewCount',
                              'likeCount', 'dislikeCount', 'favoriteCount', 'commentCount', 'duration',
@@ -157,18 +171,6 @@ def read_youtube_csv(region_code: str, filename: str):
     print(df)
 
 
-def upsert_video(video_id: str, song: Song, **kwargs) -> YouTubeVideo:
-    try:
-        video = YouTubeVideo.objects.get(video_id=video_id)
-    except ObjectDoesNotExist:
-        video = YouTubeVideo(video_id=video_id, song=song, **kwargs)
-        try:
-            video.save()
-        except IntegrityError:
-            print(f'{video.title} {song.title}')
-    return video
-
-
 def populate_insert_to_db(filename: str):
     with open(filename) as csvfile:
         reader = csv.DictReader(csvfile)
@@ -191,12 +193,19 @@ def populate_insert_to_db(filename: str):
             default_lang = u['snippet'].get('defaultAudioLanguage', u['snippet'].get('defaultLanguage', ""))
             try:
                 song = SongSearcher.search_one(song_title, artists__name=artist)
-                video = upsert_video(video_id, song,
-                                     title=title, view_count=view_count,
-                                     published_at=published_at,
-                                     like_count=like_count, dislike_count=dislike_count,
-                                     favorite_count=favorite_count, channel_title=channel_title,
-                                     comment_count=comment_count, default_language=default_lang)
+                video = YouTubeVideo.upsert_video(
+                    video_id,
+                    song,
+                    title=title,
+                    view_count=view_count,
+                    published_at=published_at,
+                    like_count=like_count,
+                    dislike_count=dislike_count,
+                    favorite_count=favorite_count,
+                    channel_title=channel_title,
+                    comment_count=comment_count,
+                    default_language=default_lang,
+                )
                 print(f'Done {video.title}')
             except Exception as e:
                 print(f'Broken {title}')

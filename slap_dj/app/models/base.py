@@ -6,6 +6,9 @@ from django_pandas.managers import DataFrameManager
 from app.support.repetition import calculate_repetition
 from services.genius import remove_sections, tokenize_words
 
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
+
 
 __all__ = ['Genre', 'Song', 'YouTubeVideo',
            'BillboardYearEndEntry', 'SpotifyTrack', 'SpotifySongWeeklyStream']
@@ -65,6 +68,18 @@ class YouTubeVideo(models.Model):
     default_language = models.CharField(max_length=10, null=True)
     published_at = models.DateTimeField(null=True)
     channel_title = models.CharField(max_length=255, null=True)
+
+    @classmethod
+    def upsert_video(cls, video_id: str, song: Song, **kwargs) -> 'YouTubeVideo':
+        try:
+            video = YouTubeVideo.objects.get(video_id=video_id)
+        except ObjectDoesNotExist:
+            video = YouTubeVideo(video_id=video_id, song=song, **kwargs)
+            try:
+                video.save()
+            except IntegrityError:
+                print(f'{video.title} {song.title}')
+        return video
 
 
 class BillboardYearEndEntry(models.Model):
