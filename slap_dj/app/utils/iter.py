@@ -44,4 +44,4 @@ def remove_consecs(lst: Iterable[T], o: T = None) -> Iterable[T]:
     """
     if o is None:
         raise AssertionError
-    return chain((curr for curr, nxt in pairwise(lst) if not (curr == nxt == o)), lst[-1])
+    return chain((curr for curr, nxt in pairwise(lst, None) if not (curr == nxt == o)))
