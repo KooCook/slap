@@ -37,7 +37,7 @@
         type: 'bar'
     };
 
-    const SongLyricsPopularitySlap = require("@/modules/slap-client");
+    const SongLyricsPopularitySlap = require("slap-client");
     export default {
         name: "SongView",
         components: {

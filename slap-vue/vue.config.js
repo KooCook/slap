@@ -1,18 +1,16 @@
 const path = require("path");
 
-function resolve (dir) {
-    return path.join(__dirname, dir)
-  }
+function resolve(dir) {
+  return path.join(__dirname, dir);
+}
 
 module.exports = {
-  configureWebpack: {
-    resolve: {
+  configureWebpack: (config) => {
+    config.resolve = {
       alias: {
-        "@": path.join(__dirname, "src/"),
+        ...config.resolve.alias,
+        "slap-client": resolve("src/modules/slap-client/src"),
       },
-    },
-  },
-  chainWebpack: (config) => {
-    config.resolve.alias.set("@", resolve("src"));
+    };
   },
 };
