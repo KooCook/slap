@@ -1,6 +1,6 @@
 import unittest
 
-from app.services import genius
+from services import genius
 from dirs import ROOT_DIR
 
 TEST_DATA_DIR = ROOT_DIR / 'testdata'
