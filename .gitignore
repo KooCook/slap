@@ -146,6 +146,6 @@ autogen/*
 .DS_Store
 
 # test output
-tests/actual/
+*/testdata/**/actual/
 
 celerybeat-schedule.db
