@@ -8,7 +8,7 @@ __all__ = ['Artist', 'Song']
 
 class ArtistInSong(models.Model):
 
-    class ArtistRole(models.TextChoices):
+    class Role(models.TextChoices):
         Primary = "primary"
         Secondary = "secondary"
         Collaborator = "collaborator"
@@ -16,4 +16,4 @@ class ArtistInSong(models.Model):
 
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
-    role = models.CharField(max_length=64, choices=ArtistRole.choices)
+    role = models.CharField(max_length=64, choices=Role.choices)

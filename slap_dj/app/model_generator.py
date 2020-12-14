@@ -47,5 +47,5 @@ def insert_song_from_model(song_model: SongModel) -> 'Song':
             genre.save()
         inst.genres.add(genre)
     for idx, artist in enumerate(artists):
-        ArtistInSong(artist=artist, song=inst, role='primary' if idx == 0 else 'secondary').save()
+        ArtistInSong(artist=artist, song=inst, role=ArtistInSong.Role.Primary.value if idx == 0 else ArtistInSong.Role.Secondary.value).save()
     return inst
