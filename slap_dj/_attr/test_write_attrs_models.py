@@ -17,7 +17,7 @@ class WriteAttrsModelsTestCase(unittest.TestCase):
             (f'    pageInfo: PageInfo = attr.ib(converter=_attr.c.from_dict(PageInfo), validator=[attr.validators.instance_of(PageInfo)])',
              kwds(attrib='pageInfo', cls=PageInfo, convert=True, validate=True)),
             (f'    items: List[VideoResource] = attr.ib(converter=_attr.c.iterate(_attr.c.from_dict(VideoResource)), validator=[attr.validators.deep_iterable(member_validator=attr.validators.instance_of(VideoResource), iterable_validator=attr.validators.instance_of(list))])',
-             kwds(attrib='pageInfo', cls=List['VideoResource'], convert=True, validate=True)),
+             kwds(attrib='items', cls=List['VideoResource'], convert=True, validate=True)),
             (f'    nextPageToken: str = attr.ib(default=None, validator=attr.validators.optional([attr.validators.instance_of(str)]))',
              kwds(attrib='nextPageToken', cls=str, convert=True, validate=True, optional=True)),
             (f'    prevPageToken: str = attr.ib(default=None, validator=attr.validators.optional([attr.validators.instance_of(str)]))',
