@@ -147,3 +147,5 @@ autogen/*
 
 # test output
 tests/actual/
+
+celerybeat-schedule.db
