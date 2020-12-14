@@ -7,14 +7,8 @@ from app.support.repetition import calculate_repetition
 from services.genius import remove_sections, tokenize_words
 
 
-__all__ = ['Artist', 'Genre', 'Song', 'YouTubeVideo', 'BillboardYearEndEntry', 'SpotifyTrack', 'SpotifySongWeeklyStream']
-
-
-class Artist(models.Model):
-    name = models.CharField(max_length=289)
-
-    def as_dict(self) -> dict:
-        return {'name': self.name}
+__all__ = ['Genre', 'Song', 'YouTubeVideo',
+           'BillboardYearEndEntry', 'SpotifyTrack', 'SpotifySongWeeklyStream']
 
 
 class Genre(models.Model):

@@ -1,9 +1,26 @@
 from django.db import models
 
-from .base import Artist, Song
+from services.wikidata import get_artist_akas
+from .base import Song
 
 
-__all__ = ['Artist', 'Song']
+__all__ = ['Artist', 'ArtistAkas', 'ArtistInSong']
+
+
+class Artist(models.Model):
+    name = models.CharField(max_length=289)
+
+    def as_dict(self) -> dict:
+        return {'name': self.name}
+
+    def generate_akas(self):
+        for akas in get_artist_akas(self.name):
+            ArtistAkas(artist=self, name=akas).save()
+
+
+class ArtistAkas(models.Model):
+    name = models.CharField(max_length=150, unique=True)
+    artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
 
 
 class ArtistInSong(models.Model):
