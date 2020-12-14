@@ -1,5 +1,3 @@
-from typing import List
-
 import pandas
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -7,25 +5,7 @@ from rest_framework.views import APIView
 from app.models import Song
 
 from app.support.repetition import get_bow_dataframe
-
-
-def is_english_word_alpha(word: str) -> bool:
-    """Returns True when `word` is an English word. False otherwise.
-
-    Args:
-        word: Any given word
-
-    Examples:
-        >>> is_english_word_alpha("English")
-        True
-        >>> is_english_word_alpha("영원한")
-        False
-    """
-    return word.upper() != word.lower()
-
-
-def extract_eng_words(words: List[str]) -> List[str]:
-    return list(filter(is_english_word_alpha, words))
+from app.utils.nlp import extract_eng_words
 
 
 class KpopGenreView(APIView):

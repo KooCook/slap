@@ -1,11 +1,11 @@
 import unittest
 from doctest import DocTestSuite
 
-from app.views import kpop
+from app.utils import nlp
 
 
 def load_tests(loader: unittest.TestLoader, tests: unittest.TestSuite, ignore) -> unittest.TestSuite:
-    modules_to_test = (kpop,)
+    modules_to_test = (nlp,)
     tests.addTests(map(DocTestSuite, modules_to_test))
     return tests
 
