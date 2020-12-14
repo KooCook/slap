@@ -9,6 +9,22 @@ from utils.str import camel_to_capwords
 path_to_converters = '_attr.c'
 path_to_validators = '_attr.v'
 
+template = """
+{
+  "kind": "youtube#videoListResponse",
+  "etag": etag,
+  "nextPageToken": string,
+  "prevPageToken": string,
+  "pageInfo": {
+    "totalResults": integer,
+    "resultsPerPage": integer
+  },
+  "items": [
+    video Resource
+  ]
+}
+""".strip()
+
 
 def write_attrib(attrib: str, cls: typing.Union[type, str], convert: bool = None, validate: bool = True, equal_to: typing.Any = None, optional: bool = False):
     if convert is None:
@@ -64,3 +80,35 @@ def write_attrib(attrib: str, cls: typing.Union[type, str], convert: bool = None
             val.append(f'{path_to_validators}.equal_to({repr(equal_to)})')
         kwargs.append(_base.format(val=', '.join(val)))
     return f"    {attrib}: {clsname} = attr.ib({', '.join(kwargs)})"
+
+
+def main():
+    tmp = yaml.load(template, Loader=yaml.FullLoader)
+    print(tmp)
+
+    lines = [
+        f'@attr.s',
+        f'class {camel_to_capwords(tmp["kind"].split("#")[1])}',
+    ]
+    for k, v in tmp.items():
+        if isinstance(v, str):
+            try:
+                t = {
+                    'string': str,
+                    'integer': int,
+                    'decimal': float,
+                }
+            except KeyError:
+                pass # DO STH
+        
+        write_attrib(k, )
+        f'     kind: str = attr.ib(validator=[attr.validators.instance_of(str), attr.v.equal_to("youtube#videoListResponse")])',
+        f'     etag: str = attr.ib(validator=[attr.validators.instance_of(str)])',
+        f'     pageInfo: PageInfo = attr.ib(converter=attr.c.from_dict(PageInfo), validator=[attr.validators.instance_of(PageInfo)])',
+        f'     items: List[VideoResource] = attr.ib()',
+        f'     nextPageToken: str = attr.ib(default=None, validator=attr.validators.optional(attr.validators.instance_of(str)))',
+        f'     prevPageToken: str = attr.ib(default=None, validator=attr.validators.optional(attr.validators.instance_of(str)))',
+    ]
+
+if __name__ == '__main__':
+    main()
