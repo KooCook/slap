@@ -1,0 +1,27 @@
+version: "3.7"
+services:
+  slap-frontend:
+    container_name: slap-frontend
+    build:
+      context: ./slap-vue
+    ports:
+      - "8080:80"
+    depends_on:
+      - slap-dj-backend
+  slap-backend-dj:
+    container_name: slap-backend-dj
+    build:
+      context: ./slap_dj
+    ports:
+      - "8000:8000"
+  slap-redis-backend:
+    image: redis
+    ports:
+      - "6379:6379"
+#
+#networks:
+#  slap-airflow:
+#volumes:
+#  airflow-engine:
+#  airflow-backend:
+# src/modules/slap-client
