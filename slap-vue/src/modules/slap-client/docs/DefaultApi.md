@@ -5,6 +5,7 @@ All URIs are relative to *http://localhost:8000/api*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**listSongWordFrequencyPlots**](DefaultApi.md#listSongWordFrequencyPlots) | **GET** /songs/{song_id}/word-frequency/plot | 
+[**listSwaggerSpecs**](DefaultApi.md#listSwaggerSpecs) | **GET** /swagger-specs | 
 [**listWordFrequencys**](DefaultApi.md#listWordFrequencys) | **GET** /songs/{song_id}/word-frequency | 
 [**listWordRandomizations**](DefaultApi.md#listWordRandomizations) | **GET** /songs/words/randomize | 
 [**listWords**](DefaultApi.md#listWords) | **GET** /songs/{song_id}/words | 
@@ -47,6 +48,45 @@ apiInstance.listSongWordFrequencyPlots(songId, (error, data, response) => {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **songId** | **String**|  | 
+
+### Return type
+
+**Object**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+
+## listSwaggerSpecs
+
+> Object listSwaggerSpecs()
+
+
+
+### Example
+
+```javascript
+import SlapClient from 'slap-client';
+
+let apiInstance = new SlapClient.DefaultApi();
+apiInstance.listSwaggerSpecs((error, data, response) => {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+});
+```
+
+### Parameters
+
+This endpoint does not need any parameter.
 
 ### Return type
 
@@ -537,8 +577,8 @@ import SlapClient from 'slap-client';
 
 let apiInstance = new SlapClient.DefaultApi();
 let opts = {
-  'popFacet': youtube_view, // Number | The page number
-  'repFacet': compressibility // Number | The page number
+  'popFacet': youtube_view, // String | The popularity facet
+  'repFacet': compressibility // String | The repetition facet
 };
 apiInstance.slapListRepetitionPopularityPlots(opts, (error, data, response) => {
   if (error) {
@@ -554,8 +594,8 @@ apiInstance.slapListRepetitionPopularityPlots(opts, (error, data, response) => {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **popFacet** | **Number**| The page number | [optional] 
- **repFacet** | **Number**| The page number | [optional] 
+ **popFacet** | **String**| The popularity facet | [optional] 
+ **repFacet** | **String**| The repetition facet | [optional] 
 
 ### Return type
 

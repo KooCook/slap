@@ -9,7 +9,7 @@ def generate_artists():
     Artist.generate_akas_all()
 
 
-def chain_kpop_songs(limit: int = 100):
+def chain_kpop_songs(limit: int = 1000):
     records: List = get_kpop_songs().to_dict('records')
     for record in records[:limit]:
         title = record['song_title']
@@ -20,6 +20,6 @@ def chain_kpop_songs(limit: int = 100):
             vid = record['video_id']
             YouTubeVideo.upsert_video(vid, s)
             print(f"done {title} - {record['performers']}")
-        except NameError:
-            print(f"Not found {title} - {record['performers']}")
+        except (NameError, TypeError, AttributeError):
+            print(f"Service retrieval error {title} - {record['performers']}")
 

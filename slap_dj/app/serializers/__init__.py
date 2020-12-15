@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from ..models import Song, Genre
+from ..models import Song, Genre, Artist
 from ..models.artists import ArtistInSong
 from ..models.word import WordCache
 
@@ -11,6 +11,13 @@ class ArtistInSongSerializer(serializers.ModelSerializer):
     class Meta:
         model = ArtistInSong
         fields = ['role', 'name']
+
+
+class ArtistSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Artist
+        fields = '__all__'
 
 
 class SongSerializer(serializers.ModelSerializer):

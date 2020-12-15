@@ -1,9 +1,15 @@
+import json
 import random
 from typing import List
 
+import yaml
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Max
+from django.shortcuts import render
 from rest_framework import filters
 from rest_framework.schemas.openapi import AutoSchema
+from rest_framework.schemas.views import SchemaView
 
 from services.genius import tokenize_words
 from app.support.init.nltk import initialize_nltk
@@ -22,10 +28,19 @@ from rest_framework.views import APIView
 from ..mixins import PaginatedViewMixin
 from ..models import Song, Artist, Genre
 from ..models.word import WordCache
-from ..serializers import SongSerializer, GenreSerializer, WordOccurrenceSerializer
+from ..serializers import SongSerializer, GenreSerializer, WordOccurrenceSerializer, ArtistSerializer
 from ..support.pagination import LargeResultsSetPagination
 
 ps = SnowballStemmer('english')
+
+
+def swagger_specs(request):
+    if hasattr(settings, 'SWAGGER_YAML_FILE'):
+        file = open(settings.SWAGGER_YAML_FILE)
+        spec = yaml.load(file.read())
+        return render(request, template_name="swagger-ui.html", context={'data': json.dumps(spec)})
+    else:
+        raise ImproperlyConfigured('You should define SWAGGER_YAML_FILE in your settings')
 
 
 class SongViewSetParams(filters.BaseFilterBackend):
@@ -68,6 +83,9 @@ class ArtistViewSet(viewsets.ModelViewSet):
     An API endpoint that allows artists to be viewed.
     """
     queryset = Artist.objects.all()
+    serializer_class = ArtistSerializer
+    pagination_class = LargeResultsSetPagination
+    http_method_names = ('get', )
 
 
 class GenreViewSet(viewsets.ModelViewSet):
@@ -198,3 +216,13 @@ class WordView(APIView):
     def get(self, request, song_id: str):
         s = retrieve_cached_song(pk=song_id)
         return Response({'words': tokenize_words(s.lyrics)})
+
+
+class SwaggerSpecsView(APIView):
+    def get(self, request):
+        if hasattr(settings, 'SWAGGER_YAML_FILE'):
+            file = open(settings.SWAGGER_YAML_FILE)
+            spec = yaml.load(file.read())
+            return Response(spec)
+        else:
+            raise ImproperlyConfigured('You should define SWAGGER_YAML_FILE in your settings')

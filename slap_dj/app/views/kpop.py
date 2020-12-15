@@ -8,7 +8,7 @@ from app.support.repetition import get_bow_dataframe
 from utils.nlp import extract_eng_words
 
 
-class KpopGenreView(APIView):
+class KPopGenreView(APIView):
     def get(self, request):
         kpop_songs = Song.objects.filter(genres__name='k-pop')
         df: pandas.DataFrame = kpop_songs.to_dataframe()

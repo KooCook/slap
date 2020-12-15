@@ -143,6 +143,70 @@ paths:
           description: ''
       tags:
       - api
+  /api/artists/:
+    get:
+      operationId: listArtists
+      description: An API endpoint that allows artists to be viewed.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 123
+                  next:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?page=4
+                  previous:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?page=2
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Artist'
+          description: ''
+      tags:
+      - api
+  /api/artists/{id}/:
+    get:
+      operationId: retrieveArtist
+      description: An API endpoint that allows artists to be viewed.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this artist.
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Artist'
+          description: ''
+      tags:
+      - api
   /api/plot/rep-matrix/{song_id}:
     get:
       operationId: retrieveRepetitionMatrixPlot
@@ -232,6 +296,12 @@ paths:
         description: The selected data format for visualization
         schema:
           type: string
+      - name: lang
+        required: false
+        in: query
+        description: ''
+        schema:
+          type: string
       responses:
         '200':
           content:
@@ -265,7 +335,7 @@ paths:
       - api
   /api/songs/kpop:
     get:
-      operationId: listKpopGenres
+      operationId: listKPopGenres
       description: ''
       parameters: []
       responses:
@@ -336,6 +406,21 @@ paths:
           description: ''
       tags:
       - api
+  /api/swagger-specs:
+    get:
+      operationId: listSwaggerSpecs
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+          description: ''
+      tags:
+      - api
 components:
   schemas:
     Song:
@@ -385,3 +470,14 @@ components:
       required:
       - name
       - pretty_name
+    Artist:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 289
+      required:
+      - name

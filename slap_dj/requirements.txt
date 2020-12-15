@@ -4,6 +4,7 @@ djangorestframework
 django-cors-headers
 djangorestframework-csv
 drf-nested-routers
+django-rest-swagger
 django_pandas
 coreapi
 channels

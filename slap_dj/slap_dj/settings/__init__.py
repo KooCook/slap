@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'app.apps.SlapDjAppConfig',
+    'rest_framework_swagger',
     # 'channels'
     # 'slap_dj.app.apps.SlapDjAppConfig',
 ]
@@ -139,4 +140,5 @@ YOUTUBE_DATA_API_KEYS = config("YOUTUBE_DATA_API_KEYS", cast=Csv(), default="")
 GENIUS_SECRET = config("GENIUS_SECRET", default="")
 SPOTIFY_CLIENT_ID = config("SPOTIFY_CLIENT_ID", default="")
 SPOTIFY_CLIENT_SECRET = config("SPOTIFY_CLIENT_SECRET", default="")
+SWAGGER_YAML_FILE = config("SWAGGER_YAML_FILE", default=BASE_DIR / "slap-api.yaml")
 # ASGI_APPLICATION = "slap_dj.asgi.application"

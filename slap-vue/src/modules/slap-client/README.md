@@ -121,6 +121,7 @@ All URIs are relative to *http://localhost:8000/api*
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 *SlapClient.DefaultApi* | [**listSongWordFrequencyPlots**](docs/DefaultApi.md#listSongWordFrequencyPlots) | **GET** /songs/{song_id}/word-frequency/plot | 
+*SlapClient.DefaultApi* | [**listSwaggerSpecs**](docs/DefaultApi.md#listSwaggerSpecs) | **GET** /swagger-specs | 
 *SlapClient.DefaultApi* | [**listWordFrequencys**](docs/DefaultApi.md#listWordFrequencys) | **GET** /songs/{song_id}/word-frequency | 
 *SlapClient.DefaultApi* | [**listWordRandomizations**](docs/DefaultApi.md#listWordRandomizations) | **GET** /songs/words/randomize | 
 *SlapClient.DefaultApi* | [**listWords**](docs/DefaultApi.md#listWords) | **GET** /songs/{song_id}/words | 

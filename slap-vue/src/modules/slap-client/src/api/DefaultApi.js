@@ -83,6 +83,41 @@ export default class DefaultApi {
     }
 
     /**
+     * Callback function to receive the result of the listSwaggerSpecs operation.
+     * @callback module:api/DefaultApi~listSwaggerSpecsCallback
+     * @param {String} error Error message, if any.
+     * @param {Object} data The data returned by the service call.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * @param {module:api/DefaultApi~listSwaggerSpecsCallback} callback The callback function, accepting three arguments: error, data, response
+     * data is of type: {@link Object}
+     */
+    listSwaggerSpecs(callback) {
+      let postBody = null;
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = [];
+      let accepts = ['application/json'];
+      let returnType = Object;
+      return this.apiClient.callApi(
+        '/swagger-specs', 'GET',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
      * Callback function to receive the result of the listWordFrequencys operation.
      * @callback module:api/DefaultApi~listWordFrequencysCallback
      * @param {String} error Error message, if any.
@@ -529,8 +564,8 @@ export default class DefaultApi {
     /**
      * Return a list of all users.
      * @param {Object} opts Optional parameters
-     * @param {Number} opts.popFacet The page number
-     * @param {Number} opts.repFacet The page number
+     * @param {String} opts.popFacet The popularity facet
+     * @param {String} opts.repFacet The repetition facet
      * @param {module:api/DefaultApi~slapListRepetitionPopularityPlotsCallback} callback The callback function, accepting three arguments: error, data, response
      * data is of type: {@link Object}
      */

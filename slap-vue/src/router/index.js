@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import D3Test from "../views/D3Test.vue";
 import Overview from "../views/Overview.vue";
+import SwaggerUI from "../views/SwaggerUI.vue";
 import SongDetailView from "../views/SongView.vue";
 import SongListView from "../views/Songs.vue";
 
@@ -23,6 +24,11 @@ const routes = [
     path: "/overview",
     name: "Overview",
     component: Overview,
+  },
+  {
+    path: "/swagger-ui",
+    name: "API Docs",
+    component: SwaggerUI,
   },
   {
     path: "/song/:id",

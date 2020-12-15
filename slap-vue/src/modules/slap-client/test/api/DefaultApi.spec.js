@@ -58,6 +58,16 @@
         done();
       });
     });
+    describe('listSwaggerSpecs', function() {
+      it('should call listSwaggerSpecs successfully', function(done) {
+        //uncomment below and update the code to test listSwaggerSpecs
+        //instance.listSwaggerSpecs(function(error) {
+        //  if (error) throw error;
+        //expect().to.be();
+        //});
+        done();
+      });
+    });
     describe('listWordFrequencys', function() {
       it('should call listWordFrequencys successfully', function(done) {
         //uncomment below and update the code to test listWordFrequencys

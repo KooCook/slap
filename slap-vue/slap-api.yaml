@@ -12,7 +12,7 @@ info:
     url: https://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.0
 servers:
-- url: localhost:8000/api
+- url: http://localhost:8000/api
 paths:
   /songs:
     parameters:
@@ -287,17 +287,17 @@ paths:
     parameters:
       - name: pop_facet
         in: query
-        description: The page number
+        description: The popularity facet
         required: false
         schema:
-          type: integer
+          type: string
         example: youtube_view
       - name: rep_facet
         in: query
-        description: The page number
+        description: The repetition facet
         required: false
         schema:
-          type: integer
+          type: string
         example: compressibility
     get:
       operationId: slap.listRepetitionPopularityPlots
@@ -331,6 +331,18 @@ paths:
             text/csv:
               schema:
                 type: string
+          description: ''
+  /swagger-specs:
+    get:
+      operationId: listSwaggerSpecs
+      description: ''
+      parameters: [ ]
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
           description: ''
 components:
   schemas:

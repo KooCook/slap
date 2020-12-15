@@ -553,7 +553,7 @@ class ApiClient {
     hostSettings() {
         return [
             {
-              'url': "localhost:8000/api",
+              'url': "http://localhost:8000/api",
               'description': "No description provided",
             }
       ];
