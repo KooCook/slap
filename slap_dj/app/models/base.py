@@ -3,7 +3,7 @@ from typing import List
 from django.db import models
 from django_pandas.managers import DataFrameManager
 
-from app.support.repetition import calculate_repetition
+from app.support.repetition import calculate_repetition, get_words
 from services.genius import remove_sections, tokenize_words
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -37,7 +37,7 @@ class Song(models.Model):
 
     @property
     def words(self) -> List[str]:
-        return tokenize_words(self.lyrics)
+        return list(get_words(remove_sections(self.lyrics)))
 
     @property
     def word_count(self) -> int:
@@ -77,8 +77,8 @@ class YouTubeVideo(models.Model):
             video = YouTubeVideo(video_id=video_id, song=song, **kwargs)
             try:
                 video.save()
-            except IntegrityError:
-                print(f'{video.title} {song.title}')
+            except IntegrityError as e:
+                print(f'Fail {video.title} {song.title} - {e}')
         return video
 
 
