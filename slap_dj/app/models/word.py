@@ -1,4 +1,5 @@
 from django.db import models
+from scipy import special
 
 from app.support.repetition import get_bow_dataframe
 from .base import Song
@@ -10,12 +11,25 @@ __all__ = ['WordCache', 'WordOccurrenceInSong']
 class WordCache(models.Model):
     word = models.CharField(max_length=289, unique=True)
     occurs_in_song = models.ManyToManyField(Song, through='WordOccurrenceInSong')
+    # wordoccurrenceinsong_set from ManyToManyField
+
+    @property
+    def popularity(self) -> float:
+        word_occurrence_in_songs = self.wordoccurrenceinsong_set.all()
+        return sum(wois.weighted_frequency * wois.appears_in.weighted_popularity for wois in word_occurrence_in_songs)
 
 
 class WordOccurrenceInSong(models.Model):
     word = models.ForeignKey(WordCache, on_delete=models.CASCADE)
     appears_in = models.ForeignKey(Song, on_delete=models.CASCADE)
     frequency = models.IntegerField()
+
+    @property
+    def weighted_frequency(self) -> float:
+        """ Returns a number between 0 and 1 """
+        w = float(special.expit(self.frequency - 2.8))
+        assert 0 <= w <= 1, f"weighted_frequency of {self} not in bound: {w}"
+        return w
 
     @classmethod
     def update_all_songs_word_frequency(cls, skip: bool = True) -> None:

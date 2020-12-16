@@ -1,14 +1,14 @@
 from typing import List
 
-from django.db import models
+import numpy as np
+from scipy import special
+
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError, models
 from django_pandas.managers import DataFrameManager
 
 from app.support.repetition import calculate_repetition, get_words
 from services.genius import remove_sections, tokenize_words
-
-from django.core.exceptions import ObjectDoesNotExist
-from django.db import IntegrityError
-
 
 __all__ = ['Genre', 'Song', 'YouTubeVideo',
            'BillboardYearEndEntry', 'SpotifyTrack', 'SpotifySongWeeklyStream']
@@ -46,6 +46,14 @@ class Song(models.Model):
     @property
     def identifier(self) -> str:
         return f"{self.title} - {self.artist_names}"
+
+    @property
+    def weighted_popularity(self) -> float:
+        """ Returns a number between 0 and 1 """
+        popularity = self.spotify_popularity
+        w = float(special.expit((np.log10(popularity) - 5.2) / 0.3))
+        assert 0 <= w <= 1, f"weighted_popularity of {self} not in bound: {w}"
+        return w
 
     def update_compression_ratio(self):
         new = calculate_repetition(remove_sections(self.lyrics))
