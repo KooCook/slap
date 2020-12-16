@@ -1,6 +1,7 @@
 import typing
 
 import yaml
+import ruamel.yaml
 
 import attr
 
@@ -82,33 +83,67 @@ def write_attrib(attrib: str, cls: typing.Union[type, str], convert: bool = None
     return f"    {attrib}: {clsname} = attr.ib({', '.join(kwargs)})"
 
 
-def main():
-    tmp = yaml.load(template, Loader=yaml.FullLoader)
-    print(tmp)
+@attr.s(slots=True)
+class Attrib:
+    name: str = attr.ib()
+    type: typing.Union[type, type(typing.List), typing.ForwardRef] = attr.ib()
+    is_optional: bool = attr.ib(default=False, converter=bool)
+    default: typing.Any = attr.ib(default=None)
+    converters: typing.List[str] = attr.ib(factory=list, validator=attr.validators.instance_of(list))
+    validators: typing.List[str] = attr.ib(factory=list, validator=attr.validators.instance_of(list))
 
-    lines = [
-        f'@attr.s',
-        f'class {camel_to_capwords(tmp["kind"].split("#")[1])}',
-    ]
-    for k, v in tmp.items():
-        if isinstance(v, str):
-            try:
-                t = {
-                    'string': str,
-                    'integer': int,
-                    'decimal': float,
-                }
-            except KeyError:
-                pass # DO STH
-        
-        write_attrib(k, )
-        f'     kind: str = attr.ib(validator=[attr.validators.instance_of(str), attr.v.equal_to("youtube#videoListResponse")])',
-        f'     etag: str = attr.ib(validator=[attr.validators.instance_of(str)])',
-        f'     pageInfo: PageInfo = attr.ib(converter=attr.c.from_dict(PageInfo), validator=[attr.validators.instance_of(PageInfo)])',
-        f'     items: List[VideoResource] = attr.ib()',
-        f'     nextPageToken: str = attr.ib(default=None, validator=attr.validators.optional(attr.validators.instance_of(str)))',
-        f'     prevPageToken: str = attr.ib(default=None, validator=attr.validators.optional(attr.validators.instance_of(str)))',
-    ]
+
+@attr.s(slots=True)
+class Attrs:
+    name: str
+    attrs_kwds: dict = attr.ib(factory=dict, validator=attr.validators.deep_mapping(key_validator=attr.validators.instance_of(str), value_validator=[]))
+    attribs: typing.List[Attrib] = attr.ib(factory=list, validator=attr.validators.deep_iterable(member_validator=attr.validators.instance_of(Attrib), iterable_validator=attr.validators.instance_of(list)))
+
+    def __str__(self):
+        return f"""
+@attr.s(kw_only=True)
+class {self.name}:
+""" + '\n'.join(map(str, self.attribs))
+
+
+def main():
+    from ruamel.yaml import scalarstring
+    # tmp = yaml.load(template, Loader=yaml.FullLoader)
+    # print(tmp)
+    tmp = ruamel.yaml.round_trip_load(template, preserve_quotes=True)
+
+    print(isinstance(tmp['etag'], scalarstring.DoubleQuotedScalarString))
+
+    # lines = [
+    #     f'@attr.s',
+    #     f'class {camel_to_capwords(tmp["kind"].split("#")[1])}',
+    # ]
+    # for k, v in tmp.items():
+    #     if isinstance(v, str):
+    #         try:
+    #             t = {
+    #                 'string': str,
+    #                 'integer': int,
+    #                 'decimal': float,
+    #             }[v]
+    #         except KeyError:
+    #             pass
+
+        # write_attrib(k, )
+    # lsAt = [
+    #     f'     kind: str = attr.ib(validator=[attr.validators.instance_of(str), attr.v.equal_to("youtube#videoListResponse")])',
+    #     f'     etag: str = attr.ib(validator=[attr.validators.instance_of(str)])',
+    #     f'     pageInfo: PageInfo = attr.ib(converter=attr.c.from_dict(PageInfo), validator=[attr.validators.instance_of(PageInfo)])',
+    #     f'     items: List[VideoResource] = attr.ib()',
+    #     f'     nextPageToken: str = attr.ib(default=None, validator=attr.validators.optional(attr.validators.instance_of(str)))',
+    #     f'     prevPageToken: str = attr.ib(default=None, validator=attr.validators.optional(attr.validators.instance_of(str)))',
+    # ]
+
+
+def write_attrs(json_model: str) -> str:
+    """Returns the lines of code to write a attrs class"""
+    return ''
+
 
 if __name__ == '__main__':
     main()
