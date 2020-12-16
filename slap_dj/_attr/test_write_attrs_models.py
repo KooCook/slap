@@ -23,7 +23,7 @@ class WriteAttrsModelsTestCase(unittest.TestCase):
     video Resource
   ]
 }
-        """.strip()
+""".strip()
         expected = """
 @attr.s(kw_only=True)
 class VideoListResponse:
@@ -39,7 +39,7 @@ class VideoListResponse:
     )
     nextPageToken: str = attr.ib(default=None, validator=attr.validators.optional(attr.validators.instance_of(str)))
     prevPageToken: str = attr.ib(default=None, validator=attr.validators.optional(attr.validators.instance_of(str)))
-        """.strip()
+""".strip()
         actual = write_attrs(json_model)
         self.assertEqual(actual, expected)
 
