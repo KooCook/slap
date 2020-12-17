@@ -10,7 +10,7 @@ def generate_artists():
 
 
 def chain_kpop_songs(limit: int = 1000):
-    records: List = get_kpop_songs().to_dict('records')
+    records: List = wikidata.get_kpop_songs().to_dict('records')
     for record in records[:limit]:
         title = record['song_title']
         try:
