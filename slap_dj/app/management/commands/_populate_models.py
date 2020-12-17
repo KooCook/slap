@@ -1,8 +1,8 @@
-from typing import Dict, List
+from typing import List
 
-from app.model_generator import retrieve_cached_song
+from app.model_generator import retrieve_cached_song, insert_song_from_model
 from app.models import Artist, YouTubeVideo, Song, ArtistInSong
-from services.wikidata import get_kpop_songs
+from services.wikidata import get_kpop_songs, retrieve_english_songs
 
 
 def generate_artists():
@@ -23,3 +23,10 @@ def chain_kpop_songs(limit: int = 1000):
         except (NameError, TypeError, AttributeError):
             print(f"Service retrieval error {title} - {record['performers']}")
 
+
+def generate_english_songs(limit: int = 1000):
+    songs = retrieve_english_songs()
+    for song in songs:
+        song.update_field_data()
+        insert_song_from_model(song)
+        print(f"{song.name} - {song.artist_names}")

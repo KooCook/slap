@@ -9,7 +9,7 @@ from typing import List
 from SPARQLWrapper import SPARQLWrapper, JSON
 import pandas as pd
 
-from contract_models import SongModel
+from contract_models.base import SongModel
 
 K_POP_QUERY = """
 SELECT ?song ?songLabel 
@@ -105,6 +105,31 @@ def get_kpop_songs() -> pd.DataFrame:
     return df
 
 
+all_song_query = """
+SELECT ?song ?songLabel 
+(GROUP_CONCAT(DISTINCT ?performerlabel; SEPARATOR=", ") AS ?performers) 
+(GROUP_CONCAT(DISTINCT ?track;SEPARATOR=", ") AS ?sttracks) 
+(GROUP_CONCAT(DISTINCT ?gsid;SEPARATOR=", ") AS ?gsids)
+(GROUP_CONCAT(DISTINCT ?video;SEPARATOR=", ") AS ?ytVideoIds)
+{ ?performer p:P136 [ps:P136 wd:Q37073];
+             p:P1412 [ps:P1412 wd:Q1860];
+             rdfs:label ?performerlabel. 
+  ?song p:P175 [ps:P175 ?performer];
+        p:P31 [ps:P31 ?in].
+ ?in p:P279 [ps:P279 wd:Q2188189].
+  
+  FILTER( LANG(?performerlabel) = "en")
+  OPTIONAL { ?song p:P31 [ps:P31 wd:Q134556]. }
+  FILTER (?in in (wd:Q7366, wd:Q134556))
+   OPTIONAL { ?song p:P1651 [ps:P1651 ?video]. }
+ OPTIONAL { ?song p:P2207 [ps:P2207 ?track]. }
+ OPTIONAL { ?song p:P6218 [ps:P6218 ?gsid]. }
+   SERVICE wikibase:label { bd:serviceParam wikibase:language "en,[AUTO_LANGUAGE]".}        
+}
+GROUP BY ?song ?songLabel
+ORDER BY DESC(?ytVideoIds)
+"""
+
 song_query = """
 SELECT ?song ?songLabel 
 (GROUP_CONCAT(DISTINCT ?performerlabel; SEPARATOR=", ") AS ?performers) 
@@ -152,9 +177,21 @@ def retrieve_songmodel_wikidata(song_title: str, artists: List[str]) -> SongMode
     return SongModel(wikidata_id=wikidata_id, youtube_id=youtube_id)
 
 
+def retrieve_english_songs() -> List[SongModel]:
+    df = builder.raw_query(['song', 'songLabel', 'performers', 'ytVideoIds'], all_song_query)
+    s_list = []
+    for index, row in df.iterrows():
+        wid = row['song.value'].replace('http://www.wikidata.org/entity/', '')
+        s = SongModel(wikidata_id=wid,
+                      artist_names=row['performers.value'].split(","),
+                      youtube_ids=row['ytVideoIds.value'].split(","),
+                      name=row['songLabel.value'])
+        s_list.append(s)
+    return s_list
+
+
 def main():
     print(get_kpop_songs().to_dict('records'))
-    # print(get_artist_akas("Kesha Sebert"))
 
 
 if __name__ == '__main__':
