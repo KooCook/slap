@@ -9,6 +9,7 @@ from typing import List
 from SPARQLWrapper import SPARQLWrapper, JSON
 import pandas as pd
 
+from contract_models import SongModel
 
 K_POP_QUERY = """
 SELECT ?song ?songLabel 
@@ -102,6 +103,53 @@ def get_kpop_songs() -> pd.DataFrame:
                        "performers.value": "performers",
                        "ytVideoIds.value": "video_id"})
     return df
+
+
+song_query = """
+SELECT ?song ?songLabel 
+(GROUP_CONCAT(DISTINCT ?performerlabel; SEPARATOR=", ") AS ?performers) 
+(GROUP_CONCAT(DISTINCT ?track;SEPARATOR=", ") AS ?sttracks) 
+(GROUP_CONCAT(DISTINCT ?gsid;SEPARATOR=", ") AS ?gsids)
+(GROUP_CONCAT(DISTINCT ?video;SEPARATOR=", ") AS ?ytVideoIds)
+{{ ?performer p:P136 [ps:P136 wd:Q37073];
+             rdfs:label ?performerlabel. 
+  ?song p:P175 [ps:P175 ?performer];
+        rdfs:label ?song2Label;
+        p:P31 [ps:P31 ?in].
+
+  FILTER( LANG(?performerlabel) = "en")
+  OPTIONAL {{ ?song p:P31 [ps:P31 wd:Q134556]. }}
+  FILTER (?in in (wd:Q7366, wd:Q134556))
+  FILTER (STR(?song2Label) = '{title}')
+  FILTER (STR(?performerlabel) = '{performer}')
+
+   OPTIONAL {{ ?song p:P1651 [ps:P1651 ?video]. }}
+ OPTIONAL {{ ?song p:P2207 [ps:P2207 ?track]. }}
+ OPTIONAL {{ ?song p:P6218 [ps:P6218 ?gsid]. }}
+   SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en,[AUTO_LANGUAGE]".}}        
+}}
+GROUP BY ?song ?songLabel
+LIMIT 5000
+"""
+
+# TODO: Strategy pattern
+
+
+def retrieve_songmodel_wikidata(song_title: str, artists: List[str]) -> SongModel:
+    """
+
+    Args:
+        song_title:
+        artists:
+
+    Returns:
+        The wikidata id of a given song
+    """
+    df = builder.raw_query(['song', 'ytVideoIds'], song_query.format(title=song_title, performer=artists[0]))
+    # raise ValueError("Song Id Not found")
+    wikidata_id = df['song.value'][0].replace('http://www.wikidata.org/entity/', '')
+    youtube_id = df['ytVideoIds.value'][0]
+    return SongModel(wikidata_id=wikidata_id, youtube_id=youtube_id)
 
 
 def main():

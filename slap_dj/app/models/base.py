@@ -1,6 +1,7 @@
 from typing import List
 
 import numpy as np
+from django.db.models.aggregates import Sum
 from scipy import special
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -8,10 +9,13 @@ from django.db import IntegrityError, models
 from django_pandas.managers import DataFrameManager
 
 from app.support.repetition import calculate_repetition, get_words
+from contract_models import SongModel
 from services.genius import remove_sections, tokenize_words
 
 __all__ = ['Genre', 'Song', 'YouTubeVideo',
            'BillboardYearEndEntry', 'SpotifyTrack', 'SpotifySongWeeklyStream']
+
+from services.wikidata import retrieve_songmodel_wikidata
 
 
 class Genre(models.Model):
@@ -29,7 +33,18 @@ class Song(models.Model):
     artists = models.ManyToManyField('Artist', through='ArtistInSong')
     genres = models.ManyToManyField(Genre)
     spotify_popularity = models.IntegerField()
+    wikidata_id = models.CharField(max_length=13)
     objects = DataFrameManager()
+
+    def retrieve_wikidata_id(self):
+        """ Retrieves wikidata from title, artist
+        genre? """
+        if self.wikidata_id:
+            return
+        aw_ids = [a.wikidata_id for a in self.artists]
+        song: SongModel = retrieve_songmodel_wikidata(song_title=self.title, artists=aw_ids)
+        self.wikidata_id = song.wikidata_id
+        self.save()
 
     @property
     def artist_names(self) -> str:
@@ -50,7 +65,7 @@ class Song(models.Model):
     @property
     def weighted_popularity(self) -> float:
         """ Returns a number between 0 and 1 """
-        popularity = self.spotify_popularity
+        popularity = list(self.youtubevideo_set.all())[0].view_count
         w = float(special.expit((np.log10(popularity) - 5.2) / 0.3))
         assert 0 <= w <= 1, f"weighted_popularity of {self} not in bound: {w}"
         return w
@@ -65,7 +80,8 @@ class Song(models.Model):
 
 
 class YouTubeVideo(models.Model):
-    song = models.OneToOneField(Song, on_delete=models.CASCADE)
+    song = models.ForeignKey(Song, on_delete=models.CASCADE)
+    # song = models.OneToOneField(Song, on_delete=models.CASCADE)
     video_id = models.CharField(max_length=255, unique=True)
     title = models.CharField(max_length=255)
     view_count = models.BigIntegerField()

@@ -12,3 +12,5 @@ class SongModel:
     spotify_popularity: int = 0
     spotify_id: str = ''
     spotify_album_id: str = ''
+    youtube_id: str = ''
+    wikidata_id: str = ''
