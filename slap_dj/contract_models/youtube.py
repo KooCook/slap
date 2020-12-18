@@ -17,6 +17,7 @@ class YouTubeVideoModel:
     published_at: str = ''
     channel_id: str = ''
     channel_title: str = ''
+    HARD_LIMIT = 50
 
     @classmethod
     def _from_dict(cls, video_id: str, dct: dict) -> 'YouTubeVideoModel':
@@ -27,9 +28,9 @@ class YouTubeVideoModel:
         return cls(video_id=video_id,
                 title=snippet['title'],
                 view_count=int(stats['viewCount']),
-                like_count=int(stats['likeCount']),
-                dislike_count=int(stats['dislikeCount']),
-                favorite_count=int(stats['favoriteCount']),
+                like_count=int(stats.get('likeCount', 0)),
+                dislike_count=int(stats.get('dislikeCount', 0)),
+                favorite_count=int(stats.get('favoriteCount', 0)),
                 comment_count=int(stats['commentCount']),
                 published_at=published_at,
                 default_language=lang,

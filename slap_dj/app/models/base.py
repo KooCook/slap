@@ -9,7 +9,8 @@ from django.db import IntegrityError, models
 from django_pandas.managers import DataFrameManager
 
 from app.support.repetition import calculate_repetition, get_words
-from contract_models import SongModel
+from contract_models.song import SongModel
+from contract_models.youtube import YouTubeVideoModel
 from services.genius import remove_sections, tokenize_words
 
 __all__ = ['Genre', 'Song', 'YouTubeVideo',
@@ -34,6 +35,8 @@ class Song(models.Model):
     genres = models.ManyToManyField(Genre)
     spotify_popularity = models.IntegerField()
     wikidata_id = models.CharField(max_length=13)
+    genius_id = models.CharField(max_length=15)
+    # image_url = models.URLField()
     objects = DataFrameManager()
 
     def retrieve_wikidata_id(self):
@@ -48,7 +51,7 @@ class Song(models.Model):
 
     @property
     def artist_names(self) -> str:
-        return ",".join([a.name for a in self.artists.all()])
+        return ",".join([a.title for a in self.artists.all()])
 
     @property
     def words(self) -> List[str]:
@@ -82,16 +85,29 @@ class Song(models.Model):
 class YouTubeVideo(models.Model):
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
     # song = models.OneToOneField(Song, on_delete=models.CASCADE)
-    video_id = models.CharField(max_length=255, unique=True)
-    title = models.CharField(max_length=255)
-    view_count = models.BigIntegerField()
-    like_count = models.BigIntegerField()
-    dislike_count = models.BigIntegerField()
-    favorite_count = models.BigIntegerField()
-    comment_count = models.BigIntegerField()
+    video_id = models.CharField(max_length=255, unique=True,
+                                blank=False)
+    title = models.CharField(max_length=255, null=True)
+    view_count = models.BigIntegerField(null=True)
+    like_count = models.BigIntegerField(null=True)
+    dislike_count = models.BigIntegerField(null=True)
+    favorite_count = models.BigIntegerField(null=True)
+    comment_count = models.BigIntegerField(null=True)
     default_language = models.CharField(max_length=10, null=True)
     published_at = models.DateTimeField(null=True)
     channel_title = models.CharField(max_length=255, null=True)
+    channel_id = models.CharField(max_length=255, null=True)
+
+    @classmethod
+    def update_all_video_stats(cls, start = 0):
+        all_vid_count = cls.objects.all().count()
+        current = start
+        while current < all_vid_count:
+            models = YouTubeVideoModel.from_video_ids(list(dct['video_id'] for dct in cls.objects.all()[current:current + 50].values('video_id')))
+            for m in models:
+                inst = cls.objects.get(video_id=m.video_id)
+                inst.update_stats(m)
+            current += current + YouTubeVideoModel.HARD_LIMIT
 
     @classmethod
     def upsert_video(cls, video_id: str, song: Song, **kwargs) -> 'YouTubeVideo':
@@ -103,7 +119,24 @@ class YouTubeVideo(models.Model):
                 video.save()
             except IntegrityError as e:
                 print(f'Fail {video.title} {song.title} - {e}')
+        # video.update_stats()
         return video
+
+    def update_stats(self, yt_video = None):
+        if yt_video is None:
+            yt_video = YouTubeVideoModel.from_video_id(self.video_id)
+        if not self.title:
+            self.title = yt_video.title
+        self.view_count = yt_video.view_count
+        self.like_count = yt_video.like_count
+        self.favorite_count = yt_video.favorite_count
+        self.dislike_count = yt_video.dislike_count
+        self.comment_count = yt_video.comment_count
+        self.published_at = yt_video.published_at
+        self.channel_title = yt_video.channel_title
+        self.channel_id = yt_video.channel_id
+        self.default_language = yt_video.default_language
+        self.save()
 
 
 class BillboardYearEndEntry(models.Model):
@@ -135,8 +168,20 @@ class BillboardYearEndEntry(models.Model):
 
 class SpotifyTrack(models.Model):
     song = models.OneToOneField(Song, on_delete=models.CASCADE)
-    track_id = models.CharField(max_length=255)
+    track_id = models.CharField(max_length=255, unique=True)
     album_id = models.CharField(max_length=255)
+
+    @classmethod
+    def upsert(cls, track_id: str, song: Song, **kwargs) -> 'YouTubeVideo':
+        try:
+            video = cls.objects.get(track_id=track_id)
+        except ObjectDoesNotExist:
+            video = cls(track_id=track_id, song=song, **kwargs)
+            try:
+                video.save()
+            except IntegrityError as e:
+                print(f'Fail {video.track_id} {song.title} - {e}')
+        return video
 
 
 class SpotifySongWeeklyStream(models.Model):

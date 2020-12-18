@@ -135,7 +135,7 @@ SELECT ?song ?songLabel
 (GROUP_CONCAT(DISTINCT ?performerlabel; SEPARATOR=", ") AS ?performers) 
 (GROUP_CONCAT(DISTINCT ?track;SEPARATOR=", ") AS ?sttracks) 
 (GROUP_CONCAT(DISTINCT ?gsid;SEPARATOR=", ") AS ?gsids)
-(GROUP_CONCAT(DISTINCT ?video;SEPARATOR=", ") AS ?ytVideoIds)
+(GROUP_CONCAT(DISTINCT ?video;SEPARATOR=",") AS ?ytVideoIds)
 {{ ?performer p:P136 [ps:P136 wd:Q37073];
              rdfs:label ?performerlabel. 
   ?song p:P175 [ps:P175 ?performer];
