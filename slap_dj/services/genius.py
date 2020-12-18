@@ -12,11 +12,6 @@ from utils.iter import remove_consecs
 genius_client = lg.Genius(GENIUS_SECRET)
 
 
-def search_for_song_lyrics(song_name: str, artist_name: str) -> str:
-    song = genius_client.search_song(song_name, artist_name)
-    return song.lyrics
-
-
 def tokenize_words(raw_lyrics: str) -> List[str]:
     all_sections = []
     m = re.findall(r'\[(.+)\][ \n]+([^\[]+)', raw_lyrics)

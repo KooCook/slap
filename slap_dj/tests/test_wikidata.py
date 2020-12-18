@@ -1,6 +1,6 @@
 import unittest
 
-from app.model_generator import insert_song_from_model
+from app.model_generator import insert_song_from_model, check_song_existence
 from services.wikidata import retrieve_songmodel_wikidata, retrieve_english_songs
 
 
@@ -21,6 +21,11 @@ class WikidataSongModelTest(unittest.TestCase):
 
     def test_retrieve_songs(self):
         songs = retrieve_english_songs()
-        for song in songs[:5]:
-            song.update_field_data()
-            insert_song_from_model(song)
+        for song in songs:
+            try:
+                if check_song_existence(song.name, song.combined_artist_names):
+                    continue
+                song.update_field_data()
+                insert_song_from_model(song)
+            except NameError:
+                pass

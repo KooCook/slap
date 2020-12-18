@@ -9,7 +9,7 @@ from typing import List
 from SPARQLWrapper import SPARQLWrapper, JSON
 import pandas as pd
 
-from contract_models.base import SongModel
+from contract_models.song import SongModel
 
 K_POP_QUERY = """
 SELECT ?song ?songLabel 
@@ -127,7 +127,7 @@ SELECT ?song ?songLabel
    SERVICE wikibase:label { bd:serviceParam wikibase:language "en,[AUTO_LANGUAGE]".}        
 }
 GROUP BY ?song ?songLabel
-ORDER BY DESC(?ytVideoIds)
+ORDER BY RAND()
 """
 
 song_query = """
@@ -174,7 +174,7 @@ def retrieve_songmodel_wikidata(song_title: str, artists: List[str]) -> SongMode
     # raise ValueError("Song Id Not found")
     wikidata_id = df['song.value'][0].replace('http://www.wikidata.org/entity/', '')
     youtube_id = df['ytVideoIds.value'][0]
-    return SongModel(wikidata_id=wikidata_id, youtube_id=youtube_id)
+    return SongModel(wikidata_id=wikidata_id, youtube_ids=youtube_id)
 
 
 def retrieve_english_songs() -> List[SongModel]:

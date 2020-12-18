@@ -161,8 +161,8 @@ def read_dumped_json_to_csv(region_code: str):
                 cc = stats['commentCount']
                 v_id = item['id']
                 cd = item['contentDetails']['duration']
-                dl = sn.get('defaultLanguage', "")
-                dal = sn.get('defaultAudioLanguage', "")
+                dl = sn.upsert('defaultLanguage', "")
+                dal = sn.upsert('defaultAudioLanguage', "")
                 writer.writerow([v_id, ti, pub_at, ch_id, ch_ti, vc, lc, dc, fc, cc, cd, dl, dal])
 
 
@@ -186,11 +186,11 @@ def populate_insert_to_db(filename: str):
             published_at = u['snippet']['publishedAt']
             channel_title = u['snippet']['channelTitle']
             view_count = int(u['statistics']['viewCount'])
-            like_count = int(u['statistics'].get('likeCount', 0))
-            dislike_count = int(u['statistics'].get('dislikeCount', 0))
-            favorite_count = int(u['statistics'].get('favoriteCount', 0))
-            comment_count = int(u['statistics'].get('commentCount', 0))
-            default_lang = u['snippet'].get('defaultAudioLanguage', u['snippet'].get('defaultLanguage', ""))
+            like_count = int(u['statistics'].upsert('likeCount', 0))
+            dislike_count = int(u['statistics'].upsert('dislikeCount', 0))
+            favorite_count = int(u['statistics'].upsert('favoriteCount', 0))
+            comment_count = int(u['statistics'].upsert('commentCount', 0))
+            default_lang = u['snippet'].upsert('defaultAudioLanguage', u['snippet'].upsert('defaultLanguage', ""))
             try:
                 song = SongSearcher.search_one(song_title, artists__name=artist)
                 video = YouTubeVideo.upsert_video(
