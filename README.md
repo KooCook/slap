@@ -33,13 +33,29 @@ python -m pip install -r requirements.txt
 4\. Migrate Django data models
 
 ```sh
-cd slap_dj
 python manage.py migrate
 ```
 
 5\. Start the Django server
 
 ```sh
-cd slap_dj
 python manage.py runserver
 ```
+
+## Data population
+
+```sh
+python manage.py populate_data ... # TODO: mode
+```
+
+## Deployment 
+
+[comment]: <> (## Quickstart with Docker Compose)
+
+[comment]: <> (1.\)
+
+[comment]: <> (```shell)
+
+[comment]: <> (docker-compose up -d)
+
+[comment]: <> (```)

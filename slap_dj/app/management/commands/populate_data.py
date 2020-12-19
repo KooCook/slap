@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 
-from ._populate_models import generate_artists, chain_kpop_songs, generate_english_songs
+from ._populate_models import generate_artists, chain_kpop_songs, generate_english_songs, update_word_cache
+from ...models import Song
 
 
 class Command(BaseCommand):
@@ -20,3 +21,8 @@ class Command(BaseCommand):
         elif m == 'artists':
             self.stdout.write("Start gen artist")
             generate_artists()
+        elif m == 'wc':
+            self.stdout.write("Start wc artist")
+            update_word_cache()
+        elif m == 'delete':
+            Song.objects.all().delete()

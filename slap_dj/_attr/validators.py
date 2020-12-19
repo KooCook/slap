@@ -16,7 +16,7 @@ class _EqualToValidator(object):
             raise ValueError(
                 "'{name}' must be equal to expected value {expected!r}"
                 " (got {value!r})".format(
-                    name=attr.name, expected=self.expected, value=value
+                    name=attr.title, expected=self.expected, value=value
                 ),
                 attr,
                 self.expected,

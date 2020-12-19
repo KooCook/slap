@@ -4,6 +4,9 @@ services:
     container_name: slap-frontend
     build:
       context: ./slap-vue
+    volumes: 
+      - ./openapi:/app/openapi/specs
+      - ./autogen:/app/openapi/autogen
     ports:
       - "8080:80"
     depends_on:
@@ -14,6 +17,25 @@ services:
       context: ./slap_dj
     ports:
       - "8000:8000"
+  slap-backend-worker:
+    container_name: slap-backend-w
+    build:
+      context: ./slap_dj
+    command: celery -A slap_dj worker -l DEBUG
+    depends_on:
+      - slap-redis-backend
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
+    stop_grace_period: "${DOCKER_STOP_GRACE_PERIOD:-3s}"
+  slap-backend-worker-beat:
+    container_name: slap-backend-wb
+    build:
+      context: ./slap_dj
+    command: celery -A slap_dj beat -l DEBUG
+    depends_on:
+      - slap-redis-backend
+      - slap-backend-worker
+    restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
+    stop_grace_period: "${DOCKER_STOP_GRACE_PERIOD:-3s}"
   slap-redis-backend:
     image: redis
     ports:

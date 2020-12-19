@@ -6,5 +6,7 @@ cd slap-client || exit
 #npm install
 #npm run build
 cd ..
+cp -rf openapi/slap-api.yaml slap_dj/slap-api.yaml
+cp openapi/slap-api.yaml slap-vue/slap-api.yaml
 cp -rf slap-client slap-vue/src/modules
 rm -r slap-client

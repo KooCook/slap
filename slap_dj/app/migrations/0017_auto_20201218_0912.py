@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='spotifytrack',
             name='album_id',
-            field=models.CharField(max_length=255, unique=True),
+            field=models.CharField(max_length=255),
         ),
         migrations.AlterField(
             model_name='spotifytrack',

@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.aggregates import Min, Max
 from scipy import special
 
 from app.support.repetition import get_bow_dataframe
@@ -11,12 +12,49 @@ __all__ = ['WordCache', 'WordOccurrenceInSong']
 class WordCache(models.Model):
     word = models.CharField(max_length=289, unique=True)
     occurs_in_song = models.ManyToManyField(Song, through='WordOccurrenceInSong')
+    popularity_score = models.FloatField(null=True)
+
     # wordoccurrenceinsong_set from ManyToManyField
+    @classmethod
+    def min_relative_popularity(cls) -> float:
+        return WordCache.objects.aggregate(Min('popularity_score'))['popularity_score__min']
+
+    # compared to max
+    @classmethod
+    def max_popularity(cls) -> float:
+        s = WordCache.objects.aggregate(Max('popularity_score'))
+        return s['popularity_score__max']
 
     @property
-    def popularity(self) -> float:
+    def relative_popularity(self) -> float:
+        if not self.popularity_score:
+            return 0
+        return self.popularity_score / self.max_popularity()
+
+    def update_popularity(self):
         word_occurrence_in_songs = self.wordoccurrenceinsong_set.all()
-        return sum(wois.weighted_frequency * wois.appears_in.weighted_popularity for wois in word_occurrence_in_songs)
+        lst = []
+        for wois in word_occurrence_in_songs:
+            try:
+                lst.append(wois.weighted_frequency * wois.appears_in.weighted_popularity)
+            except (models.base.ObjectDoesNotExist, ValueError):
+                pass
+        self.popularity_score = sum(lst)
+        self.save()
+
+    # @property
+    # def popularity(self) -> float:
+    #     word_occurrence_in_songs = self.wordoccurrenceinsong_set.all()
+    #     lst = []
+    #     skip_count = 0
+    #     for wois in word_occurrence_in_songs:
+    #         try:
+    #             lst.append(wois.weighted_frequency * wois.appears_in.weighted_popularity)
+    #         except models.base.ObjectDoesNotExist:
+    #             skip_count += 1
+    #     # print(skip_count)
+    #     # print(len(lst))
+    #     return sum(lst)
 
 
 class WordOccurrenceInSong(models.Model):
@@ -36,11 +74,13 @@ class WordOccurrenceInSong(models.Model):
         for song in Song.objects.all():
             try:
                 occurrence = cls.objects.filter(appears_in=song)
-                if skip and occurrence is not None:
+                if skip and len(occurrence) > 0:
+                    print(f"skip {song.id} {song.title}")
                     continue
             except cls.DoesNotExist:
                 pass
             cls.update_song_word_frequency(song)
+            print(f"freq {song.title}")
 
     @classmethod
     def update_song_word_frequency(cls, song: Song) -> None:

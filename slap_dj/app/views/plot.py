@@ -21,11 +21,11 @@ class RepetitionPopularityPlotView(APIView):
     """
 
     def each_item(self, x):
-        if x.name == 'artistinsong__artist__name':
+        if x.title == 'artistinsong__artist__name':
             if len(x.values) > 1:
                 return " feat. ".join(x.values[:2])
             return x.values[0]
-        if x.name == 'title':
+        if x.title == 'title':
             return x.values[0]
         if isinstance(x, Series):
             if str(x.name).isnumeric():

@@ -4,7 +4,7 @@ URL = 'https://music.youtube.com/playlist?list=PLOHoVaTp8R7dfrJW5pumS0iD_dhlXKv1
 
 
 def get_youtube_music_playlist_chart(url: str):
-    driver.get(url)
+    driver.upsert(url)
     for ele in driver.find_elements_by_tag_name('ytmusic-responsive-list-item-renderer'):
         try:
             video_title = ele.find_element_by_xpath('.//*[@class="title-column"]//yt-formatted-string//a"]').text

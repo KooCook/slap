@@ -1,8 +1,9 @@
 from typing import List
 
-from app.model_generator import retrieve_cached_song, insert_song_from_model
-from app.models import Artist, YouTubeVideo, Song, ArtistInSong
-from services.wikidata import get_kpop_songs, retrieve_english_songs
+from app.model_generator import retrieve_cached_song, insert_song_from_model, check_song_existence
+from app.models import Artist, YouTubeVideo, ArtistInSong, WordOccurrenceInSong
+from services import wikidata
+from services.wikidata import retrieve_english_songs
 
 
 def generate_artists():
@@ -27,6 +28,16 @@ def chain_kpop_songs(limit: int = 1000):
 def generate_english_songs(limit: int = 1000):
     songs = retrieve_english_songs()
     for song in songs:
-        song.update_field_data()
-        insert_song_from_model(song)
-        print(f"{song.name} - {song.artist_names}")
+        try:
+            if check_song_existence(song.name, song.primary_artist.name):
+                print(f"Skipped: {song.name} - {song.artists}")
+                continue
+            song.update_field_data()
+            insert_song_from_model(song)
+            print(f"Created: {song.name} - {song.artists}")
+        except (NameError, AttributeError, TypeError) as e:
+            print(f"Error Skipped: {song.name} - {song.artists}: {e}")
+
+
+def update_word_cache():
+    WordOccurrenceInSong.update_all_songs_word_frequency()
