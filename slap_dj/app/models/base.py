@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 import numpy as np
 from django.db.models.aggregates import Sum
@@ -66,12 +66,18 @@ class Song(models.Model):
         return f"{self.title} - {self.artist_names}"
 
     @property
-    def weighted_popularity(self) -> float:
+    def weighted_popularity(self) -> Optional[float]:
         """ Returns a number between 0 and 1 """
-        popularity = list(self.youtubevideo_set.all())[0].view_count
-        w = float(special.expit((np.log10(popularity) - 5.2) / 0.3))
-        assert 0 <= w <= 1, f"weighted_popularity of {self} not in bound: {w}"
-        return w
+        yt_vid = self.youtubevideo_set.all()
+        if len(yt_vid) == 0:
+            raise ValueError("No yt")
+        popularity = list(yt_vid)[0].view_count
+        if popularity:
+            w = float(special.expit((np.log10(popularity) - 5.2) / 0.3))
+            assert 0 <= w <= 1, f"weighted_popularity of {self} not in bound: {w}"
+            return w
+        else:
+            raise ValueError("The view count does not exist.")
 
     def update_compression_ratio(self):
         new = calculate_repetition(remove_sections(self.lyrics))
@@ -102,12 +108,15 @@ class YouTubeVideo(models.Model):
     def update_all_video_stats(cls, start = 0):
         all_vid_count = cls.objects.all().count()
         current = start
+
         while current < all_vid_count:
-            models = YouTubeVideoModel.from_video_ids(list(dct['video_id'] for dct in cls.objects.all()[current:current + 50].values('video_id')))
+            end = current + YouTubeVideoModel.HARD_LIMIT
+            models = YouTubeVideoModel.from_video_ids(list(dct['video_id'] for dct in cls.objects.all()
+            [current: end].values('video_id')))
             for m in models:
                 inst = cls.objects.get(video_id=m.video_id)
                 inst.update_stats(m)
-            current += current + YouTubeVideoModel.HARD_LIMIT
+            current += YouTubeVideoModel.HARD_LIMIT
 
     @classmethod
     def upsert_video(cls, video_id: str, song: Song, **kwargs) -> 'YouTubeVideo':

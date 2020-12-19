@@ -12,6 +12,7 @@ from .views import WordOccurrenceView, WordInLyricsCorrectnessView, WordRandomiz
     swagger_specs, SwaggerSpecsView
 from .views.kpop import KPopGenreView
 from .views.plot import RepetitionPopularityPlotView, RepetitionMatrixPlotView, SongWordFrequencyPlotView
+from .views.word import WordsView, SongFromWordView
 
 router = routers.DefaultRouter()
 router.register(r'songs', views.SongViewSet, basename='Song')
@@ -24,6 +25,15 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api/plot/rep-matrix/<song_id>', RepetitionMatrixPlotView.as_view()),
     path('api/plot/rep-pop', RepetitionPopularityPlotView.as_view()),
+    path('api/words/song', SongFromWordView.as_view()),
+    # TODO: query params: word <- 0 - 1 (0.9) Max
+    # TODO: GET method: word, min_song_popularity, max_result=, shuffle = True, sect (orderby pop by default)
+    # Returns: List[SongObject]
+    path('api/words', WordsView.as_view()),
+    # TODO: GET method: (params) min_relative_popularity, max_relative_popularity (required=False),
+    # song_tags? (None = all), max_result=, shuffle = True (orderby pop by default)
+    # maybe pagination NotImplemented
+    # Returns: List[sanitized(WordObject), rel_pop?]
     path('api/songs/words/randomize', WordRandomizationView.as_view()),
     path('api/songs/<song_id>/words', WordView.as_view()),
     path('api/songs/<song_id>/word-frequency', WordFrequencyView.as_view()),

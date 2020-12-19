@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from typing import List
 
 from app.support.repetition import calculate_repetition
+from contract_models import Artist, ArtistRole
 from contract_models.genius import GeniusSongModel
 from contract_models.youtube import YouTubeVideoModel
 from services.genius import remove_sections
@@ -15,7 +16,7 @@ class SongModel:
     name: str = ''
     lyrics: str = ''
     genres: list = field(default_factory=list)
-    artist_names: List[str] = field(default_factory=list)
+    artists: List[Artist] = field(default_factory=list)
     compressibility: float = 0
     spotify_popularity: int = 0
     genius_id: str = ''
@@ -25,26 +26,48 @@ class SongModel:
     wikidata_id: str = ''
     youtube_video: YouTubeVideoModel = None
 
+    def add_artists_from_names(self, names: List[str]):
+        self.artists = [Artist(role=ArtistRole.Primary, name=name) if idx == 0
+                        else Artist(role=ArtistRole.Secondary, name=name)
+                        for idx, name in enumerate(names)]
+
     @property
-    def combined_artist_names(self) -> str:
-        return self.artist_names[0]
+    def artist_names(self) -> [str]:
+        return (artist.name for artist in self.artists)
+
+    def get_artist_by_name(self, name: str) -> Artist:
+        return next(artist for artist in self.artists
+                    if artist.name == name)
+
+    @property
+    def primary_artist(self) -> Artist:
+        return next(artist for artist in self.artists
+                    if artist.role == ArtistRole.Primary)
+
+    def update_artists(self, artists: List[Artist]):
+        names = list(self.artist_names)
+        for a in artists:
+            if a.name in names:
+                self.get_artist_by_name(a.name).role = a.role
 
     def update_field_data(self):
-        self.update_from_genius()
         self.update_spotify_metadata()
+        self.update_from_genius()
         self.update_repetition()
 
     def update_from_genius(self):
-        g = GeniusSongModel.from_song_artist(self.name, self.combined_artist_names)
+        g = GeniusSongModel.from_song_artist(self.name, self.primary_artist.name)
         self.genius_id = g.genius_id
         self.lyrics = g.lyrics
+        print(g.artists)
+        self.update_artists(g.artists)
 
     def update_spotify_metadata(self):
-        s = search_for_song(self.name, self.combined_artist_names)
+        s = search_for_song(self.name, self.primary_artist.name)
         self.spotify_popularity = s.spotify_popularity
         self.spotify_id = s.spotify_id
         self.genres = s.genres
-        self.artist_names = s.artist_names
+        self.add_artists_from_names(s.artist_names)
         self.spotify_album_id = s.spotify_album_id
 
     def update_repetition(self):

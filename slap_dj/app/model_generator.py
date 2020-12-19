@@ -34,11 +34,11 @@ def insert_song_from_model(song_model: SongModel) -> 'Song':
                 wikidata_id=song_model.wikidata_id,
                 genius_id=song_model.genius_id)
     artists = []
-    for artist_name in song_model.artist_names:
+    for artist in song_model.artists:
         try:
-            artist = Artist.objects.get(name=artist_name)
+            artist = Artist.objects.get(name=artist.name)
         except ObjectDoesNotExist:
-            artist = Artist(name=artist_name)
+            artist = Artist(name=artist.name)
             artist.save()
         artists.append(artist)
     songs = Song.objects.filter(title=song_model.name, artists__in=artists)

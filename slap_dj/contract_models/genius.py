@@ -18,15 +18,11 @@ class GeniusSongModel:
     title: str = ''
     lyrics: str = ''
     artists: List[Artist] = field(default_factory=list)
-    artist_names: List[str] = field(default_factory=list)
     medias: List[GeniusMediaLink] = field(default_factory=list)
     image_thumbnail_url: str = ''
     image_url: str = ''
     apple_music_id: str = ''
     release_date: str = '' # 2014-03-17
-
-    def add_artist(self, artist_name: str):
-        self.artist_names.append(artist_name)
 
     @property
     def primary_artist(self) -> Artist:
@@ -49,7 +45,7 @@ class GeniusSongModel:
                 genius_id=song._id)
         m.add_primary_artist(song.artist)
         for artist in song.featured_artists:
-            m.add_featured_artist(artist.name)
+            # {'api_path': '/artists/92', 'header_image_url': 'https://images.genius.com/ab2a85c825e8e602ff228a210a218473.913x498x1.png', 'id': 92, 'image_url': 'https://images.genius.com/be1eda80c5e637a4f1450fa68408f3a2.1000x1000x1.jpg', 'is_meme_verified': True, 'is_verified': True, 'name': 'Nicki Minaj', 'url': 'https://genius.com/artists/Nicki-minaj', 'iq': 3295}
+            m.add_featured_artist(artist['name'])
         print(song.featured_artists)
-        # m.add_featured_artist()
         return m

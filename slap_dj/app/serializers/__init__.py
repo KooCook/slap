@@ -62,3 +62,19 @@ class WordOccurrenceSerializer(serializers.ModelSerializer):
     class Meta:
         model = WordCache
         fields = '__all__'
+
+
+class WordSerializer(serializers.ModelSerializer):
+    relative_popularity = serializers.FloatField(read_only=True)
+
+    class Meta:
+        model = WordCache
+        fields = ('word', 'relative_popularity')
+
+
+class SongWithWordSerializer(serializers.ModelSerializer):
+    occurs_in_song = SongShortSerializer(many=True)
+
+    class Meta:
+        model = WordCache
+        fields = '__all__'

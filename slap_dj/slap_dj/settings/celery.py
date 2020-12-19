@@ -11,6 +11,11 @@ CELERYBEAT_SCHEDULE = {
         'task': 'app.tasks.xsum',
         'schedule': crontab(minute=1),
         'args': ((4, 5),)
+    },
+    'yt_task': {
+        'task': 'app.tasks.update_youtube_stats',
+        'schedule': crontab(minute=5),
+        'args': ()
     }
 }
 CELERYBEAT_MAX_LOOP_INTERVAL = 1

@@ -31,7 +31,7 @@ class YouTubeVideoModel:
                 like_count=int(stats.get('likeCount', 0)),
                 dislike_count=int(stats.get('dislikeCount', 0)),
                 favorite_count=int(stats.get('favoriteCount', 0)),
-                comment_count=int(stats['commentCount']),
+                comment_count=int(stats.get('commentCount', 0)),
                 published_at=published_at,
                 default_language=lang,
                 channel_id=snippet['channelId'],
@@ -40,7 +40,6 @@ class YouTubeVideoModel:
     @classmethod
     def from_video_id(cls, vid_id: str) -> 'YouTubeVideoModel':
         g = get_youtube_video_by_ids(vid_id)[0]
-        print(g)
         return cls._from_dict(vid_id, g)
 
     @classmethod

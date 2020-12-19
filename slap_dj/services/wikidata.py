@@ -183,9 +183,9 @@ def retrieve_english_songs() -> List[SongModel]:
     for index, row in df.iterrows():
         wid = row['song.value'].replace('http://www.wikidata.org/entity/', '')
         s = SongModel(wikidata_id=wid,
-                      artist_names=row['performers.value'].split(","),
                       youtube_ids=row['ytVideoIds.value'].split(","),
                       name=row['songLabel.value'])
+        s.add_artists_from_names(row['performers.value'].split(","))
         s_list.append(s)
     return s_list
 

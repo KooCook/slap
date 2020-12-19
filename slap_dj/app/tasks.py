@@ -8,6 +8,7 @@ from celery.utils.log import get_task_logger
 from celery_singleton import Singleton
 from django.core.cache import cache
 
+from .models import YouTubeVideo
 from .support.billboard_reader import read_billboard_yearly
 
 logger = get_task_logger(__name__)
@@ -39,8 +40,8 @@ def add(x, y):
 
 
 @shared_task
-def mul(x, y):
-    return x * y
+def update_youtube_stats():
+    return YouTubeVideo.update_all_video_stats()
 
 
 @shared_task(base=Singleton)
