@@ -25,6 +25,7 @@ class SongModel:
     youtube_ids: List[str] = field(default_factory=list)
     wikidata_id: str = ''
     youtube_video: YouTubeVideoModel = None
+    _artist_names: str = ''
 
     def add_artists_from_names(self, names: List[str]):
         self.artists = [Artist(role=ArtistRole.Primary, name=name) if idx == 0
@@ -56,7 +57,7 @@ class SongModel:
         self.update_repetition()
 
     def update_from_genius(self):
-        g = GeniusSongModel.from_song_artist(self.name, self.primary_artist.name)
+        g = GeniusSongModel.from_title_and_artist(self.name, self.primary_artist.name)
         self.genius_id = g.genius_id
         self.lyrics = g.lyrics
         print(g.artists)

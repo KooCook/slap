@@ -130,7 +130,7 @@ GROUP BY ?song ?songLabel
 ORDER BY RAND()
 """
 
-song_query = """
+song_query_v1 = """
 SELECT ?song ?songLabel 
 (GROUP_CONCAT(DISTINCT ?performerlabel; SEPARATOR=", ") AS ?performers) 
 (GROUP_CONCAT(DISTINCT ?track;SEPARATOR=", ") AS ?sttracks) 
@@ -157,6 +157,32 @@ GROUP BY ?song ?songLabel
 LIMIT 5000
 """
 
+song_query = """
+SELECT ?song ?songLabel 
+(GROUP_CONCAT(DISTINCT ?performerlabel; SEPARATOR=",") AS ?performers) 
+(GROUP_CONCAT(DISTINCT ?track;SEPARATOR=",") AS ?sttracks) 
+(GROUP_CONCAT(DISTINCT ?gsid;SEPARATOR=",") AS ?gsids)
+(GROUP_CONCAT(DISTINCT ?video;SEPARATOR=",") AS ?ytVideoIds)
+(GROUP_CONCAT(DISTINCT ?genreLabel;SEPARATOR=",") AS ?genres)
+{ ?performer rdfs:label ?performerlabel. 
+  ?song p:P175 [ps:P175 ?performer];
+        p:P31 [ps:P31 ?in];
+        p:P136 [ps:P136 [rdfs:label ?genre]];
+        p:P407|p:P [ps:P407 wd:Q1860].
+ ?in p:P279 [ps:P279 wd:Q2188189].
+  
+  FILTER( LANG(?performerlabel) = "en")
+  OPTIONAL { ?song p:P31 [ps:P31 wd:Q134556]. }
+  FILTER (?in in (wd:Q7366, wd:Q134556))
+   OPTIONAL { ?song p:P1651 [ps:P1651 ?video]. }
+ OPTIONAL { ?song p:P2207 [ps:P2207 ?track]. }
+ OPTIONAL { ?song p:P6218 [ps:P6218 ?gsid]. }
+   SERVICE wikibase:label { bd:serviceParam wikibase:language "en,[AUTO_LANGUAGE]".}        
+}
+GROUP BY ?song ?songLabel
+ORDER BY ?ytVideoIds
+"""
+
 # TODO: Strategy pattern
 
 
@@ -165,7 +191,7 @@ def retrieve_songmodel_wikidata(song_title: str, artists: List[str]) -> SongMode
 
     Args:
         song_title:
-        artists:
+        artists: A list of artist's names
 
     Returns:
         The wikidata id of a given song
@@ -180,11 +206,13 @@ def retrieve_songmodel_wikidata(song_title: str, artists: List[str]) -> SongMode
 def retrieve_english_songs() -> List[SongModel]:
     df = builder.raw_query(['song', 'songLabel', 'performers', 'ytVideoIds'], all_song_query)
     s_list = []
+    print(df.to_csv(index=False))
     for index, row in df.iterrows():
         wid = row['song.value'].replace('http://www.wikidata.org/entity/', '')
         s = SongModel(wikidata_id=wid,
                       youtube_ids=row['ytVideoIds.value'].split(","),
-                      name=row['songLabel.value'])
+                      name=row['songLabel.value'],
+                      _artist_names=row['performers.value'])
         s.add_artists_from_names(row['performers.value'].split(","))
         s_list.append(s)
     return s_list

@@ -1,6 +1,9 @@
 import unittest
 
+from app.init import start_django_lite
+start_django_lite()
 from app.model_generator import insert_song_from_model, check_song_existence
+
 from services.wikidata import retrieve_songmodel_wikidata, retrieve_english_songs
 
 
@@ -8,6 +11,9 @@ class WikidataSongTest(unittest.TestCase):
     def test_retrieve_song_id(self):
         song_id = retrieve_songmodel_wikidata("Begin Again", ['Taylor Swift'])
         self.assertEqual(song_id, 'Q1708696')
+
+    def test_all(self):
+        retrieve_english_songs()
         # song_id = retrieve_song_id("Begin Again", ['Taylor Swift'])
         # self.assertEqual(song_id, 'Q1708696')
 

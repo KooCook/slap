@@ -36,7 +36,7 @@ class GeniusSongModel:
         self.artists.append(Artist(role=ArtistRole.Featured, name=artist_name))
 
     @classmethod
-    def from_song_artist(cls, song_name: str, artist_name: str) -> 'GeniusSongModel':
+    def from_title_and_artist(cls, song_name: str, artist_name: str) -> 'GeniusSongModel':
         song: Song = genius_client.search_song(song_name, artist_name)
         m = cls(lyrics=song.lyrics,
                 title=song.title,

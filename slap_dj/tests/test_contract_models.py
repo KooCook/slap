@@ -14,16 +14,16 @@ class ContractModelTest(unittest.TestCase):
         print(m)
 
     def test_single_artist_song(self):
-        s = GeniusSongModel.from_song_artist("Look What You Made Me Do", "Taylor Swift")
+        s = GeniusSongModel.from_title_and_artist("Look What You Made Me Do", "Taylor Swift")
         self.assertEqual(s.title, "Look What You Made Me Do")
         self.assertEqual(s.primary_artist.name, "Taylor Swift")
 
     def test_featured_artist_song(self):
-        s = GeniusSongModel.from_song_artist("The Monster", "Eminem")
+        s = GeniusSongModel.from_title_and_artist("The Monster", "Eminem")
         self.assertEqual(s.title, "The Monster")
         self.assertEqual(s.primary_artist.name, "Taylor Swift")
 
     def test_multiple_artist_collab_song(self):
-        s = GeniusSongModel.from_song_artist("Senorita", "Shawn Mendes")
+        s = GeniusSongModel.from_title_and_artist("Senorita", "Shawn Mendes")
         self.assertEqual(s.title, "Señorita")
         self.assertEqual(s.primary_artist.name, "Shawn Mendes & Camila Cabello")

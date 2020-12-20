@@ -42,8 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'app.apps.SlapDjAppConfig',
     'rest_framework_swagger',
+    'app.apps.SlapDjAppConfig',
+    'app_v2.apps.AppV2Config'
     # 'channels'
     # 'slap_dj.app.apps.SlapDjAppConfig',
 ]
