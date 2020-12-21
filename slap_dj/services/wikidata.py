@@ -14,10 +14,10 @@ from contract_models.song import SongModel
 
 K_POP_QUERY = """
 SELECT ?song ?songLabel 
-(GROUP_CONCAT(DISTINCT ?performerlabel; SEPARATOR=", ") AS ?performers) 
-(GROUP_CONCAT(DISTINCT ?track;SEPARATOR=", ") AS ?sttracks) 
-(GROUP_CONCAT(DISTINCT ?gsid;SEPARATOR=", ") AS ?gsids)
-(GROUP_CONCAT(DISTINCT ?video;SEPARATOR=", ") AS ?ytVideoIds)
+(GROUP_CONCAT(DISTINCT ?performerlabel; SEPARATOR=",") AS ?performers) 
+(GROUP_CONCAT(DISTINCT ?track;SEPARATOR=",") AS ?sttracks) 
+(GROUP_CONCAT(DISTINCT ?gsid;SEPARATOR=",") AS ?gsids)
+(GROUP_CONCAT(DISTINCT ?video;SEPARATOR=",") AS ?ytVideoIds)
 { ?performer p:P136 [ps:P136 wd:Q213665];
              rdfs:label ?performerlabel. 
   ?song p:P175 [ps:P175 ?performer];
@@ -108,10 +108,10 @@ def get_kpop_songs() -> pd.DataFrame:
 
 all_song_query = """
 SELECT ?song ?songLabel 
-(GROUP_CONCAT(DISTINCT ?performerlabel; SEPARATOR=", ") AS ?performers) 
-(GROUP_CONCAT(DISTINCT ?track;SEPARATOR=", ") AS ?sttracks) 
-(GROUP_CONCAT(DISTINCT ?gsid;SEPARATOR=", ") AS ?gsids)
-(GROUP_CONCAT(DISTINCT ?video;SEPARATOR=", ") AS ?ytVideoIds)
+(GROUP_CONCAT(DISTINCT ?performerlabel; SEPARATOR=",") AS ?performers) 
+(GROUP_CONCAT(DISTINCT ?track;SEPARATOR=",") AS ?sttracks) 
+(GROUP_CONCAT(DISTINCT ?gsid;SEPARATOR=",") AS ?gsids)
+(GROUP_CONCAT(DISTINCT ?video;SEPARATOR=",") AS ?ytVideoIds)
 { ?performer p:P136 [ps:P136 wd:Q37073];
              p:P1412 [ps:P1412 wd:Q1860];
              rdfs:label ?performerlabel. 
@@ -133,9 +133,9 @@ ORDER BY RAND()
 
 song_query_v1 = """
 SELECT ?song ?songLabel 
-(GROUP_CONCAT(DISTINCT ?performerlabel; SEPARATOR=", ") AS ?performers) 
-(GROUP_CONCAT(DISTINCT ?track;SEPARATOR=", ") AS ?sttracks) 
-(GROUP_CONCAT(DISTINCT ?gsid;SEPARATOR=", ") AS ?gsids)
+(GROUP_CONCAT(DISTINCT ?performerlabel; SEPARATOR=",") AS ?performers) 
+(GROUP_CONCAT(DISTINCT ?track;SEPARATOR=",") AS ?sttracks) 
+(GROUP_CONCAT(DISTINCT ?gsid;SEPARATOR=",") AS ?gsids)
 (GROUP_CONCAT(DISTINCT ?video;SEPARATOR=",") AS ?ytVideoIds)
 {{ ?performer p:P136 [ps:P136 wd:Q37073];
              rdfs:label ?performerlabel. 

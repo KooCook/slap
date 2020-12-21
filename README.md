@@ -50,12 +50,12 @@ python manage.py populate_data ... # TODO: mode
 
 ## Deployment 
 
-[comment]: <> (## Quickstart with Docker Compose)
+## Quickstart with Docker Compose
 
-[comment]: <> (1.\)
+1.\
 
-[comment]: <> (```shell)
+```shell
 
-[comment]: <> (docker-compose up -d)
+docker-compose up -d
 
-[comment]: <> (```)
+```
