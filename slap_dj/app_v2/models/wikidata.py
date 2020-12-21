@@ -3,12 +3,13 @@ import json
 
 from django.db import models
 
+from app_v2.models.youtube import YoutubeVideo
 from app_v2.models.base import Song
 from app_v2.models.spotify import retrieve_from_song_title_and_possible_artists
-from app_v2.db.fields import CSVField
 from app_v2.db.utils import upsert
 from contract_models.song import SongModel
-from services.wikidata import retrieve_songmodel_wikidata, retrieve_english_songs as populate_internal
+from services.wikidata import retrieve_songmodel_wikidata, retrieve_english_songs as populate_internal, \
+    retrieve_song_model_from_wikidata_id
 
 __all__ = [
     'populate_wikidata_english_songs',
@@ -20,13 +21,19 @@ __all__ = [
 def populate_wikidata_english_songs():
     song_list: List[SongModel] = populate_internal()
     for song in song_list:
-        ws = upsert(WikidataSong, title=song.name, wikidata_id=song.wikidata_id)
+        ws = upsert(WikidataSong, title=song.name.strip(), wikidata_id=song.wikidata_id)
         for artist in song.artists:
-            p = upsert(WikidataArtist, name=artist.name)
+            p = upsert(WikidataArtist, name=artist.name.strip())
             ws.performers.add(p)
-        s: Song = upsert(Song, wikidata_song=ws)
-        retrieve_from_song_title_and_possible_artists(song.name, song.artist_names)
+        spotify_songs = retrieve_from_song_title_and_possible_artists(song.name.strip(), song.artist_names)
+        for spotify_song in spotify_songs:
+            s: Song = upsert(Song, wikidata_song=ws, spotify_song=spotify_song)
         print(song)
+
+
+class WikidataGenre(models.Model):
+    wikidata_id = models.CharField(max_length=13, unique=True)
+    label = models.CharField(max_length=255)
 
 
 class WikidataSong(models.Model):
@@ -34,6 +41,7 @@ class WikidataSong(models.Model):
     wikidata_id = models.CharField(max_length=13, unique=True,
                                    blank=False)
     performers = models.ManyToManyField('WikidataArtist')
+    genres = models.ManyToManyField('WikidataGenre')
 
     @classmethod
     def retrieve_song(cls, song_title: str, artists_names: List[str]) -> 'WikidataSong':
@@ -44,10 +52,34 @@ class WikidataSong(models.Model):
                                         artists=artists_names)
         return upsert(cls, title=s.name, wikidata_id=s.wikidata_id)
 
+    @classmethod
+    def retrieve_all_info_from_id(cls):
+        for inst in cls.objects.all():
+            if inst.wikidata_id:
+                inst.retrieve_info_from_id()
+
     def retrieve_info_from_id(self):
-        # TODO: retrieve title, performers, etc. from id
-        # TODO: link base Song to YoutubeVideo
-        pass
+        # Retrieve youtube ids from wikidata service
+        try:
+            s = retrieve_song_model_from_wikidata_id(wikidata_id=self.wikidata_id)
+        except KeyError:
+            print(self, self.wikidata_id)
+            raise
+
+        if s.name.upper() == self.wikidata_id.upper():
+            pass
+        else:
+            self.title = s.name
+
+        assert len(s.genres) == len(s.genre_ids)
+        for genre, genre_id in zip(s.genres, s.genres):
+            g = upsert(WikidataGenre, wikidata_id=genre_id, label=genre)
+            self.genres.add(g)
+
+        for yt_id in s.youtube_ids:
+            yt = upsert(YoutubeVideo, video_id=yt_id)
+            self.song.youtube_videos.add(yt)
+        self.save()
 
 
 class WikidataArtist(models.Model):

@@ -26,7 +26,8 @@ class GeniusSong(models.Model):
     def retrieve_song(cls, title: str, artists_names: List['Artist']) -> 'GeniusSong':
         # Ensure that it at least has an ID
         s = GeniusSongModel.from_title_and_artist(title, artists_names[0])
-        return upsert(cls, title=s.title,
+        return upsert(cls,
+                      title=s.title,
                       lyrics=s.lyrics,
                       song_id=s.genius_id)
 

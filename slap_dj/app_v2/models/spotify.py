@@ -7,7 +7,7 @@ from contract_models.spotify import SpotifySongModel
 from services.spotify import search_for_song
 
 
-class Genre(models.Model):
+class SpotifyGenre(models.Model):
     name = models.CharField(max_length=289)
     pretty_name = models.CharField(max_length=289)
 
@@ -38,7 +38,7 @@ class SpotifySong(models.Model):
     track_id = models.CharField(max_length=255, unique=True,
                                 blank=False)
     popularity_score = models.IntegerField()
-    genres = models.ManyToManyField('Genre')
+    genres = models.ManyToManyField('SpotifyGenre')
     artists = models.ManyToManyField('SpotifyArtist')
 
     @classmethod
@@ -52,7 +52,7 @@ class SpotifySong(models.Model):
                           popularity_score=s.spotify_popularity,
                           )
         for genre in s.genres:
-            g = upsert(Genre, name=genre)
+            g = upsert(SpotifyGenre, name=genre)
             instance.genres.add(g)
         return instance
 

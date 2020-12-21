@@ -12,7 +12,7 @@ from app_v2.db.utils import upsert
 class Song(models.Model):
     # youtube_videos = models.OneToManyField('YoutubeVideo', null=True, on_delete=models.SET_NULL)
     genius_song = models.OneToOneField('GeniusSong', null=True, on_delete=models.SET_NULL)
-    wikidata_song = models.OneToOneField('WikidataSong', null=True, on_delete=models.SET_NULL)
+    wikidata_song = models.ForeignKey('WikidataSong', null=True, on_delete=models.SET_NULL)
     spotify_song = models.OneToOneField('SpotifySong', null=True, on_delete=models.SET_NULL)
     artists = models.ManyToManyField('Artist', through='ArtistSong')
     # cached fields
@@ -73,7 +73,8 @@ class Song(models.Model):
         if self.genius_song is not None:
             # already linked
             return
-        genius_song = GeniusSong.retrieve_song(self.title, [self.artists.first().name])
+        # Use spotify title bc service is related
+        genius_song = GeniusSong.retrieve_song(self.spotify_song.title, [self.artists.first().name])
         self.genius_song = genius_song
         self.save()
 
