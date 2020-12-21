@@ -20,3 +20,4 @@ class SpotifyArtistModel:
     name: str = ''
     genres: list = field(default_factory=list)
     popularity: int = 0
+    role: str = ''

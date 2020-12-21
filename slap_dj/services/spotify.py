@@ -3,7 +3,7 @@ from typing import List
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
-from contract_models.spotify import SpotifySongModel
+from contract_models.spotify import SpotifySongModel, SpotifyArtistModel
 from settings import SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET
 
 sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTIFY_CLIENT_ID,
@@ -39,3 +39,12 @@ def search_for_song(song_name: str, artist_name: str) -> SpotifySongModel:
         raise NameError(f"No such song! {song_name} : {artist_name}")
     if s is None:
         raise NameError(f"Error! {song_name} - {artist_name}")
+
+
+def search_for_artists(artist_name: str) -> List[SpotifyArtistModel]:
+    results = sp.search(q=f"artist:{artist_name}", type='artist', limit=20)
+    artists = results['artists']['items']
+    artist_contracts: List[SpotifyArtistModel] = []
+    for artist in artists:
+        artist_contracts.append(SpotifyArtistModel(spotify_id=artist['id']))
+    return artist_contracts

@@ -9,6 +9,7 @@ from typing import List
 from SPARQLWrapper import SPARQLWrapper, JSON
 import pandas as pd
 
+from contract_models import Artist
 from contract_models.song import SongModel
 
 K_POP_QUERY = """
@@ -174,7 +175,7 @@ SELECT ?song ?songLabel
   FILTER( LANG(?performerlabel) = "en")
   OPTIONAL { ?song p:P31 [ps:P31 wd:Q134556]. }
   FILTER (?in in (wd:Q7366, wd:Q134556))
-   OPTIONAL { ?song p:P1651 [ps:P1651 ?video]. }
+OPTIONAL { ?song p:P1651 [ps:P1651 ?video]. }
  OPTIONAL { ?song p:P2207 [ps:P2207 ?track]. }
  OPTIONAL { ?song p:P6218 [ps:P6218 ?gsid]. }
    SERVICE wikibase:label { bd:serviceParam wikibase:language "en,[AUTO_LANGUAGE]".}        
@@ -183,7 +184,42 @@ GROUP BY ?song ?songLabel
 ORDER BY ?ytVideoIds
 """
 
+song_id_query = """
+SELECT ?songLabel
+(GROUP_CONCAT(DISTINCT ?performerLabel; SEPARATOR=",") AS ?performers) 
+(GROUP_CONCAT(DISTINCT ?trackLabel;SEPARATOR=",") AS ?sttracks) 
+(GROUP_CONCAT(DISTINCT ?video;SEPARATOR=",") AS ?ytVideoIds)
+(GROUP_CONCAT(DISTINCT ?genreLabel;SEPARATOR=",") AS ?genres)
+{ wd:Q68097173 p:P175 [ps:P175 ?performer];
+               p:P136 [ps:P136 ?genre].
+
+ # FILTER( LANG(?performerLabel) = "en")
+ OPTIONAL { wd:Q68097173 p:P1651 [ps:P1651 ?video]. }
+ OPTIONAL { wd:Q68097173 p:P2207 [ps:P2207 ?track]. }
+ SERVICE wikibase:label { bd:serviceParam wikibase:language "en".
+                          wd:Q68097173 rdfs:label ?songLabel.
+                          ?performer rdfs:label ?performerLabel.
+                          ?track rdfs:label ?trackLabel.
+                          ?genre rdfs:label ?genreLabel
+                        }
+}
+"""
+
 # TODO: Strategy pattern
+
+
+def retrieve_song_model_from_wikidata_id(wikidata_id: str) -> SongModel:
+    df = builder.raw_query(['songLabel', 'performers', 'ytVideoIds', 'genres'],
+                           song_id_query.format(wikidata_id=wikidata_id))
+    # raise ValueError("Song Id Not found")
+    title = df['songLabel.value'][0]
+    performers = df['performers.value'].split(',')
+    youtube_id = df['ytVideoIds.value'].split(',')
+    genres = df['genres.value'].split(',')
+
+    return SongModel(name=title, _artist_names=performers,
+                     youtube_ids=youtube_id,
+                     genres=genres)
 
 
 def retrieve_songmodel_wikidata(song_title: str, artists: List[str]) -> SongModel:
