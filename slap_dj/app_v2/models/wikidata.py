@@ -28,6 +28,7 @@ def populate_wikidata_english_songs():
         spotify_songs = retrieve_from_song_title_and_possible_artists(song.name.strip(), song.artist_names)
         for spotify_song in spotify_songs:
             s: Song = upsert(Song, wikidata_song=ws, spotify_song=spotify_song)
+            break
         print(song)
 
 
