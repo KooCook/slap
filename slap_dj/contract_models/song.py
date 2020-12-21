@@ -24,6 +24,7 @@ class SongModel:
     spotify_album_id: str = ''
     youtube_ids: List[str] = field(default_factory=list)
     wikidata_id: str = ''
+    genre_ids: List[str] = field(default_factory=list)
     youtube_video: YouTubeVideoModel = None
     _artist_names: str = ''
 

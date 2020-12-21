@@ -190,10 +190,12 @@ SELECT ?songLabel
 (GROUP_CONCAT(DISTINCT ?trackLabel;SEPARATOR=",") AS ?sttracks) 
 (GROUP_CONCAT(DISTINCT ?video;SEPARATOR=",") AS ?ytVideoIds)
 (GROUP_CONCAT(DISTINCT ?genreLabel;SEPARATOR=",") AS ?genres)
+(GROUP_CONCAT(DISTINCT ?genre;SEPARATOR=",") AS ?genreIds)
 {{ wd:{wikidata_id} p:P175 [ps:P175 ?performer];
                p:P136 [ps:P136 ?genre].
 
  # FILTER( LANG(?performerLabel) = "en")
+ OPTIONAL {{ wd:{wikidata_id} p:P136 [ps:P136 ?genre]. }}
  OPTIONAL {{ wd:{wikidata_id} p:P1651 [ps:P1651 ?video]. }}
  OPTIONAL {{ wd:{wikidata_id} p:P2207 [ps:P2207 ?track]. }}
  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en".
@@ -210,7 +212,8 @@ GROUP BY ?songLabel
 
 
 def retrieve_song_model_from_wikidata_id(wikidata_id: str) -> SongModel:
-    df = builder.raw_query(['songLabel', 'performers', 'ytVideoIds', 'genres'],
+    df = builder.raw_query(['songLabel', 'performers',
+                            'ytVideoIds', 'genres', 'genreIds'],
                            song_id_query.format(wikidata_id=wikidata_id))
     # raise ValueError("Song Id Not found")
     row = df.iloc[0]
@@ -218,10 +221,11 @@ def retrieve_song_model_from_wikidata_id(wikidata_id: str) -> SongModel:
     performers = row['performers.value'].split(',')
     youtube_id = row['ytVideoIds.value'].split(',')
     genres = row['genres.value'].split(',')
+    genre_ids = row['genreIds.value'].split(',')
 
     return SongModel(name=title, _artist_names=performers,
                      youtube_ids=youtube_id,
-                     genres=genres)
+                     genres=genres, genre_ids=genre_ids)
 
 
 def retrieve_songmodel_wikidata(song_title: str, artists: List[str]) -> SongModel:
