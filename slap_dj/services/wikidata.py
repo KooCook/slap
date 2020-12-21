@@ -190,19 +190,19 @@ SELECT ?songLabel
 (GROUP_CONCAT(DISTINCT ?trackLabel;SEPARATOR=",") AS ?sttracks) 
 (GROUP_CONCAT(DISTINCT ?video;SEPARATOR=",") AS ?ytVideoIds)
 (GROUP_CONCAT(DISTINCT ?genreLabel;SEPARATOR=",") AS ?genres)
-{ wd:Q68097173 p:P175 [ps:P175 ?performer];
+{{ wd:{wikidata_id} p:P175 [ps:P175 ?performer];
                p:P136 [ps:P136 ?genre].
 
  # FILTER( LANG(?performerLabel) = "en")
- OPTIONAL { wd:Q68097173 p:P1651 [ps:P1651 ?video]. }
- OPTIONAL { wd:Q68097173 p:P2207 [ps:P2207 ?track]. }
+ OPTIONAL {{ wd:{wikidata_id} p:P1651 [ps:P1651 ?video]. }}
+ OPTIONAL {{ wd:{wikidata_id} p:P2207 [ps:P2207 ?track]. }}
  SERVICE wikibase:label { bd:serviceParam wikibase:language "en".
                           wd:Q68097173 rdfs:label ?songLabel.
                           ?performer rdfs:label ?performerLabel.
                           ?track rdfs:label ?trackLabel.
                           ?genre rdfs:label ?genreLabel
-                        }
-}
+ }}
+}}
 """
 
 # TODO: Strategy pattern
