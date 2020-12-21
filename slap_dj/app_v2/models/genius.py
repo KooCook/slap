@@ -21,4 +21,4 @@ class GeniusSong(models.Model):
 class GeniusArtist(models.Model):
     name = models.CharField(max_length=255)
     artist_id = models.CharField(max_length=15, unique=True,
-                               blank=False)
+                                 blank=False)

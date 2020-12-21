@@ -1,7 +1,7 @@
 __all__ = ('SongModel', )
 
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Iterable
 
 from app.support.repetition import calculate_repetition
 from contract_models import Artist, ArtistRole
@@ -33,7 +33,7 @@ class SongModel:
                         for idx, name in enumerate(names)]
 
     @property
-    def artist_names(self) -> [str]:
+    def artist_names(self) -> Iterable[str]:
         return (artist.name for artist in self.artists)
 
     def get_artist_by_name(self, name: str) -> Artist:

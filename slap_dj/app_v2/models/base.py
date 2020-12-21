@@ -171,5 +171,5 @@ class Artist(models.Model):
         if self.wikidata_artist is not None:
             # already linked
             return
-        WikidataArtist.
-        wiki_artist
+        # WikidataArtist.
+        # wiki_artist

@@ -3,7 +3,7 @@ from typing import List, Type, TypeVar
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
-from app_v2.models import Song
+from app_v2.models import Song, retrieve_from_song_title_and_possible_artists
 from app_v2.models.fields import CSVField
 from app_v2.models.utils import upsert
 from contract_models.song import SongModel
@@ -17,8 +17,8 @@ def populate_wikidata_english_songs():
         for artist in song.artists:
             p = upsert(WikidataArtist, name=artist)
             ws.performers.add(p)
-        Song.objects.create(wikidata_song=ws)
-        # TODO: call spotify next
+        s: Song = Song.objects.create(wikidata_song=ws)
+        retrieve_from_song_title_and_possible_artists(song.name, song.artist_names)
 
 
 class WikidataSong(models.Model):

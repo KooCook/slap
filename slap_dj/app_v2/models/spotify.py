@@ -3,7 +3,9 @@ from typing import List
 from django.db import models
 
 from app_v2.models import upsert
+from contract_models.spotify import SpotifySongModel
 from services.spotify import search_for_song
+
 
 class Genre(models.Model):
     name = models.CharField(max_length=289)
@@ -11,6 +13,20 @@ class Genre(models.Model):
 
     def as_dict(self) -> dict:
         return {'name': self.name}
+
+
+def retrieve_from_song_title_and_possible_artists(song_title: str, possible_artist_names: List[str]) -> List['SpotifySong']:
+    songs = []
+    for artist in possible_artist_names:
+        try:
+            s = search_for_song(song_title, artist)
+        except NameError:
+            continue
+        song = SpotifySong.from_song_model(s)
+        song.artist = SpotifySong
+        # TODO: Create artist from this and connect to Song
+        songs.append()
+    return songs
 
 
 class SpotifySong(models.Model):
@@ -24,9 +40,7 @@ class SpotifySong(models.Model):
                                on_delete=models.SET_NULL)
 
     @classmethod
-    def retrieve_song(cls, song_title: str, artists: List['Artist']):
-        s = search_for_song(song_title, artists[0].name)
-
+    def from_song_model(cls, s: SpotifySongModel):
         instance = upsert(cls, title=s.name, track_id=s.spotify_id,
                           album_id=s.spotify_album_id, popularity_score=s.spotify_popularity)
         for genre in s.genres:
@@ -35,6 +49,12 @@ class SpotifySong(models.Model):
                 continue
             instance.genres.add(g)
         return instance
+
+    @classmethod
+    def retrieve_song(cls, song_title: str, artists: List['Artist']) -> 'SpotifySong':
+        s = search_for_song(song_title, artists[0].name)
+        return cls.from_song_model(s)
+
 
 
 class SpotifyArtist(models.Model):
