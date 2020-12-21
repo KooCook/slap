@@ -73,7 +73,8 @@ class Song(models.Model):
         if self.genius_song is not None:
             # already linked
             return
-        genius_song = GeniusSong.retrieve_song(self.title, [self.artists.first().name])
+        # Use spotify title bc service is related
+        genius_song = GeniusSong.retrieve_song(self.spotify_song.title, [self.artists.first().name])
         self.genius_song = genius_song
         self.save()
 

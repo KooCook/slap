@@ -16,6 +16,7 @@ class SongModel:
     name: str = ''
     lyrics: str = ''
     genres: list = field(default_factory=list)
+    genre_ids: list = field(default_factory=list)
     artists: List[Artist] = field(default_factory=list)
     compressibility: float = 0
     spotify_popularity: int = 0
