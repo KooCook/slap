@@ -1,3 +1,6 @@
+from typing import List, Optional
+
+import numpy as np
 from django.db import models
 from django.db.models.aggregates import Min, Max
 from scipy import special
@@ -7,7 +10,7 @@ from app_v2.db.utils import upsert
 
 
 class Song(models.Model):
-    youtube_videos = models.ForeignKey('YoutubeVideo', null=True, on_delete=models.SET_NULL)
+    # youtube_videos = models.OneToManyField('YoutubeVideo', null=True, on_delete=models.SET_NULL)
     genius_song = models.OneToOneField('GeniusSong', null=True, on_delete=models.SET_NULL)
     wikidata_song = models.OneToOneField('WikidataSong', null=True, on_delete=models.SET_NULL)
     spotify_song = models.OneToOneField('SpotifySong', null=True, on_delete=models.SET_NULL)
@@ -25,12 +28,34 @@ class Song(models.Model):
             return self.spotify_song.title
         raise ValueError("No title available for this Song.")
 
+    @property
+    def artists_names(self) -> List[str]:
+        return list(map(lambda a: a.name, self.artists.all()))
+
+    @property
+    def weighted_popularity(self) -> Optional[float]:
+        """ Returns a number between 0 and 1 if popularity exists."""
+
+        yt_vids = self.youtube_videos.all()
+        if len(yt_vids) == 0:
+            raise ValueError("No youtube videos available")
+
+        # strategy = max view_count
+        popularity = max(map(lambda x: x.view_count, yt_vids))
+
+        if popularity:
+            w = float(special.expit((np.log10(popularity) - 5.2) / 0.3))
+            assert 0 <= w <= 1, f"weighted_popularity of {self} not in bound: {w}"
+            return w
+        else:
+            raise ValueError("The view count does not exist.")
+
     def link_to_wikidata(self):
         from app_v2.models.wikidata import WikidataSong
         if self.wikidata_song is not None:
             # already linked
             return
-        wd_song = WikidataSong.retrieve_song(self.title, self.artists)
+        wd_song = WikidataSong.retrieve_song(self.title, self.artists_names)
         self.wikidata_song = wd_song
         self.save()
 
@@ -39,7 +64,7 @@ class Song(models.Model):
         if self.spotify_song is not None:
             # already linked
             return
-        spotify_song = SpotifySong.retrieve_song(self.title, self.artists)
+        spotify_song = SpotifySong.retrieve_song(self.title, [self.artists.first().name])
         self.spotify_song = spotify_song
         self.save()
 
@@ -48,7 +73,7 @@ class Song(models.Model):
         if self.genius_song is not None:
             # already linked
             return
-        genius_song = GeniusSong.retrieve_song(self.title, self.artists)
+        genius_song = GeniusSong.retrieve_song(self.title, [self.artists.first().name])
         self.genius_song = genius_song
         self.save()
 
@@ -142,7 +167,7 @@ class WordSong(models.Model):
 
     @classmethod
     def update_song_word_frequency(cls, song: Song) -> None:
-        df = get_bow_dataframe(song.words)
+        df = get_bow_dataframe(song.genius_song.words)
         freq = df['freq']
         words = df['word']
         for w, f in zip(words, freq):
@@ -158,7 +183,7 @@ class Artist(models.Model):
     @property
     def name(self) -> str:
         if self.wikidata_artist:
-            return self.wikidata_artist.artist_names
+            return self.wikidata_artist.name
         if self.genius_artist:
             return self.genius_artist.name
         if self.spotify_artist:

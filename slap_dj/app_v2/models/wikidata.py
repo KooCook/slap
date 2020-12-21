@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Iterable
 import json
 
 from django.db import models
@@ -20,7 +20,7 @@ __all__ = [
 def populate_wikidata_english_songs():
     song_list: List[SongModel] = populate_internal()
     for song in song_list:
-        ws = upsert(WikidataSong, wikidata_id=song.wikidata_id)
+        ws = upsert(WikidataSong, title=song.name, wikidata_id=song.wikidata_id)
         for artist in song.artists:
             p = upsert(WikidataArtist, name=artist.name)
             ws.performers.add(p)
@@ -36,12 +36,18 @@ class WikidataSong(models.Model):
     performers = models.ManyToManyField('WikidataArtist')
 
     @classmethod
-    def retrieve_song(cls, song_title: str, artists: List['Artist']) -> 'WikidataSong':
-        if not artists:
-            raise TypeError(f"NULL ARTIST!!!!! {artists}")
+    def retrieve_song(cls, song_title: str, artists_names: List[str]) -> 'WikidataSong':
+        # Ensure that it at least has an ID
+        if not artists_names:
+            raise TypeError(f"NULL ARTIST!!!!! {artists_names}")
         s = retrieve_songmodel_wikidata(song_title=song_title,
-                                        artists=list(map(lambda a: a.name, artists)))
-        return upsert(cls, wikidata_id=s.wikidata_id)
+                                        artists=artists_names)
+        return upsert(cls, title=s.name, wikidata_id=s.wikidata_id)
+
+    def retrieve_info_from_id(self):
+        # TODO: retrieve title, performers, etc. from id
+        # TODO: link base Song to YoutubeVideo
+        pass
 
 
 class WikidataArtist(models.Model):

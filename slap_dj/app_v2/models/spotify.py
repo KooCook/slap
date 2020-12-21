@@ -57,8 +57,9 @@ class SpotifySong(models.Model):
         return instance
 
     @classmethod
-    def retrieve_song(cls, song_title: str, artists: List['Artist']) -> 'SpotifySong':
-        s = search_for_song(song_title, artists[0].name)
+    def retrieve_song(cls, song_title: str, artists_names: List[str]) -> 'SpotifySong':
+        # Ensure that it at least has an ID
+        s = search_for_song(song_title, artists_names[0])
         return cls.from_song_model(s)
 
 
