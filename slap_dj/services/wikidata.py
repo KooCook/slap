@@ -196,7 +196,7 @@ SELECT ?songLabel
  # FILTER( LANG(?performerLabel) = "en")
  OPTIONAL {{ wd:{wikidata_id} p:P1651 [ps:P1651 ?video]. }}
  OPTIONAL {{ wd:{wikidata_id} p:P2207 [ps:P2207 ?track]. }}
- SERVICE wikibase:label { bd:serviceParam wikibase:language "en".
+ SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en".
                           wd:Q68097173 rdfs:label ?songLabel.
                           ?performer rdfs:label ?performerLabel.
                           ?track rdfs:label ?trackLabel.
