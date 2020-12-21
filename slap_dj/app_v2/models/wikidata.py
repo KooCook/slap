@@ -1,4 +1,5 @@
 from typing import List
+import json
 
 from django.db import models
 
@@ -9,16 +10,23 @@ from app_v2.db.utils import upsert
 from contract_models.song import SongModel
 from services.wikidata import retrieve_songmodel_wikidata, retrieve_english_songs as populate_internal
 
+__all__ = [
+    'populate_wikidata_english_songs',
+    'WikidataSong',
+    'WikidataArtist',
+]
+
 
 def populate_wikidata_english_songs():
     song_list: List[SongModel] = populate_internal()
     for song in song_list:
         ws = upsert(WikidataSong, wikidata_id=song.wikidata_id)
         for artist in song.artists:
-            p = upsert(WikidataArtist, name=artist)
+            p = upsert(WikidataArtist, name=artist.name)
             ws.performers.add(p)
-        s: Song = Song.objects.create(wikidata_song=ws)
+        s: Song = upsert(Song, wikidata_song=ws)
         retrieve_from_song_title_and_possible_artists(song.name, song.artist_names)
+        print(song)
 
 
 class WikidataSong(models.Model):
@@ -38,4 +46,12 @@ class WikidataSong(models.Model):
 
 class WikidataArtist(models.Model):
     name = models.CharField(max_length=255)
-    alt_names = CSVField(item_type=str)
+    alt_names_serialized = models.CharField(max_length=1000)
+
+    @property
+    def alt_names(self) -> List[str]:
+        return json.loads(self.alt_names_serialized)
+
+    @alt_names.setter
+    def alt_names(self, value):
+        self.alt_names_serialized = json.dumps(value)

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Iterable
 
 from django.db import models
 
@@ -15,17 +15,20 @@ class Genre(models.Model):
         return {'name': self.name}
 
 
-def retrieve_from_song_title_and_possible_artists(song_title: str, possible_artist_names: List[str]) -> List['SpotifySong']:
+def retrieve_from_song_title_and_possible_artists(song_title: str, possible_artist_names: Iterable[str]) -> List['SpotifySong']:
     songs = []
-    for artist in possible_artist_names:
+    for name in possible_artist_names:
         try:
-            s = search_for_song(song_title, artist)
+            s = search_for_song(song_title, name)
         except NameError:
             continue
+        if s is None:
+            continue
         song = SpotifySong.from_song_model(s)
-        song.artist = SpotifySong
-        # TODO: Create artist from this and connect to Song
-        songs.append()
+        for artist in s.artists:
+            artist_obj = upsert(SpotifyArtist, name=artist.name, artist_id=artist.spotify_id)
+            song.artists.add(artist_obj)
+        songs.append(song)
     return songs
 
 
@@ -36,17 +39,20 @@ class SpotifySong(models.Model):
                                 blank=False)
     popularity_score = models.IntegerField()
     genres = models.ManyToManyField('Genre')
-    artist = models.ForeignKey('SpotifyArtist', null=True,
-                               on_delete=models.SET_NULL)
+    artists = models.ManyToManyField('SpotifyArtist')
 
     @classmethod
     def from_song_model(cls, s: SpotifySongModel):
-        instance = upsert(cls, title=s.name, track_id=s.spotify_id,
-                          album_id=s.spotify_album_id, popularity_score=s.spotify_popularity)
+        if s is None:
+            raise TypeError("'s' should be a SpotifySongModel, not None")
+        instance = upsert(cls,
+                          title=s.name,
+                          track_id=s.spotify_id,
+                          album_id=s.spotify_album_id,
+                          popularity_score=s.spotify_popularity,
+                          )
         for genre in s.genres:
             g = upsert(Genre, name=genre)
-            if cls.objects.filter(genres__name=g) > 0:
-                continue
             instance.genres.add(g)
         return instance
 
@@ -54,7 +60,6 @@ class SpotifySong(models.Model):
     def retrieve_song(cls, song_title: str, artists: List['Artist']) -> 'SpotifySong':
         s = search_for_song(song_title, artists[0].name)
         return cls.from_song_model(s)
-
 
 
 class SpotifyArtist(models.Model):
