@@ -212,10 +212,11 @@ def retrieve_song_model_from_wikidata_id(wikidata_id: str) -> SongModel:
     df = builder.raw_query(['songLabel', 'performers', 'ytVideoIds', 'genres'],
                            song_id_query.format(wikidata_id=wikidata_id))
     # raise ValueError("Song Id Not found")
-    title = df['songLabel.value'][0]
-    performers = df['performers.value'].split(',')
-    youtube_id = df['ytVideoIds.value'].split(',')
-    genres = df['genres.value'].split(',')
+    row = df.iloc[0]
+    title = row['songLabel.value']
+    performers = row['performers.value'].split(',')
+    youtube_id = row['ytVideoIds.value'].split(',')
+    genres = row['genres.value'].split(',')
 
     return SongModel(name=title, _artist_names=performers,
                      youtube_ids=youtube_id,
