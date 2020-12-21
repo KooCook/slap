@@ -23,7 +23,7 @@ Components include:
 Django API Server
 
 - Python 3.6+
-- Python packages per [requirements.txt](#requirements.txt)
+- Python packages per [requirements.txt](requirements.txt)
 
 Vue application
  
@@ -60,7 +60,7 @@ java -jar path/to/openapi-generator-cli-4.3.1.jar generate -i openapi/slap-api.y
 python -m pip install -r requirements.txt
 ```
 
-2\. Make Django migrations (go to `/slap_dj/`)
+2\. Make Django migrations (go to [`slap_dj/`](slap_dj))
 
 ```sh
 python manage.py makemigrations
@@ -87,14 +87,18 @@ python manage.py runserver
 ```
 
 ### Running the development Vue app to visualize data
+
+See [slap-vue/README.md](slap-vue/README.md)
+
 ## Data population
 
 ```sh
 python manage.py populate_data ... # TODO: mode
 ```
+
+```
 wikidata.populate_wikidata_english_songs()
 wikidata.WikidataSong.retrieve_all_info_from_id()
-
 ```
 
 ## Deployment 
