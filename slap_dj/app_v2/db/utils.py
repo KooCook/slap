@@ -31,17 +31,27 @@ def upsert(cls: Type[_M], **kwargs) -> _M:
             uniques[k] = v
         else:
             rest[k] = v
-    try:
-        instance = cls.objects.get(**uniques)
-    except MultipleObjectsReturned:
+    if uniques:
+        try:
+            instance = cls.objects.get(**uniques)
+        except MultipleObjectsReturned:
+            # BAD DATA
+            raise
+            # raise
+            # try:
+            #     instance = cls.objects.get(**kwargs)
+            # except ObjectDoesNotExist:
+            #     instances = cls.objects.filter(**uniques)
+            #     # TODO: Try possible combinations from the strictest to the least strict
+            #     instance = instances.first()
+        except ObjectDoesNotExist:
+            instance = cls()
+    else:
         try:
             instance = cls.objects.get(**kwargs)
+            return instance
         except ObjectDoesNotExist:
-            instances = cls.objects.filter(**uniques)
-            # TODO: Try possible combinations from the strictest to the least strict
-            instance = instances.first()
-    except ObjectDoesNotExist:
-        instance = cls()
+            instance = cls()
     for k, v in kwargs.items():
         setattr(instance, k, v)
     try:
