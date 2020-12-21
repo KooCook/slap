@@ -203,6 +203,7 @@ SELECT ?songLabel
                           ?genre rdfs:label ?genreLabel
  }}
 }}
+GROUP BY ?songLabel
 """
 
 # TODO: Strategy pattern
