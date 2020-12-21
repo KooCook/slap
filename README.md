@@ -18,6 +18,17 @@ Components include:
 - API server
 - Client app to visualize data
 
+### Team Members
+
+| Name                                                                                                   | Student    |
+|--------------------------------------------------------------------------------------------------------|------------|
+| Mai Norapong ([@MaiMee1](https://github.com/MaiMee1)) ([@MaiNorapong](https://github.com/MaiNorapong)) | 6110545619 |
+| Tharathorn Bunrattanasathian ([@th-bunratta](https://github.com/th-bunratta))                          | 6110546011 |
+
+Software & Knowledge Engineering	Program,  
+Department of Computer Engineering,  
+Faculty of Engineering, Kasetsart University
+
 ## Requirements
 
 Django API Server
