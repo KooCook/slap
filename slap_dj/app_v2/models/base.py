@@ -3,7 +3,7 @@ from django.db.models.aggregates import Min, Max
 from scipy import special
 
 from app.support.repetition import get_bow_dataframe
-from app_v2.models import WikidataSong, SpotifySong, upsert, GeniusSong, WikidataArtist
+from app_v2.db.utils import upsert
 
 
 class Song(models.Model):
@@ -11,7 +11,7 @@ class Song(models.Model):
     genius_song = models.OneToOneField('GeniusSong', null=True, on_delete=models.SET_NULL)
     wikidata_song = models.OneToOneField('WikidataSong', null=True, on_delete=models.SET_NULL)
     spotify_song = models.OneToOneField('SpotifySong', null=True, on_delete=models.SET_NULL)
-    artists = models.ManyToManyField('Artist', through='ArtistSong', null=True)
+    artists = models.ManyToManyField('Artist', through='ArtistSong')
     # cached fields
     compressibility = models.FloatField(null=True)
 
@@ -26,6 +26,7 @@ class Song(models.Model):
         raise ValueError("No title available for this Song.")
 
     def link_to_wikidata(self):
+        from app_v2.models.wikidata import WikidataSong
         if self.wikidata_song is not None:
             # already linked
             return
@@ -34,6 +35,7 @@ class Song(models.Model):
         self.save()
 
     def link_to_spotify(self):
+        from app_v2.models.spotify import SpotifySong
         if self.spotify_song is not None:
             # already linked
             return
@@ -42,6 +44,7 @@ class Song(models.Model):
         self.save()
 
     def link_to_genius(self):
+        from app_v2.models.genius import GeniusSong
         if self.genius_song is not None:
             # already linked
             return

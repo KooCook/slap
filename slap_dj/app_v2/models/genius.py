@@ -1,6 +1,6 @@
 from django.db import models
 
-from app_v2.models import upsert, Artist
+from app_v2.db.utils import upsert
 from contract_models.genius import GeniusSongModel
 
 

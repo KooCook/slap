@@ -1,0 +1,491 @@
+openapi: 3.0.2
+info:
+  title: ''
+  version: ''
+paths:
+  /api/songs/:
+    get:
+      operationId: listSongs
+      description: An API endpoint that allows songs to be viewed.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: title
+        required: false
+        in: query
+        description: The partial title of this song
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 123
+                  next:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?page=4
+                  previous:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?page=2
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Song'
+          description: ''
+      tags:
+      - api
+  /api/songs/{id}/:
+    get:
+      operationId: retrieveSong
+      description: An API endpoint that allows songs to be viewed.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this song.
+        schema:
+          type: string
+      - name: title
+        required: false
+        in: query
+        description: The partial title of this song
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Song'
+          description: ''
+      tags:
+      - api
+  /api/genres/:
+    get:
+      operationId: listGenres
+      description: ''
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 123
+                  next:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?page=4
+                  previous:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?page=2
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Genre'
+          description: ''
+      tags:
+      - api
+  /api/genres/{id}/:
+    get:
+      operationId: retrieveGenre
+      description: ''
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this genre.
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Genre'
+          description: ''
+      tags:
+      - api
+  /api/artists/:
+    get:
+      operationId: listArtists
+      description: An API endpoint that allows artists to be viewed.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 123
+                  next:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?page=4
+                  previous:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?page=2
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Artist'
+          description: ''
+      tags:
+      - api
+  /api/artists/{id}/:
+    get:
+      operationId: retrieveArtist
+      description: An API endpoint that allows artists to be viewed.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this artist.
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Artist'
+          description: ''
+      tags:
+      - api
+  /api/plot/rep-matrix/{song_id}:
+    get:
+      operationId: retrieveRepetitionMatrixPlot
+      description: ''
+      parameters:
+      - name: song_id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            text/csv:
+              schema: {}
+            application/json:
+              schema: {}
+          description: ''
+      tags:
+      - api
+  /api/plot/rep-pop:
+    get:
+      operationId: listRepetitionPopularityPlots
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+          description: ''
+      tags:
+      - api
+  /api/songs/words/randomize:
+    get:
+      operationId: listWordRandomizations
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+          description: ''
+      tags:
+      - api
+  /api/songs/{song_id}/words:
+    get:
+      operationId: listWords
+      description: A list of words in the given song lyrics
+      parameters:
+      - name: song_id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+          description: ''
+      tags:
+      - api
+  /api/songs/{song_id}/word-frequency:
+    get:
+      operationId: listWordFrequencys
+      description: ''
+      parameters:
+      - name: song_id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: viz_format
+        required: false
+        in: query
+        description: The selected data format for visualization
+        schema:
+          type: string
+      - name: lang
+        required: false
+        in: query
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+          description: ''
+      tags:
+      - api
+  /api/songs/{song_id}/word-frequency/plot:
+    get:
+      operationId: listSongWordFrequencyPlots
+      description: ''
+      parameters:
+      - name: song_id
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+          description: ''
+      tags:
+      - api
+  /api/songs/kpop:
+    get:
+      operationId: listKPopGenres
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+          description: ''
+      tags:
+      - api
+  /api/word-occur:
+    get:
+      operationId: listWordOccurrences
+      description: A view that returns the occurrences of words in songs in JSON.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 123
+                  next:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?page=4
+                  previous:
+                    type: string
+                    nullable: true
+                    format: uri
+                    example: http://api.example.org/accounts/?page=2
+                  results:
+                    type: array
+                    items: {}
+          description: ''
+      tags:
+      - api
+  /api/check/songs/word-in-lyrics:
+    get:
+      operationId: listWordInLyricsCorrectness
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+          description: ''
+      tags:
+      - api
+  /api/swagger-specs:
+    get:
+      operationId: listSwaggerSpecs
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+          description: ''
+      tags:
+      - api
+components:
+  schemas:
+    Song:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        artists:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        genres:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        title:
+          type: string
+          maxLength: 289
+        lyrics:
+          type: string
+        compressibility:
+          type: number
+        spotify_popularity:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+        wikidata_id:
+          type: string
+          maxLength: 13
+        genius_id:
+          type: string
+          maxLength: 15
+      required:
+      - title
+      - lyrics
+      - compressibility
+      - spotify_popularity
+      - wikidata_id
+      - genius_id
+    Genre:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 289
+        pretty_name:
+          type: string
+          maxLength: 289
+      required:
+      - name
+      - pretty_name
+    Artist:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 289
+      required:
+      - name

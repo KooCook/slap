@@ -17,7 +17,7 @@ class YoutubeVideo(models.Model):
     default_language = models.CharField(max_length=10, null=True)
     published_at = models.DateTimeField(null=True)
     channel_title = models.CharField(max_length=255, null=True)
-    channel = models.ForeignKey('YoutubeChannel', on_delete=models.SET_NULL)
+    channel = models.ForeignKey('YoutubeChannel', on_delete=models.SET_NULL, null=True)
 
     @classmethod
     def update_all_video_stats(cls, start=0):

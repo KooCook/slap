@@ -2,7 +2,7 @@ from typing import List
 
 from django.db import models
 
-from app_v2.models import upsert
+from app_v2.db.utils import upsert
 from contract_models.spotify import SpotifySongModel
 from services.spotify import search_for_song
 
@@ -35,7 +35,7 @@ class SpotifySong(models.Model):
     track_id = models.CharField(max_length=255, unique=True,
                                 blank=False)
     popularity_score = models.IntegerField()
-    genres = models.ManyToManyField('Genre', unique=True)
+    genres = models.ManyToManyField('Genre')
     artist = models.ForeignKey('SpotifyArtist', null=True,
                                on_delete=models.SET_NULL)
 

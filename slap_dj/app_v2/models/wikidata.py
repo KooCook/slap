@@ -1,11 +1,11 @@
-from typing import List, Type, TypeVar
+from typing import List
 
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
-from app_v2.models import Song, retrieve_from_song_title_and_possible_artists
-from app_v2.models.fields import CSVField
-from app_v2.models.utils import upsert
+from app_v2.models.base import Song
+from app_v2.models.spotify import retrieve_from_song_title_and_possible_artists
+from app_v2.db.fields import CSVField
+from app_v2.db.utils import upsert
 from contract_models.song import SongModel
 from services.wikidata import retrieve_songmodel_wikidata, retrieve_english_songs as populate_internal
 
@@ -25,7 +25,7 @@ class WikidataSong(models.Model):
     title = models.CharField(max_length=255)
     wikidata_id = models.CharField(max_length=13, unique=True,
                                    blank=False)
-    performers = models.ManyToManyField('WikidataArtist', on_delete=models.SET_NULL, null=True)
+    performers = models.ManyToManyField('WikidataArtist')
 
     @classmethod
     def retrieve_song(cls, song_title: str, artists: List['Artist']) -> 'WikidataSong':
