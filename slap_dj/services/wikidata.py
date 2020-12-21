@@ -191,8 +191,7 @@ SELECT ?songLabel
 (GROUP_CONCAT(DISTINCT ?video;SEPARATOR=",") AS ?ytVideoIds)
 (GROUP_CONCAT(DISTINCT ?genreLabel;SEPARATOR=",") AS ?genres)
 (GROUP_CONCAT(DISTINCT ?genre;SEPARATOR=",") AS ?genreIds)
-{{ wd:{wikidata_id} p:P175 [ps:P175 ?performer];
-               p:P136 [ps:P136 ?genre].
+{{ wd:{wikidata_id} p:P175 [ps:P175 ?performer].
 
  # FILTER( LANG(?performerLabel) = "en")
  OPTIONAL {{ wd:{wikidata_id} p:P136 [ps:P136 ?genre]. }}
