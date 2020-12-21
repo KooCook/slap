@@ -21,11 +21,14 @@ class Song(models.Model):
     @property
     def title(self) -> str:
         if self.wikidata_song:
-            return self.wikidata_song.title
+            if self.wikidata_song.title:
+                return self.wikidata_song.title
         if self.genius_song:
-            return self.genius_song.title
+            if self.genius_song.title:
+                return self.genius_song.title
         if self.spotify_song:
-            return self.spotify_song.title
+            if self.spotify_song.title:
+                return self.spotify_song.title
         raise ValueError("No title available for this Song.")
 
     @property
@@ -184,11 +187,14 @@ class Artist(models.Model):
     @property
     def name(self) -> str:
         if self.wikidata_artist:
-            return self.wikidata_artist.name
+            if self.wikidata_artist:
+                return self.wikidata_artist.name
         if self.genius_artist:
-            return self.genius_artist.name
+            if self.wikidata_artist:
+                return self.genius_artist.name
         if self.spotify_artist:
-            return self.spotify_artist.name
+            if self.spotify_artist.name:
+                return self.spotify_artist.name
         raise ValueError("No name available for this Artist.")
 
     def link_to_spotify(self):
