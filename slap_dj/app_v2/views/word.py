@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.request import Request
 
-from app.models import WordCache, WordOccurrenceInSong, Song
+from app_v2.models import Word, WordSong, Song
 from app.serializers import WordOccurrenceSerializer, WordSerializer, SongWithWordSerializer, SongShortSerializer
 
 
@@ -18,9 +18,9 @@ class WordsView(APIView):
         max_result: int = self.request.query_params.get('max_result', 50)
         shuffle: bool = self.request.query_params.get('shuffle', False)
         if song_tag:
-            queryset = WordCache.objects.filter(wordoccurrenceinsong__appears_in__genres__name=song_tag)
+            queryset = Word.objects.filter(wordsong__song__spotify_song__genres__name=song_tag)
         else:
-            queryset = WordCache.objects.all()
+            queryset = Word.objects.all()
         if shuffle:
             queryset = queryset.order_by('?')
         wc = [w for w in queryset if min_rel_pop <= w.relative_popularity <= max_rel_pop][:max_result]

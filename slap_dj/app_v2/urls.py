@@ -4,7 +4,7 @@ from rest_framework import routers
 from app_v2.views.base import WordOccurrenceView, WordInLyricsCorrectnessView, WordRandomizationView, WordView, WordFrequencyView, SwaggerSpecsView, SongViewSet, GenreViewSet, ArtistViewSet
 from app_v2.views.kpop import KPopGenreView
 from app_v2.views.plot import RepetitionPopularityPlotView, RepetitionMatrixPlotView, SongWordFrequencyPlotView
-from app.views.word import WordsView, SongFromWordView
+from app_v2.views.word import WordsView, SongFromWordView
 
 router = routers.DefaultRouter()
 router.register(r'songs', SongViewSet, basename='Song')
