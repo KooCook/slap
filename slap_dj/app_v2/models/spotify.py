@@ -3,6 +3,7 @@ from typing import List, Iterable
 from django.db import models
 
 from app_v2.db.utils import upsert
+from app_v2.models import ArtistSong, Artist, Song
 from contract_models.spotify import SpotifySongModel
 from services.spotify import search_for_song
 
@@ -24,11 +25,13 @@ def retrieve_from_song_title_and_possible_artists(song_title: str, possible_arti
             continue
         if s is None:
             continue
-        song = SpotifySong.from_song_model(s)
+        spotify_song = SpotifySong.from_song_model(s)
         for artist in s.artists:
-            artist_obj = upsert(SpotifyArtist, name=artist.name, artist_id=artist.spotify_id)
-            song.artists.add(artist_obj)
-        songs.append(song)
+            spotify_artist = upsert(SpotifyArtist, name=artist.name, artist_id=artist.spotify_id)
+            a = upsert(Artist, spotify_artist=spotify_artist)
+            s = upsert(Song, spotify_song=spotify_song)
+            upsert(ArtistSong, song=s, artist=a)
+        songs.append(spotify_song)
     return songs
 
 
