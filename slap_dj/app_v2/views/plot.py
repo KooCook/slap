@@ -1,5 +1,3 @@
-import csv
-import io
 from itertools import chain
 
 from pandas import DataFrame, Series
@@ -10,10 +8,9 @@ from rest_framework_csv.renderers import CSVRenderer
 
 from app.support.lyric_metrics import get_lyrics_frequency_df
 from app.support.similarity_matrix import get_similarity_matrix_map_v2
-from ..model_generator import retrieve_cached_song
 from app.support.plotter import get_fitted_line_params
 
-from ..models import Song
+from app_v2.models import Song
 
 
 class RepetitionPopularityPlotView(APIView):
@@ -63,7 +60,10 @@ class RepetitionMatrixPlotView(APIView):
     renderer_classes = tuple(chain((RepetitionMatrixV2Renderer,), api_settings.DEFAULT_RENDERER_CLASSES))
 
     def get(self, request, song_id: str):
-        s = retrieve_cached_song(pk=song_id)
+        try:
+            s = Song.objects.get(pk=song_id)
+        except Song.DoesNotExist as e:
+            return Response({"error": str(e)}, 404)
         content = [{
             'x': row[0],
             'y': row[1],
@@ -75,7 +75,10 @@ class RepetitionMatrixPlotView(APIView):
 
 class SongWordFrequencyPlotView(APIView):
     def get(self, request, song_id: str):
-        s = retrieve_cached_song(pk=song_id)
+        try:
+            s = Song.objects.get(pk=song_id)
+        except Song.DoesNotExist as e:
+            return Response({"error": str(e)}, 404)
         df = get_lyrics_frequency_df(s.genius_song.lyrics)
         content = {
             'x': df['words'],
