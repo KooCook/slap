@@ -43,6 +43,13 @@ class Song(models.Model):
                 return self.spotify_song.title
         raise ValueError("No title available for this Song.")
 
+    def get_title(self, pref: str) -> str:
+        try:
+            return getattr(self, pref).title
+        except AttributeError:
+            pass
+        return self.title
+
     @property
     def lyrics(self) -> str:
         if self.genius_song:
@@ -104,7 +111,7 @@ class Song(models.Model):
             # already linked
             return
         # Use spotify title bc service is related
-        genius_song = GeniusSong.retrieve_song(self.spotify_song.title, [self.artists.first().name])
+        genius_song = GeniusSong.retrieve_song(self.get_title('spotify_song'), [self.artists.first().name])
         self.genius_song = genius_song
         self.save()
 
