@@ -4,7 +4,7 @@ import os
 import sys
 
 
-def main():
+def main( ):
     """Run administrative tasks."""
     sys.path.append(os.path.abspath(os.path.dirname(os.path.abspath(__file__)) + '/..'))
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'slap_dj.settings')

@@ -3,10 +3,12 @@ from typing import List, Optional
 import numpy as np
 from django.db import models
 from django.db.models.aggregates import Min, Max
+from django_pandas.managers import DataFrameManager
 from scipy import special
 
-from app.support.repetition import get_bow_dataframe
+from app.support.repetition import get_bow_dataframe, calculate_repetition
 from app_v2.db.utils import upsert
+from services.genius import remove_sections
 
 
 class Song(models.Model):
@@ -17,6 +19,16 @@ class Song(models.Model):
     artists = models.ManyToManyField('Artist', through='ArtistSong')
     # cached fields
     compressibility = models.FloatField(null=True)
+
+    objects = DataFrameManager()
+
+    @property
+    def genres(self) -> List['SpotifyGenre']:
+        if self.wikidata_song:
+            return self.wikidata_song.genres
+        if self.spotify_song:
+            return self.spotify_song.genres
+        raise ValueError("No title available for this Song.")
 
     @property
     def title(self) -> str:
@@ -30,6 +42,13 @@ class Song(models.Model):
             if self.spotify_song.title:
                 return self.spotify_song.title
         raise ValueError("No title available for this Song.")
+
+    @property
+    def lyrics(self) -> str:
+        if self.genius_song:
+            return self.genius_song.lyrics
+        return "N/A"
+        # raise ValueError("No lyrics available for this Song.")
 
     @property
     def artists_names(self) -> List[str]:
@@ -52,6 +71,14 @@ class Song(models.Model):
             return w
         else:
             raise ValueError("The view count does not exist.")
+
+    def update_compression_ratio(self):
+        new = calculate_repetition(remove_sections(self.genius_song.lyrics))
+        print(f"Updating model {self}\n"
+              f"old: {self.compressibility}\n"
+              f"new: {new}")
+        self.compressibility = new
+        self.save()
 
     def link_to_wikidata(self):
         from app_v2.models.wikidata import WikidataSong

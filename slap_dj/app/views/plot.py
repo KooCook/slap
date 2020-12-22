@@ -20,18 +20,18 @@ class RepetitionPopularityPlotView(APIView):
     """
     """
 
-    def each_item(self, x):
-        if x.title == 'artistinsong__artist__name':
-            if len(x.values) > 1:
-                return " feat. ".join(x.values[:2])
-            return x.values[0]
-        if x.title == 'title':
-            return x.values[0]
-        if isinstance(x, Series):
-            if str(x.name).isnumeric():
-                if len(x.values) > 1:
-                    return " feat. ".join(x.values[:2])
-                return x.values[0]
+    def process_each(self, x):
+        # if isinstance(x, Series):
+        #     if str(x.name).isnumeric():
+        #         if len(x.values) > 1:
+        #             return " feat. ".join(x.values[:2])
+        #         return x.values[0]
+        # if x.title == 'artistinsong__artist__name':
+        #     if len(x.values) > 1:
+        #         return " feat. ".join(x.values[:2])
+        #     return x.values[0]
+        # if x.title == 'title':
+        #     return x.values[0]
         return x.values[0]
 
     def get(self, request):
@@ -40,18 +40,20 @@ class RepetitionPopularityPlotView(APIView):
         if pop_facet == 'youtube_view':
             pop_facet = 'youtubevideo__view_count'
         df: DataFrame = Song.objects.all().values('id', rep_facet, pop_facet, 'title', 'artistinsong__artist__name').to_dataframe()
-        df = df.groupby(by=["id"]).agg(self.each_item)
+        df = df.groupby(by=["id"]).agg(self.process_each)
         df = df.query(f'artistinsong__artist__name.notnull() & {pop_facet}.notnull()')
         df['title-artist'] = df[['title', 'artistinsong__artist__name']].agg(' - '.join, axis=1)
         text_label = 'title-artist'
         x_dat = df[rep_facet]
         y_dat = df[pop_facet]
-        x_line, y_line, r_val = get_fitted_line_params(x_dat, y_dat)
+        x_line, y_line, r_squared_val, slope = get_fitted_line_params(x_dat, y_dat)
         return Response({'data':
                              {'text': df[text_label], 'x': x_dat, 'y': y_dat,
                               'type': 'scatter'},
                          'line_data': {
-                             'x': x_line, 'y': y_line, 'r_val': r_val
+                             'x': x_line, 'y': y_line,
+                             'r_val': r_squared_val,
+                             'slope': slope
                          }})
 
 

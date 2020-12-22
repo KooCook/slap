@@ -1,10 +1,10 @@
-from typing import List, Iterable
+from typing import List
 import json
 
 from django.db import models
 
 from app_v2.models.youtube import YoutubeVideo
-from app_v2.models.base import Song
+from app_v2.models.base import Song, Artist, ArtistSong
 from app_v2.models.spotify import retrieve_from_song_title_and_possible_artists
 from app_v2.db.utils import upsert
 from contract_models.song import SongModel
@@ -22,16 +22,23 @@ def populate_wikidata_english_songs():
     song_list: List[SongModel] = populate_internal()
     for song in song_list:
         ws = upsert(WikidataSong, title=song.name.strip(), wikidata_id=song.wikidata_id)
+        artists = []
         for artist in song.artists:
             p = upsert(WikidataArtist, name=artist.name.strip())
             ws.performers.add(p)
+            a = upsert(Artist, wikidata_artist=p)
+            artists.append(a)
+
         spotify_songs = retrieve_from_song_title_and_possible_artists(song.name.strip(), song.artist_names)
         for spotify_song in spotify_songs:
             upsert(Song, wikidata_song=ws, spotify_song=spotify_song)
             break
-        else:
-            upsert(Song, wikidata_song=ws)
-        print(song)
+        s: Song = upsert(Song, wikidata_song=ws)
+        for at in artists:
+            upsert(ArtistSong, artist=at, song=s)
+        # break
+        s.link_to_genius()
+        s.update_compression_ratio()
 
 
 class WikidataGenre(models.Model):

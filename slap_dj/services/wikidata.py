@@ -264,4 +264,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    retrieve_english_songs()
+    # main()

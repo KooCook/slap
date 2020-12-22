@@ -32,10 +32,10 @@ def do_regression_using_scientific(x, y) -> None:
     # plt.show()
 
 
-def get_fitted_line_params(xdata, ydata, line_tick: float = 0.01) -> Tuple[Any, float, float]:
+def get_fitted_line_params(xdata, ydata, line_tick: float = 0.01) -> Tuple[Any, float, float, float]:
     slope, intercept, r_value, p_value, std_err = stats.linregress(xdata, ydata)
     p = np.arange(xdata.min(), xdata.max(), line_tick)
-    return p, intercept + slope * p, r_value
+    return p, intercept + slope * p, r_value ** 2, slope
 
 
 def add_fitted_line_trace(fig: go.Figure, xdata, ydata,
