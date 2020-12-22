@@ -22,18 +22,23 @@ def populate_wikidata_english_songs():
     song_list: List[SongModel] = populate_internal()
     for song in song_list:
         ws = upsert(WikidataSong, title=song.name.strip(), wikidata_id=song.wikidata_id)
-        artists = []
+        artists: List[Artist] = []
+        assert song.artists, song.artists
         for artist in song.artists:
             p = upsert(WikidataArtist, name=artist.name.strip())
             ws.performers.add(p)
             a = upsert(Artist, wikidata_artist=p)
             artists.append(a)
+        assert artists, artists
 
         spotify_songs = retrieve_from_song_title_and_possible_artists(song.name.strip(), song.artist_names)
         for spotify_song in spotify_songs:
-            upsert(Song, wikidata_song=ws, spotify_song=spotify_song)
+            # TODO: Fix error: duplicate spotify song
+            s = upsert(Song, wikidata_song=ws, spotify_song=spotify_song)
             break
-        s: Song = upsert(Song, wikidata_song=ws)
+        else:
+            # BAD: no spotify songs for the wikidata entry
+            s = upsert(Song, wikidata_song=ws)
         for at in artists:
             upsert(ArtistSong, artist=at, song=s)
         # break
