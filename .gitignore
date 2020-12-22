@@ -149,3 +149,5 @@ autogen/*
 */testdata/**/actual/
 
 celerybeat-schedule.db
+
+*.sqlite3
