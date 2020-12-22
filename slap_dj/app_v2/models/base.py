@@ -192,13 +192,13 @@ class WordSong(models.Model):
 
     @classmethod
     def update_all_songs_word_frequency(cls, skip: bool = True) -> None:
-        for song in cls.objects.all():
+        for song in Song.objects.all():
             try:
-                occurrence = cls.objects.filter(appears_in=song)
+                occurrence = WordSong.objects.filter(song=song)
                 if skip and len(occurrence) > 0:
                     print(f"skip {song.id} {song.title}")
                     continue
-            except cls.DoesNotExist:
+            except WordSong.DoesNotExist:
                 pass
             cls.update_song_word_frequency(song)
             print(f"freq {song.title}")
@@ -209,7 +209,7 @@ class WordSong(models.Model):
         freq = df['freq']
         words = df['word']
         for w, f in zip(words, freq):
-            upsert(cls, word=w, song=song, frequency=f)
+            upsert(WordSong, word=w, song=song, frequency=f)
 
 
 class Artist(models.Model):
