@@ -1,10 +1,27 @@
 from itertools import combinations
-from typing import Type, TypeVar, List
+from typing import Type, TypeVar, List, Any, Dict
 
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.db import models, IntegrityError
 
 _M = TypeVar('_M', bound=models.Model)
+
+
+def update(instance: _M, kwargs: Dict[str, Any]) -> _M:
+    """ Updates and returns a Django model instance.
+
+    Args:
+        instance: An instance of a Django model.
+        kwargs: A dict of {attribute: value} to update the instance with.
+
+    Raises
+        django.db.utils.IntegrityError:
+            From instance.save() when failing constraints.
+    """
+    for k, v in kwargs.items():
+        setattr(instance, k, v)
+    instance.save()
+    return instance
 
 
 def get_unique_fields(cls: Type[_M]) -> List[str]:
@@ -31,12 +48,16 @@ def upsert(cls: Type[_M], **kwargs) -> _M:
             uniques[k] = v
         else:
             rest[k] = v
+
+    err = ValueError(f"Failed to upsert cls={cls} with values uniques={uniques} rest={rest}")
+
     if uniques:
         try:
-            instance = cls.objects.get(**uniques)
-        except MultipleObjectsReturned:
+            oldinst = cls.objects.get(**uniques)
+            return update(oldinst, rest)
+        except MultipleObjectsReturned as e:
             # BAD DATA
-            raise
+            raise err from e
             # raise
             # try:
             #     instance = cls.objects.get(**kwargs)
@@ -45,17 +66,16 @@ def upsert(cls: Type[_M], **kwargs) -> _M:
             #     # TODO: Try possible combinations from the strictest to the least strict
             #     instance = instances.first()
         except ObjectDoesNotExist:
-            instance = cls()
+            newinst = cls()
     else:
+        assert rest == kwargs
         try:
-            instance = cls.objects.get(**kwargs)
-            return instance
+            oldinst = cls.objects.get(**kwargs)
+            return oldinst
         except ObjectDoesNotExist:
-            instance = cls()
-    for k, v in kwargs.items():
-        setattr(instance, k, v)
+            newinst = cls()
+
     try:
-        instance.save()
+        return update(newinst, kwargs)
     except IntegrityError as e:
-        raise
-    return instance
+        raise err from e
