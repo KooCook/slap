@@ -90,13 +90,21 @@ See [slap-vue/README.md](slap-vue/README.md)
 
 ## Data population
 
+For app v1
+
 ```sh
-python manage.py populate_data ... # TODO: mode
+python manage.py populate_data <mode here, see help message -h>
 ```
 
+For app v2
+
+Call these methods in succession
+
 ```
-wikidata.populate_wikidata_english_songs()
-wikidata.WikidataSong.retrieve_all_info_from_id()
+models.wikidata.populate_wikidata_english_songs()
+models.wikidata.WikidataSong.retrieve_all_info_from_id()
+models.base.Song.link_to_genius() # do this for all songs
+models.base.Song.update_compression_ratio() # do this for all songs
 ```
 
 ## Deployment 
